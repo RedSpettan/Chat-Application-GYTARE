@@ -30,10 +30,6 @@ public class Client {
         }else{
             serverHost = host;
         }
-
-
-
-
     }
 
     public void StartClient(){
