@@ -38,6 +38,11 @@ public class Client {
 
             System.out.println("Got Here");
 
+            while(clientSocket.isConnected()){
+                System.out.println("Connected...");
+            }
+
+            System.out.println("Not connected");
 
 
         } catch (UnknownHostException e) {
