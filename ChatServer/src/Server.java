@@ -69,10 +69,6 @@ public class Server {
 
             }
 
-
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,10 +103,9 @@ public class Server {
 
                     server.socketList.add(clientSocket);
 
+                    new Thread(new ServerThread(clientSocket, server, server.socketList)).start();
 
                 }
-
-
 
             } catch (IOException e) {
                 e.printStackTrace();
