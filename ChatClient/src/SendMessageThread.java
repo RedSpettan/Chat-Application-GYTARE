@@ -21,6 +21,8 @@ public class SendMessageThread implements Runnable{
 
         try(PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
+
+
             Scanner scanner = new Scanner(System.in);
 
             String line;

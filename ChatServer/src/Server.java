@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Server {
 
@@ -9,6 +8,9 @@ public class Server {
 
     private List<Socket> socketList = new ArrayList<>();
 
+    Map<Socket, Thread> socketThreadMap = new HashMap<>();
+
+    boolean updateServer = true;
 
     public Server(int port){
 
@@ -63,18 +65,74 @@ public class Server {
             System.out.println("Socket has been opened, awaiting connections...");
             System.out.println("IP address: " + Inet4Address.getLocalHost());
 
+
+
             new Thread(new ServerConnection(serverSocket, this)).start();
+
+            new Thread(new DebugServerThread(this)).start();
+
+            //UpdateServer();
 
             while(true){
 
+                System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
+
+                for(int x = 0; x < socketList.size(); x++){
+                    //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
+                    if(socketList.get(x).isClosed()){
+
+                        socketThreadMap.get(socketList.get(x)).interrupt();
+
+                        System.out.println("Is Alive?: " + socketThreadMap.get(socketList.get(x)).isAlive());
+
+
+                        socketList.remove(x);
+
+                        System.exit(0);
+
+                        break;
+                    }
+                }
+
+                /*if(socketList.size() == 0){
+                    System.out.println(socketList.size());
+
+                }else{
+
+                }*/
+
+
+                //CheckSocketConnection();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+
+    private void UpdateServer(){
+
+        while(true){
+
+
+        }
 
     }
+
+    private void CheckSocketStatus(){
+
+        /*if(socketList.size() > 0){
+            System.out.println("Wut!");
+        }*/
+
+
+
+    }
+
+
+
 
 
     private class ServerConnection implements Runnable{
@@ -103,7 +161,11 @@ public class Server {
 
                     server.socketList.add(clientSocket);
 
-                    new Thread(new ServerThread(clientSocket, server, server.socketList)).start();
+                    Thread localThread = new Thread(new ServerThread(clientSocket, server, server.socketList));
+
+                    server.socketThreadMap.put(clientSocket, localThread);
+
+                    localThread.start();
 
                 }
 
@@ -113,6 +175,36 @@ public class Server {
 
         }
     }
+
+
+    private class DebugServerThread implements Runnable{
+
+
+        private Server activeServer;
+
+        public DebugServerThread(Server server){
+            this.activeServer = server;
+        }
+
+        @Override
+        public void run() {
+
+            String line;
+
+            Scanner inputScanner = new Scanner(System.in);
+
+
+            while((line = inputScanner.nextLine()) != null){
+                if(line.equals("sockets")){
+                    for(Socket socket : activeServer.socketList){
+                        System.out.println(socket.getPort());
+                    }
+                }
+            }
+        }
+    }
+
+
 
 
 }

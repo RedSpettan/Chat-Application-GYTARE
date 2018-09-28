@@ -28,8 +28,6 @@ public class ServerThread implements Runnable{
     @Override
     public void run() {
 
-
-
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
             String line;
