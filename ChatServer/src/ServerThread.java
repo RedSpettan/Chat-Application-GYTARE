@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,13 +37,11 @@ public class ServerThread implements Runnable{
                 System.out.println(line);
             }
 
+
+
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-
-        for(Socket s: socketList){
-            System.out.println(s.getPort());
+            System.out.println("Thread stopped!");
         }
     }
 }

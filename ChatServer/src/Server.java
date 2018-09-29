@@ -6,7 +6,7 @@ public class Server {
 
     public int remotePort;
 
-    private List<Socket> socketList = new ArrayList<>();
+    List<Socket> socketList = new ArrayList<>();
 
     Map<Socket, Thread> socketThreadMap = new HashMap<>();
 
@@ -71,39 +71,9 @@ public class Server {
 
             new Thread(new DebugServerThread(this)).start();
 
-            //UpdateServer();
-
-            while(true){
-
-                System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
-
-                for(int x = 0; x < socketList.size(); x++){
-                    //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
-                    if(socketList.get(x).isClosed()){
-
-                        socketThreadMap.get(socketList.get(x)).interrupt();
-
-                        System.out.println("Is Alive?: " + socketThreadMap.get(socketList.get(x)).isAlive());
+            UpdateServer();
 
 
-                        socketList.remove(x);
-
-                        System.exit(0);
-
-                        break;
-                    }
-                }
-
-                /*if(socketList.size() == 0){
-                    System.out.println(socketList.size());
-
-                }else{
-
-                }*/
-
-
-                //CheckSocketConnection();
-            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,7 +86,29 @@ public class Server {
 
         while(true){
 
+            System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
 
+            for(int x = 0; x < socketList.size(); x++){
+                //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
+                if(socketList.get(x).isClosed()){
+
+
+                    //System.out.println(socketThreadMap.get(socketList.get(x)).isAlive());
+
+                    socketThreadMap.remove(socketList.get(x));
+
+                    //System.out.println("Is Alive?: " + socketThreadMap.get(socketList.get(x)).isAlive());
+
+
+                    socketList.remove(x);
+
+                    //System.exit(0);
+
+                    break;
+                }
+            }
+
+            //CheckSocketConnection();
         }
 
     }
