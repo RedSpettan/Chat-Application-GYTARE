@@ -86,7 +86,7 @@ public class Server {
 
         while(true){
 
-            System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
+            //System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
 
             for(int x = 0; x < socketList.size(); x++){
                 //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
@@ -108,7 +108,6 @@ public class Server {
                 }
             }
 
-            //CheckSocketConnection();
         }
 
     }
@@ -118,8 +117,6 @@ public class Server {
         /*if(socketList.size() > 0){
             System.out.println("Wut!");
         }*/
-
-
 
     }
 
@@ -167,36 +164,6 @@ public class Server {
 
         }
     }
-
-
-    private class DebugServerThread implements Runnable{
-
-
-        private Server activeServer;
-
-        public DebugServerThread(Server server){
-            this.activeServer = server;
-        }
-
-        @Override
-        public void run() {
-
-            String line;
-
-            Scanner inputScanner = new Scanner(System.in);
-
-
-            while((line = inputScanner.nextLine()) != null){
-                if(line.equals("sockets")){
-                    for(Socket socket : activeServer.socketList){
-                        System.out.println(socket.getPort());
-                    }
-                }
-            }
-        }
-    }
-
-
 
 
 }
