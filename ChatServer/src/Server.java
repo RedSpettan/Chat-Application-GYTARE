@@ -1,6 +1,7 @@
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Server {
 
@@ -10,7 +11,7 @@ public class Server {
 
     Map<Socket, Thread> socketThreadMap = new HashMap<>();
 
-    boolean updateServer = true;
+    ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
 
     public Server(int port){
 
@@ -55,7 +56,7 @@ public class Server {
     }
 
 
-    public void StartServer(){
+    void StartServer(){
 
 
         System.out.println("Remote port: " + remotePort);
@@ -70,6 +71,8 @@ public class Server {
             new Thread(new ServerConnection(serverSocket, this)).start();
 
             new Thread(new DebugServerThread(this)).start();
+
+            //new Thread(new SendMessagesThread(this, messageList)).start();
 
             UpdateServer();
 
@@ -108,21 +111,41 @@ public class Server {
                 }
             }
 
+
+           /* if(!messageList.isEmpty()){
+
+            }*/
+
+           if(!messageList.isEmpty()){
+
+               System.out.println("Size of list: " + messageList.size());
+
+               String message = messageList.poll();
+
+               for(Socket socket : socketList){
+                   try {
+                       PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                       out.println(message);
+
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+                   System.out.println(socket.getPort() + " is closed?: " + socket.isClosed());
+               }
+
+               System.out.println("Polled message: " + message);
+           }
+
         }
 
     }
 
-    private void CheckSocketStatus(){
+    void ReceiveMessages(String message, Socket socket){
 
-        /*if(socketList.size() > 0){
-            System.out.println("Wut!");
-        }*/
+        System.out.println(socket.getPort() + ": " + message);
+        messageList.add(message);
 
     }
-
-
-
-
 
     private class ServerConnection implements Runnable{
 
@@ -150,7 +173,7 @@ public class Server {
 
                     server.socketList.add(clientSocket);
 
-                    Thread localThread = new Thread(new ServerThread(clientSocket, server, server.socketList));
+                    Thread localThread = new Thread(new ServerThread(clientSocket, server));
 
                     server.socketThreadMap.put(clientSocket, localThread);
 

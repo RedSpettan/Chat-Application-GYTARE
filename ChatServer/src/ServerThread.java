@@ -1,25 +1,19 @@
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerThread implements Runnable{
-
-    private List<Socket> socketList;
 
     private Server activeServer;
 
     private Socket clientSocket;
 
-    public ServerThread(Socket clientSocket, Server server, List<Socket> socketList){
+    public ServerThread(Socket clientSocket, Server server){
 
-        this.socketList = socketList;
         this.activeServer = server;
         this.clientSocket = clientSocket;
+
 
     }
 
@@ -34,7 +28,12 @@ public class ServerThread implements Runnable{
             String line;
             while((line = reader.readLine()) !=null){
 
-                System.out.println(line);
+                activeServer.ReceiveMessages(line, clientSocket);
+                //activeServer.messageList.add(line);
+               /* System.out.println("Size of list: " + activeServer.messageList.size());
+                System.out.println("Is the socket closed?: " + clientSocket.isClosed());*/
+
+
             }
 
 
@@ -42,6 +41,8 @@ public class ServerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Thread stopped!");
+
+
         }
     }
 }

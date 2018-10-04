@@ -32,13 +32,17 @@ public class Client {
         }
     }
 
-    public void StartClient(){
+
+
+    public void startClient(){
 
         try(Socket clientSocket = new Socket(serverHost, remotePort)){
 
             System.out.println("Got Here");
 
             new Thread(new SendMessageThread(clientSocket)).start();
+
+            new Thread(new ReceiveMessagesThread(clientSocket)).start();
 
             while(true){
 

@@ -5,7 +5,7 @@ public class Main {
 
         Client mainClient = new Client("LAPTOP-9V1U1J17", 9543);
 
-        mainClient.StartClient();
+        mainClient.startClient();
 
     }
 }
