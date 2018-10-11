@@ -13,6 +13,8 @@ public class Server {
 
     ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
 
+    private boolean updateServer = false;
+
     public Server(int port){
 
         if(port < 0){
@@ -72,9 +74,17 @@ public class Server {
 
             new Thread(new DebugServerThread(this)).start();
 
-            //new Thread(new SendMessagesThread(this, messageList)).start();
+            new Thread(new SendMessagesThread(this, messageList)).start();
 
-            UpdateServer();
+            new Thread(new RemoveSocketThread(this)).start();
+
+            while(true){
+
+            }
+
+            //updateServer = true;
+
+            //UpdateServer();
 
 
 
@@ -87,36 +97,20 @@ public class Server {
 
     private void UpdateServer(){
 
-        while(true){
+        /*while(true){
+
+            //System.out.println("Here!");
 
             //System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
 
-            for(int x = 0; x < socketList.size(); x++){
-                //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
-                if(socketList.get(x).isClosed()){
 
 
-                    //System.out.println(socketThreadMap.get(socketList.get(x)).isAlive());
-
-                    socketThreadMap.remove(socketList.get(x));
-
-                    //System.out.println("Is Alive?: " + socketThreadMap.get(socketList.get(x)).isAlive());
+        }*/
 
 
-                    socketList.remove(x);
-
-                    //System.exit(0);
-
-                    break;
-                }
-            }
 
 
-           /* if(!messageList.isEmpty()){
-
-            }*/
-
-           if(!messageList.isEmpty()){
+        /*if(!messageList.isEmpty()){
 
                System.out.println("Size of list: " + messageList.size());
 
@@ -134,9 +128,7 @@ public class Server {
                }
 
                System.out.println("Polled message: " + message);
-           }
-
-        }
+           }*/
 
     }
 

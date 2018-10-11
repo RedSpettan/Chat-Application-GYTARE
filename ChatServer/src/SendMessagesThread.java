@@ -27,17 +27,25 @@ public class SendMessagesThread implements Runnable{
 
                 String messageToBeSent = messageQueue.poll();
 
+                System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
+
                 for(Socket s : activeServer.socketList){
 
-                    try(Writer out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()))) {
 
-                        out.write(messageToBeSent);
+                    if(!s.isClosed()){
+                        try{
 
-                        out.flush();
+                            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                            out.println(messageToBeSent);
+
+                            out.flush();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+
 
 
                 }
