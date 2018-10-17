@@ -5,13 +5,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Server {
 
-    public int remotePort;
+    //Store the Servers listening port
+    private int remotePort;
 
+    //List used to store all connected client sockets
     List<Socket> socketList = new ArrayList<>();
 
+    //Hash map used to associate a client socket to a specific Thread
     Map<Socket, Thread> socketThreadMap = new HashMap<>();
 
     ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
+
+    private Thread sendMessageThread;
 
     private boolean updateServer = false;
 
@@ -74,11 +79,21 @@ public class Server {
 
             new Thread(new DebugServerThread(this)).start();
 
-            new Thread(new SendMessagesThread(this, messageList)).start();
+            sendMessageThread = new Thread(new SendMessagesThread(this, messageList));
+            sendMessageThread.start();
 
-            new Thread(new RemoveSocketThread(this)).start();
+            //new Thread(new RemoveSocketThread(this)).start();
 
             while(true){
+
+                if(!sendMessageThread.isAlive()){
+
+                    System.err.print("*** Send Messages is not alive, attempting restart...*** ");
+
+
+                    sendMessageThread = new Thread(new SendMessagesThread(this, messageList));
+                    sendMessageThread.start();
+                }
 
             }
 
@@ -135,8 +150,41 @@ public class Server {
     void ReceiveMessages(String message, Socket socket){
 
         System.out.println(socket.getPort() + ": " + message);
-        messageList.add(message);
 
+        messageList.add(socket.getPort() + ": " + message);
+
+    }
+
+    void CheckSockets(){
+
+        if (socketList.size() > 0) {
+            //System.out.println("Hello!");
+            for (int x = 0; x < socketList.size(); x++) {
+                System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
+                if (socketList.get(x).isClosed()) {
+
+                    System.out.println(socketList.get(x) + " Socket is no longer available!");
+
+                    //System.out.println(socketThreadMap.get(activeServer.socketList.get(x)).isAlive());
+
+                    socketThreadMap.remove(socketList.get(x));
+
+                    //System.out.println("Is Alive?: " + socketThreadMap.get(activeServer.socketList.get(x)).isAlive());
+
+                    socketList.remove(x);
+
+                    System.out.println("Socket has been removed!");
+
+                    //System.exit(0);
+
+                    CheckSockets();
+
+                    break;
+                }
+            }
+        } else {
+            //System.out.println("SocketList is empty!");
+        }
     }
 
     private class ServerConnection implements Runnable{

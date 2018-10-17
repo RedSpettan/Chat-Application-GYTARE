@@ -25,6 +25,8 @@ public class SendMessagesThread implements Runnable{
 
             if(!messageQueue.isEmpty()){
 
+                activeServer.CheckSockets();
+
                 String messageToBeSent = messageQueue.poll();
 
                 System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
@@ -42,8 +44,11 @@ public class SendMessagesThread implements Runnable{
                             out.flush();
 
                         } catch (IOException e) {
+                            System.out.println("Crash here!");
                             e.printStackTrace();
                         }
+                    }else{
+                        activeServer.CheckSockets();
                     }
 
 

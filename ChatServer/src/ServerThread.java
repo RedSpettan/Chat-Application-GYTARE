@@ -40,9 +40,7 @@ public class ServerThread implements Runnable{
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Thread stopped!");
-
-
+            System.out.println("***Thread associated with socket '" + clientSocket.getPort() + "' has been stopped!***");
         }
     }
 }
