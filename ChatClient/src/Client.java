@@ -7,19 +7,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
 
-    public int remotePort;
-    public String serverHost;
+    private int remotePort;
+    private String serverHost;
 
     Socket clientSocket;
 
-    Thread sendMessageThread;
-    Thread receiveMessageThread;
+    private Thread sendMessageThread;
+    private Thread receiveMessageThread;
 
-    SendMessageThread sendMessageThreadClass;
+    private SendMessageThread sendMessageThreadClass;
 
-    int amountOfRetries;
-
-    ConcurrentLinkedQueue<String> unsentMessageList = new ConcurrentLinkedQueue<>();
+    private int amountOfRetries;
 
 
     public Client(String host, int port){
@@ -55,6 +53,12 @@ public class Client {
         while(true){
 
             if(this.clientSocket.isClosed()){
+
+
+                if(amountOfRetries >= 5 ){
+                    System.err.println("The amount of reconnects has exceeded");
+                    System.exit(0);
+                }
 
                 System.out.println("The clientSocket is closed: " + this.clientSocket.isClosed());
 

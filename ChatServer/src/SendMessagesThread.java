@@ -10,7 +10,7 @@ public class SendMessagesThread implements Runnable{
     private ConcurrentLinkedQueue<String> messageQueue;
     private Server activeServer;
 
-    public SendMessagesThread(Server server,  ConcurrentLinkedQueue<String> messageQueue){
+    SendMessagesThread(Server server, ConcurrentLinkedQueue<String> messageQueue){
 
         this.messageQueue = messageQueue;
         this.activeServer = server;

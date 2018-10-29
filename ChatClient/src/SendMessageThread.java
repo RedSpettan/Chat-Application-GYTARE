@@ -9,7 +9,7 @@ public class SendMessageThread implements Runnable{
 
     Scanner scanner;
 
-    public SendMessageThread(Socket socket, Client client){
+    SendMessageThread(Socket socket, Client client){
 
 
         this.clientSocket = socket;
@@ -17,7 +17,7 @@ public class SendMessageThread implements Runnable{
 
     }
 
-    public void setClientSocket(Socket clientSocket) {
+    void setClientSocket(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
 

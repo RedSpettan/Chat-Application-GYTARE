@@ -10,7 +10,7 @@ public class ReceiveMessagesThread implements Runnable{
     private Socket clientSocket;
     private Client activeClient;
 
-    public ReceiveMessagesThread(Socket socket, Client client){
+    ReceiveMessagesThread(Socket socket, Client client){
 
         this.clientSocket = socket;
         this.activeClient = client;

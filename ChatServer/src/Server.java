@@ -4,7 +4,7 @@ import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Server {
+class Server {
 
     //Store the Servers listening port
     private int remotePort;
@@ -15,13 +15,13 @@ public class Server {
     //Hash map used to associate a client socket to a specific Thread
     Map<Socket, Thread> socketThreadMap = new HashMap<>();
 
-    ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
 
     private Thread sendMessageThread;
 
     private boolean updateServer = false;
 
-    public Server(int port){
+    Server(int port){
 
         if(port < 0){
             remotePort = -1;

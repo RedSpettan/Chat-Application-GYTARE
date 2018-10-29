@@ -6,7 +6,7 @@ class DebugServerThread implements Runnable{
 
     private Server activeServer;
 
-    public DebugServerThread(Server server){
+    DebugServerThread(Server server){
         this.activeServer = server;
     }
 
