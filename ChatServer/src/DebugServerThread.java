@@ -23,6 +23,8 @@ class DebugServerThread implements Runnable{
                 for(Socket socket : activeServer.socketList){
                     System.out.println(socket.getPort());
                 }
+            }else{
+                activeServer.ReceiveMessages(line, "SERVER");
             }
         }
     }

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -151,8 +152,13 @@ public class Server {
 
         System.out.println(socket.getPort() + ": " + message);
 
-        messageList.add(socket.getPort() + ": " + message);
+        messageList.add("***" + socket.getPort() + ": " + message);
 
+    }
+    void ReceiveMessages(String message, String sender){
+        String completeMessage = sender +": " + message;
+        System.out.println(completeMessage);
+        messageList.add(completeMessage);
     }
 
     void CheckSockets(){

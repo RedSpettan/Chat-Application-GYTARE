@@ -2,11 +2,25 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
 
     public int remotePort;
     public String serverHost;
+
+    Socket clientSocket;
+
+    Thread sendMessageThread;
+    Thread receiveMessageThread;
+
+    SendMessageThread sendMessageThreadClass;
+
+    int amountOfRetries;
+
+    ConcurrentLinkedQueue<String> unsentMessageList = new ConcurrentLinkedQueue<>();
+
 
     public Client(String host, int port){
 
@@ -32,21 +46,132 @@ public class Client {
         }
     }
 
+    private void UpdateClient(){
+
+
+
+
+
+        while(true){
+
+            /*if(!sendMessageThread.isAlive()){
+                sendMessageThreadClass = new SendMessageThread(clientSocket, this);
+                sendMessageThread = new Thread(sendMessageThreadClass);
+                System.out.println("SendMessageThread has been restarted!");
+            }*/
+
+            /*if(!unsentMessageList.isEmpty()){
+                for (String message : unsentMessageList){
+                    System.out.println(message);
+                }
+            }*/
+
+            /*if(!unsentMessageList.isEmpty()){
+                for(String message : unsentMessageList){
+                    System.out.println("This message has not been sent: " + message);
+                }
+            }*/
+
+            if(this.clientSocket.isClosed()){
+                //System.out.println("YEET");
+
+                System.out.println("The clientSocket is closed: " + this.clientSocket.isClosed());
+
+                clientSocket = new Socket();
+
+                //sendMessageThreadClass.scanner.close();
+                //sendMessageThreadClass.scanner = null;
+
+
+
+                if(!reconnectClient()){
+
+                    amountOfRetries++;
+                    System.out.println("Is send message thread alive? " + sendMessageThread.isAlive());
+                    System.out.println("Is receive message thread alive? " + receiveMessageThread.isAlive());
+
+                }else{
+
+                    restartClient();
+
+                    //break;
+                }
+
+            }
+        }
+
+        /*restartClient();
+        System.out.println("Updated method has been closed!");*/
+    }
+
+    void restartClient(){
+
+
+        Socket socket = new Socket();
+        try {
+
+            socket = new Socket(serverHost, remotePort);
+
+            System.out.println("--Connection has been established--");
+
+            this.clientSocket = socket;
+
+            if(sendMessageThread == null || !sendMessageThread.isAlive()){
+                sendMessageThreadClass = new SendMessageThread(clientSocket, this);
+                sendMessageThread = new Thread(sendMessageThreadClass);
+                //sendMessages = true;
+                sendMessageThread.start();
+            }
+
+            sendMessageThreadClass.setClientSocket(this.clientSocket);
+
+
+            System.out.println("Is receiveMessageThread alive?: " + receiveMessageThread.isAlive());
+
+            new Thread(new ReceiveMessagesThread(this.clientSocket, this)).start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            try {
+                socket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
 
 
     public void startClient(){
 
         try(Socket clientSocket = new Socket(serverHost, remotePort)){
 
-            System.out.println("Got Here");
+            this.clientSocket = clientSocket;
+            System.out.println("--Connection has been established--");
 
-            new Thread(new SendMessageThread(clientSocket)).start();
+            sendMessageThreadClass = new SendMessageThread(clientSocket, this);
 
-            new Thread(new ReceiveMessagesThread(clientSocket)).start();
+            sendMessageThread = new Thread(sendMessageThreadClass);
+            //sendMessages = true;
+            sendMessageThread.start();
 
-            while(true){
 
-            }
+
+
+            receiveMessageThread = new Thread(new ReceiveMessagesThread(clientSocket, this));
+            //receiveMessages = true;
+            receiveMessageThread.start();
+
+            //Object test = receiveMessageThread.getClass();
+
+
+            UpdateClient();
+
+            /*while(true){
+
+                if(clientSocket.isClosed()){
+                    reconnectClient();
+                }
+            }*/
 
            // System.out.println("Not connected");
 
@@ -57,6 +182,57 @@ public class Client {
             e.printStackTrace();
         }
     }
+
+
+    public boolean reconnectClient(){
+
+        System.out.println(System.currentTimeMillis());
+
+        long currentTime = System.currentTimeMillis();
+
+        while(true){
+
+            if(System.currentTimeMillis() - currentTime > 5000){
+                System.out.println("Five Seconds!");
+                try(Socket socket = new Socket(serverHost, remotePort)) {
+
+                    socket.close();
+
+                    return true;
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    return false;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+
+                }
+
+            }
+            else{
+                //System.out.println("counting...");
+
+                //System.out.println(System.currentTimeMillis() - currentTime );
+            }
+
+        }
+
+
+
+
+
+        /*try(Socket clientSocket = new Socket(serverHost, remotePort)){
+
+
+
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
 
 
 }
