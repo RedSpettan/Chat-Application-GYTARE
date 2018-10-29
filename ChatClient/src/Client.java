@@ -54,35 +54,9 @@ public class Client {
 
         while(true){
 
-            /*if(!sendMessageThread.isAlive()){
-                sendMessageThreadClass = new SendMessageThread(clientSocket, this);
-                sendMessageThread = new Thread(sendMessageThreadClass);
-                System.out.println("SendMessageThread has been restarted!");
-            }*/
-
-            /*if(!unsentMessageList.isEmpty()){
-                for (String message : unsentMessageList){
-                    System.out.println(message);
-                }
-            }*/
-
-            /*if(!unsentMessageList.isEmpty()){
-                for(String message : unsentMessageList){
-                    System.out.println("This message has not been sent: " + message);
-                }
-            }*/
-
             if(this.clientSocket.isClosed()){
-                //System.out.println("YEET");
 
                 System.out.println("The clientSocket is closed: " + this.clientSocket.isClosed());
-
-                clientSocket = new Socket();
-
-                //sendMessageThreadClass.scanner.close();
-                //sendMessageThreadClass.scanner = null;
-
-
 
                 if(!reconnectClient()){
 
@@ -119,7 +93,6 @@ public class Client {
             if(sendMessageThread == null || !sendMessageThread.isAlive()){
                 sendMessageThreadClass = new SendMessageThread(clientSocket, this);
                 sendMessageThread = new Thread(sendMessageThreadClass);
-                //sendMessages = true;
                 sendMessageThread.start();
             }
 
@@ -143,7 +116,36 @@ public class Client {
 
     public void startClient(){
 
-        try(Socket clientSocket = new Socket(serverHost, remotePort)){
+        Socket socket = new Socket();
+
+        try{
+            socket = new Socket(serverHost, remotePort);
+
+            System.out.println("--Connection has been established--");
+
+            this.clientSocket = socket;
+
+            sendMessageThreadClass = new SendMessageThread(this.clientSocket, this);
+            sendMessageThread = new Thread(sendMessageThreadClass);
+            sendMessageThread.start();
+
+
+            receiveMessageThread = new Thread(new ReceiveMessagesThread(clientSocket, this));
+            receiveMessageThread.start();
+
+            UpdateClient();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            try{
+                socket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+
+       /* try(Socket clientSocket = new Socket(serverHost, remotePort)){
 
             this.clientSocket = clientSocket;
             System.out.println("--Connection has been established--");
@@ -151,36 +153,19 @@ public class Client {
             sendMessageThreadClass = new SendMessageThread(clientSocket, this);
 
             sendMessageThread = new Thread(sendMessageThreadClass);
-            //sendMessages = true;
             sendMessageThread.start();
 
-
-
-
             receiveMessageThread = new Thread(new ReceiveMessagesThread(clientSocket, this));
-            //receiveMessages = true;
             receiveMessageThread.start();
 
-            //Object test = receiveMessageThread.getClass();
-
-
             UpdateClient();
-
-            /*while(true){
-
-                if(clientSocket.isClosed()){
-                    reconnectClient();
-                }
-            }*/
-
-           // System.out.println("Not connected");
 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 

@@ -150,7 +150,7 @@ public class Server {
 
     void ReceiveMessages(String message, Socket socket){
 
-        System.out.println(socket.getPort() + ": " + message);
+        System.out.println("***" + socket.getPort() + ": " + message);
 
         messageList.add("***" + socket.getPort() + ": " + message);
 

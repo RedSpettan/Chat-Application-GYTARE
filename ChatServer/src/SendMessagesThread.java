@@ -50,13 +50,8 @@ public class SendMessagesThread implements Runnable{
                     }else{
                         activeServer.CheckSockets();
                     }
-
-
-
                 }
-
             }
         }
-
     }
 }
