@@ -19,8 +19,8 @@ public class Client {
 
     private int amountOfRetries;
 
-
-    public Client(String host, int port){
+    //Constructor for Client, checks that the port is non-negative and prints the computers IP address
+    Client(String host, int port){
 
         //Check if the port is valid
         if(port < 0){
@@ -32,6 +32,7 @@ public class Client {
 
         //Check if the host method field is not empty
         if(host.isEmpty()){
+            //If the host method field is in fact empty, it will use the clients current IP address instead
             try {
                 String localAddress = InetAddress.getLocalHost().toString();
                 serverHost = localAddress.substring(localAddress.indexOf("/") + 1);
@@ -44,29 +45,25 @@ public class Client {
         }
     }
 
+    //Method used to update the client
     private void UpdateClient(){
-
-
-
-
 
         while(true){
 
+            //Check if the socket connected to the socket is closed. If the socket is in fact closed the program will try to reconnect to the server
             if(this.clientSocket.isClosed()){
 
-
+                //If the client has attempted over 5 unsuccessful reconnects the client will shut down
                 if(amountOfRetries >= 5 ){
-                    System.err.println("The amount of reconnects has exceeded");
+                    System.err.println("The amount of reconnects has exceeded its limit");
                     System.exit(0);
                 }
 
-                System.out.println("The clientSocket is closed: " + this.clientSocket.isClosed());
 
+
+                //Attempt to reconnect to the server, if successful, will call upon restartClient
                 if(!reconnectClient()){
-
                     amountOfRetries++;
-                    System.out.println("Is send message thread alive? " + sendMessageThread.isAlive());
-                    System.out.println("Is receive message thread alive? " + receiveMessageThread.isAlive());
 
                 }else{
 
@@ -82,29 +79,33 @@ public class Client {
         System.out.println("Updated method has been closed!");*/
     }
 
-    void restartClient(){
+    //Establishes a new connection and restarts closed threads
+    private void restartClient(){
 
 
         Socket socket = new Socket();
+
         try {
-
+            //Tries to bind the socket to the server
             socket = new Socket(serverHost, remotePort);
-
-            System.out.println("--Connection has been established--");
 
             this.clientSocket = socket;
 
+            amountOfRetries = 0;
+
+            System.out.println("\n--RECONNECTION SUCCESSFUL--\n");
+
+            //Will initialize a SendMessageThread and start a new thread, if a send message thread was never assigned or shut down
             if(sendMessageThread == null || !sendMessageThread.isAlive()){
                 sendMessageThreadClass = new SendMessageThread(clientSocket, this);
                 sendMessageThread = new Thread(sendMessageThreadClass);
                 sendMessageThread.start();
             }
 
+            //Update the current clientSocket
             sendMessageThreadClass.setClientSocket(this.clientSocket);
 
-
-            System.out.println("Is receiveMessageThread alive?: " + receiveMessageThread.isAlive());
-
+            //Start a new thread for a ReceiveMessagesThread
             new Thread(new ReceiveMessagesThread(this.clientSocket, this)).start();
 
         } catch (IOException e) {
@@ -118,22 +119,23 @@ public class Client {
     }
 
 
-    public void startClient(){
+    void startClient(){
 
         Socket socket = new Socket();
 
         try{
+            //Tries to connect to the server
             socket = new Socket(serverHost, remotePort);
-
-            System.out.println("--Connection has been established--");
-
             this.clientSocket = socket;
 
+            System.out.println("\n--Connection has been established--");
+
+            //Initialize a new SendMessageThread and start a new thread using it
             sendMessageThreadClass = new SendMessageThread(this.clientSocket, this);
             sendMessageThread = new Thread(sendMessageThreadClass);
             sendMessageThread.start();
 
-
+            //Start a new thread using an locally initialized RecieveMessageThread
             receiveMessageThread = new Thread(new ReceiveMessagesThread(clientSocket, this));
             receiveMessageThread.start();
 
@@ -175,53 +177,26 @@ public class Client {
 
     public boolean reconnectClient(){
 
-        System.out.println(System.currentTimeMillis());
+        //System.out.println(System.currentTimeMillis());
 
         long currentTime = System.currentTimeMillis();
 
         while(true){
 
             if(System.currentTimeMillis() - currentTime > 5000){
-                System.out.println("Five Seconds!");
+                System.out.println("\n--RECONNECTING--\n");
                 try(Socket socket = new Socket(serverHost, remotePort)) {
 
                     socket.close();
 
                     return true;
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                    return false;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("\n--RECONNECTION FAILED--\n");
                     return false;
 
                 }
 
             }
-            else{
-                //System.out.println("counting...");
-
-                //System.out.println(System.currentTimeMillis() - currentTime );
-            }
-
         }
-
-
-
-
-
-        /*try(Socket clientSocket = new Socket(serverHost, remotePort)){
-
-
-
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
-
-
-
 }

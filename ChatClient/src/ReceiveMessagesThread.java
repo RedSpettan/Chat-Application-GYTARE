@@ -32,10 +32,14 @@ public class ReceiveMessagesThread implements Runnable{
             System.out.println("Receive message thread has been terminated!");
 
         } catch(SocketException e){
-            e.printStackTrace();
-            System.out.println("Socket ERROR!");
 
-            System.out.println("Is the socket closed: " + clientSocket.isClosed());
+
+            System.err.println("\n--CONNECTION HAS BEEN DISRUPTED--\n");
+            System.out.println("\n***AUTOMATIC RECONNECTION WILL COMMENCE***\n");
+            //e.printStackTrace();
+            /*System.out.println("Socket ERROR!");
+
+            System.out.println("Is the socket closed: " + clientSocket.isClosed());*/
         }
         catch (IOException e) {
             e.printStackTrace();

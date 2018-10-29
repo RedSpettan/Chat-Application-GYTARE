@@ -25,7 +25,7 @@ public class SendMessageThread implements Runnable{
     public void run() {
         PrintWriter output = null;
         try{
-            System.out.println("Send message thread has now started!");
+            //System.out.println("Send message thread has now started!");
             scanner = new Scanner(System.in);
             String line;
 
