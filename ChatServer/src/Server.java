@@ -1,8 +1,12 @@
 import java.io.*;
 import java.net.*;
-import java.sql.SQLOutput;
+import java.nio.file.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 class Server {
 
@@ -19,7 +23,84 @@ class Server {
 
     private Thread sendMessageThread;
 
-    private boolean updateServer = false;
+    private static Logger requestLogger;
+
+    private static final String loggingFolderPath = "\\Logs";
+
+    private Thread shutdownHookThread;
+
+
+    private String getCurrentDate(String pattern){
+        //Get the current Date
+        Date calendar = Calendar.getInstance().getTime();
+
+        //Initilize a new SimpleDateFormat using the pattern given in the method parameter
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+
+        //Format the Date using the SimpleDateFormat
+        String formattedDate = format.format(calendar);
+
+        return formattedDate;
+    }
+
+
+    private void setUpLogger(){
+
+
+        //Initilize the request logger and create a new FileHandler which will be used by the logger
+        requestLogger = Logger.getLogger("requests");
+        FileHandler requestFileHandler;
+
+        try{
+            //Get the current date by a specific pattern
+            String currentDate = getCurrentDate("EEE yyyy'-'MM'-'dd 'at' HH-mm-ss z");
+
+            //Get the project path
+            String projectPath = new File(".").getCanonicalPath();
+
+
+            //Checks if the log files have a folder inside the project. If it doesn't exist it will create one
+            try{
+                if(!Files.exists(Paths.get(projectPath + loggingFolderPath))){
+                    Files.createDirectory(Paths.get(projectPath + loggingFolderPath));
+                }
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            //Decide the save location for the save file, which is the project path + the folder where the logs are saved + the current date and time
+            String logFilePath = projectPath + loggingFolderPath + "\\Requests " + currentDate +".log";
+
+
+            //Check if the file already exist, if it doesn't it will create one
+            try{
+                if(!Files.exists(Paths.get(logFilePath))){
+                    Files.createFile(Paths.get(logFilePath));
+                }
+
+            }catch(FileAlreadyExistsException e){
+                e.printStackTrace();
+            }
+
+            //Initialize the FileHandler and add it to the request logger
+            requestFileHandler = new FileHandler(logFilePath);
+            requestLogger.addHandler(requestFileHandler);
+
+            //Create a new formatter and apply it to the FileHandler
+            SimpleFormatter formatter = new SimpleFormatter();
+            requestFileHandler.setFormatter(formatter);
+
+
+            requestLogger.info("Logger initialized ");
+
+            //Initialize and add a new shutdown hook thread to the Runtime, used for when the program is shutdown.
+            shutdownHookThread = new Thread(new ShutdownHook(requestFileHandler));
+            Runtime.getRuntime().addShutdownHook(shutdownHookThread);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     Server(int port){
 
@@ -66,6 +147,8 @@ class Server {
 
     void StartServer(){
 
+
+        setUpLogger();
 
         System.out.println("Remote port: " + remotePort);
 
@@ -224,6 +307,12 @@ class Server {
                     server.socketThreadMap.put(clientSocket, localThread);
 
                     localThread.start();
+
+                    requestLogger.info("A new client has connected with port number: " + clientSocket.getPort() +
+                            ".\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\n Host name:" + clientSocket.getInetAddress().getHostName());
+
+
+
 
                 }
 

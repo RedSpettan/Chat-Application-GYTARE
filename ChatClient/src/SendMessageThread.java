@@ -25,13 +25,12 @@ public class SendMessageThread implements Runnable{
     public void run() {
         PrintWriter output = null;
         try{
-            //System.out.println("Send message thread has now started!");
+
             scanner = new Scanner(System.in);
             String line;
 
             while((line = scanner.nextLine()) != null){
                 output = new PrintWriter(activeClient.clientSocket.getOutputStream(), true);
-                //System.out.println(line);
                 output.println(line);
 
             }

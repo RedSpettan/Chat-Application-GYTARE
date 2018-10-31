@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 public class Client {
 
@@ -18,6 +19,12 @@ public class Client {
     private SendMessageThread sendMessageThreadClass;
 
     private int amountOfRetries;
+
+
+
+
+
+
 
     //Constructor for Client, checks that the port is non-negative and prints the computers IP address
     Client(String host, int port){
@@ -47,6 +54,8 @@ public class Client {
 
     //Method used to update the client
     private void UpdateClient(){
+
+
 
         while(true){
 
