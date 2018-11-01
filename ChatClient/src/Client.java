@@ -21,11 +21,6 @@ public class Client {
     private int amountOfRetries;
 
 
-
-
-
-
-
     //Constructor for Client, checks that the port is non-negative and prints the computers IP address
     Client(String host, int port){
 
@@ -160,40 +155,24 @@ public class Client {
         }
 
 
-       /* try(Socket clientSocket = new Socket(serverHost, remotePort)){
 
-            this.clientSocket = clientSocket;
-            System.out.println("--Connection has been established--");
-
-            sendMessageThreadClass = new SendMessageThread(clientSocket, this);
-
-            sendMessageThread = new Thread(sendMessageThreadClass);
-            sendMessageThread.start();
-
-            receiveMessageThread = new Thread(new ReceiveMessagesThread(clientSocket, this));
-            receiveMessageThread.start();
-
-            UpdateClient();
-
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 
-
+    //Check if the client can reconnect to a server
     public boolean reconnectClient(){
 
         //System.out.println(System.currentTimeMillis());
 
+        //Store the current time
         long currentTime = System.currentTimeMillis();
 
         while(true){
 
+            //Check if the 5 seconds has gone by since the method was called
             if(System.currentTimeMillis() - currentTime > 5000){
                 System.out.println("\n--RECONNECTING--\n");
+
+                //Check if socket can be bound to the server, an exception thrown indicates the server is not open
                 try(Socket socket = new Socket(serverHost, remotePort)) {
 
                     socket.close();

@@ -23,9 +23,19 @@ class Server {
 
     private Thread sendMessageThread;
 
-    public Logger requestLogger;
+    private Logger requestLogger;
 
-    private static final String loggingFolderPath = "\\Logs";
+    private Logger errorLogger;
+
+    private String projectPath;
+
+    private final String loggingFolder = "\\Logs";
+    private final String errorLoggingFolder = "\\Errors";
+    private final String requestLoggingFolder = "\\Requests";
+
+    private String loggingFolderPath;
+    private String requestLoggingFolderPath;
+    private String errorLoggingFolderPath;
 
     private Thread shutdownHookThread;
 
@@ -47,9 +57,12 @@ class Server {
     private void setUpLogger(){
 
 
-        //Initilize the request logger and create a new FileHandler which will be used by the logger
+        //Initialize the request logger and create a new FileHandler which will be used by the logger
         requestLogger = Logger.getLogger("requests");
         FileHandler requestFileHandler;
+
+        errorLogger = Logger.getLogger("error");
+        FileHandler errorFileHandler;
 
         try{
             //Get the current date by a specific pattern
@@ -58,40 +71,75 @@ class Server {
             //Get the project path
             String projectPath = new File(".").getCanonicalPath();
 
+            this.projectPath = projectPath;
+
+            this.loggingFolderPath = this.projectPath + loggingFolder;
+            this.requestLoggingFolderPath = this.loggingFolderPath + requestLoggingFolder;
+            this.errorLoggingFolderPath = this.loggingFolderPath + errorLoggingFolder;
 
             //Checks if the log files have a folder inside the project. If it doesn't exist it will create one
             try{
-                if(!Files.exists(Paths.get(projectPath + loggingFolderPath))){
-                    Files.createDirectory(Paths.get(projectPath + loggingFolderPath));
+                if(!Files.exists(Paths.get(loggingFolderPath))){
+                    Files.createDirectory(Paths.get(loggingFolderPath));
                 }
+
+                //Check if the log files folder have sub-folders corresponding to "Error" and "Requests" log files, if not create two folders for error and requests
+
+                if(!Files.exists(Paths.get(requestLoggingFolderPath))){
+                    Files.createDirectory(Paths.get(requestLoggingFolderPath));
+                }
+                if(!Files.exists(Paths.get(errorLoggingFolderPath))){
+                    Files.createDirectory(Paths.get(errorLoggingFolderPath));
+                }
+
+
             }catch(IOException e){
                 e.printStackTrace();
             }
 
-            //Decide the save location for the save file, which is the project path + the folder where the logs are saved + the current date and time
-            String logFilePath = projectPath + loggingFolderPath + "\\Requests " + currentDate +".log";
+            //Decide the save location for the request and error log file, which is the request/error folder path + the current date and time
+            String requestLogFilePath = requestLoggingFolderPath + "\\Requests " + currentDate +".log";
+            String errorLogFilePath = errorLoggingFolderPath + "\\Errors " + currentDate + ".log";
 
+            //These two try block will check if log files already exist at the current time and date, if it doesn't it will create one (this will almost be false, but it's just in case)
 
-            //Check if the file already exist, if it doesn't it will create one
             try{
-                if(!Files.exists(Paths.get(logFilePath))){
-                    Files.createFile(Paths.get(logFilePath));
+                if(!Files.exists(Paths.get(requestLogFilePath))){
+                    Files.createFile(Paths.get(requestLogFilePath));
                 }
 
             }catch(FileAlreadyExistsException e){
                 e.printStackTrace();
             }
+            try{
+                if(!Files.exists(Paths.get(errorLogFilePath))){
+                    Files.createFile(Paths.get(errorLogFilePath));
+                }
+            }catch(FileAlreadyExistsException e){
+                e.printStackTrace();
+            }
 
-            //Initialize the FileHandler and add it to the request logger
-            requestFileHandler = new FileHandler(logFilePath);
+            //Initialize the request FileHandler and add it to the request logger
+            requestFileHandler = new FileHandler(requestLogFilePath);
             requestLogger.addHandler(requestFileHandler);
 
-            //Create a new formatter and apply it to the FileHandler
+
+            //Create a new formatter and apply it to the request FileHandler
             SimpleFormatter formatter = new SimpleFormatter();
             requestFileHandler.setFormatter(formatter);
 
 
             requestLogger.info("Logger initialized \r\n ");
+
+
+            //Initialize the error FileHandler and add it to the error logger
+            errorFileHandler = new FileHandler(errorLogFilePath);
+            errorLogger.addHandler(errorFileHandler);
+
+            //Apply the SimpleFormatter created earlier to the error FileHandler
+            errorFileHandler.setFormatter(formatter);
+
+            errorLogger.info("Logger initialized \r\n");
 
             //Initialize and add a new shutdown hook thread to the Runtime, used for when the program is shutdown.
             shutdownHookThread = new Thread(new ShutdownHook(requestFileHandler));
