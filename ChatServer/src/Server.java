@@ -23,7 +23,7 @@ class Server {
 
     private Thread sendMessageThread;
 
-    private static Logger requestLogger;
+    public Logger requestLogger;
 
     private static final String loggingFolderPath = "\\Logs";
 
@@ -34,7 +34,7 @@ class Server {
         //Get the current Date
         Date calendar = Calendar.getInstance().getTime();
 
-        //Initilize a new SimpleDateFormat using the pattern given in the method parameter
+        //Initialize a new SimpleDateFormat using the pattern given in the method parameter
         SimpleDateFormat format = new SimpleDateFormat(pattern);
 
         //Format the Date using the SimpleDateFormat
@@ -91,11 +91,13 @@ class Server {
             requestFileHandler.setFormatter(formatter);
 
 
-            requestLogger.info("Logger initialized ");
+            requestLogger.info("Logger initialized \r\n ");
 
             //Initialize and add a new shutdown hook thread to the Runtime, used for when the program is shutdown.
             shutdownHookThread = new Thread(new ShutdownHook(requestFileHandler));
             Runtime.getRuntime().addShutdownHook(shutdownHookThread);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,7 +170,17 @@ class Server {
 
             //new Thread(new RemoveSocketThread(this)).start();
 
+            long systemTime = System.currentTimeMillis();
+
+
             while(true){
+
+                //System.out.println(systemTime % 5000);
+
+                if(System.currentTimeMillis() - systemTime >= 5000){
+                    CheckSockets();
+                    systemTime = System.currentTimeMillis();
+                }
 
                 if(!sendMessageThread.isAlive()){
 
@@ -249,7 +261,7 @@ class Server {
         if (socketList.size() > 0) {
             //System.out.println("Hello!");
             for (int x = 0; x < socketList.size(); x++) {
-                System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
+                //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
                 if (socketList.get(x).isClosed()) {
 
                     System.out.println(socketList.get(x) + " Socket is no longer available!");
@@ -260,9 +272,14 @@ class Server {
 
                     //System.out.println("Is Alive?: " + socketThreadMap.get(activeServer.socketList.get(x)).isAlive());
 
+                    requestLogger.info("User has disconnected. \r\n Port Number: " +
+                            socketList.get(x).getPort() +
+                            "\r\n Host Address: " + socketList.get(x).getInetAddress().getHostAddress() + "\r\n Host name: " + socketList.get(x).getInetAddress().getHostName() + "\r\n");
+                    System.out.print("Socket " + socketList.get(x).getPort());
+
                     socketList.remove(x);
 
-                    System.out.println("Socket has been removed!");
+                    System.out.println(" has been removed!");
 
                     //System.exit(0);
 
@@ -308,8 +325,8 @@ class Server {
 
                     localThread.start();
 
-                    requestLogger.info("A new client has connected with port number: " + clientSocket.getPort() +
-                            ".\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\n Host name:" + clientSocket.getInetAddress().getHostName());
+                    requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
+                            ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
 
 
 

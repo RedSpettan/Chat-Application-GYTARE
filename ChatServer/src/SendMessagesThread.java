@@ -29,7 +29,7 @@ public class SendMessagesThread implements Runnable{
 
                 String messageToBeSent = messageQueue.poll();
 
-                System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
+                //System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
 
                 for(Socket s : activeServer.socketList){
 
