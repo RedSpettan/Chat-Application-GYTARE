@@ -5,6 +5,8 @@ public class Main {
 
         Server server = new Server(9543);
 
+        new Interface();
+
         server.StartServer();
 
 

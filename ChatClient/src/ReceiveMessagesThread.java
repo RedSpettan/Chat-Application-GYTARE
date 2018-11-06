@@ -19,11 +19,15 @@ public class ReceiveMessagesThread implements Runnable{
     @Override
     public void run() {
 
+        //This run method will check for any incoming messages from the associated connected socket's input stream
+
+
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream()))) {
 
 
             String line;
 
+            //Wait and read incoming lines on the socket's input stream
             while((line = reader.readLine()) != null){
 
                 System.out.println(line);
@@ -31,6 +35,7 @@ public class ReceiveMessagesThread implements Runnable{
 
             System.out.println("Receive message thread has been terminated!");
 
+            //Catch the error which is caused by the server shutting down
         } catch(SocketException e){
 
 

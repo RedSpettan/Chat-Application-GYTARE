@@ -23,16 +23,19 @@ public class SendMessagesThread implements Runnable{
 
         while(true){
 
+            //Check if the message queue in the server class (the class which started this thread) currently has any message.
             if(!messageQueue.isEmpty()){
 
+                //Check if all sockets still are connected
                 activeServer.CheckSockets();
 
+                //Retrieve the first message in the queue
                 String messageToBeSent = messageQueue.poll();
 
                 //System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
 
+                //Print the retrieved message to all connected clients
                 for(Socket s : activeServer.socketList){
-
 
                     if(!s.isClosed()){
                         try{

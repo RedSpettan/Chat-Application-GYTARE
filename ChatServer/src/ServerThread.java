@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 
-//This thread is used for receiving messages from clients which have been associated with this thread
+//This thread is used to receive messages from the client which has been associated with this thread
 
 public class ServerThread implements Runnable{
 
@@ -37,7 +37,7 @@ public class ServerThread implements Runnable{
 
         //Will catch if the client has been shut down
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println("***Thread associated with socket '" + clientSocket.getPort() + "' has been stopped!***");
         }
     }

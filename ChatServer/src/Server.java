@@ -24,7 +24,6 @@ class Server {
     private Thread sendMessageThread;
 
     private Logger requestLogger;
-
     private Logger errorLogger;
 
     private String projectPath;
@@ -39,7 +38,28 @@ class Server {
 
     private Thread shutdownHookThread;
 
+    //Constructor
+    Server(int port){
 
+        //Check if the port is not below 0, since that is not a valid port
+        if(port < 0){
+            remotePort = -1;
+        }else{
+
+            if(CheckRemotePortAvailability(port)){
+                remotePort = port;
+
+            }else{
+                remotePort = 0;
+            }
+
+
+        }
+
+
+    }
+
+    //Returns the current date and time through a given pattern
     private String getCurrentDate(String pattern){
         //Get the current Date
         Date calendar = Calendar.getInstance().getTime();
@@ -53,7 +73,7 @@ class Server {
         return formattedDate;
     }
 
-
+    //Set up save paths and file handlers for the request logger and the error logger
     private void setUpLogger(){
 
 
@@ -152,25 +172,7 @@ class Server {
         }
     }
 
-    Server(int port){
-
-        if(port < 0){
-            remotePort = -1;
-        }else{
-
-            if(CheckRemotePortAvailability(port)){
-                remotePort = port;
-
-            }else{
-                remotePort = 0;
-            }
-
-
-        }
-
-
-    }
-
+    //Check if a socket is currently not used
     private boolean CheckRemotePortAvailability(int portToCheck){
 
         try{
@@ -194,7 +196,7 @@ class Server {
         }
     }
 
-
+    //Initialises the server and it's associated threads
     void StartServer(){
 
 
@@ -202,22 +204,22 @@ class Server {
 
         System.out.println("Remote port: " + remotePort);
 
+        //Starts a new Server Socket
         try(ServerSocket serverSocket = new ServerSocket(remotePort)){
 
             System.out.println("Socket has been opened, awaiting connections...");
             System.out.println("IP address: " + Inet4Address.getLocalHost());
 
 
-
+            //Start threads
             new Thread(new ServerConnection(serverSocket, this)).start();
-
             new Thread(new DebugServerThread(this)).start();
 
             sendMessageThread = new Thread(new SendMessagesThread(this, messageList));
             sendMessageThread.start();
 
-            //new Thread(new RemoveSocketThread(this)).start();
 
+            //Get the current system time
             long systemTime = System.currentTimeMillis();
 
 
@@ -225,15 +227,16 @@ class Server {
 
                 //System.out.println(systemTime % 5000);
 
+                //If 5 seconds have surpassed, check if sockets are still connected
                 if(System.currentTimeMillis() - systemTime >= 5000){
                     CheckSockets();
                     systemTime = System.currentTimeMillis();
                 }
 
+                //Check if the send message is still alive. If not, the thread will attempt a restart
                 if(!sendMessageThread.isAlive()){
 
                     System.err.print("*** Send Messages is not alive, attempting restart...*** ");
-
 
                     sendMessageThread = new Thread(new SendMessagesThread(this, messageList));
                     sendMessageThread.start();
@@ -291,6 +294,7 @@ class Server {
 
     }
 
+    //Methods used by threads to transfer incoming messages
     void ReceiveMessages(String message, Socket socket){
 
         System.out.println("***" + socket.getPort() + ": " + message);
@@ -299,11 +303,14 @@ class Server {
 
     }
     void ReceiveMessages(String message, String sender){
+        //This method is primarily used by the server to send message to clients
+
         String completeMessage = sender +": " + message;
         System.out.println(completeMessage);
         messageList.add(completeMessage);
     }
 
+    //Check if connected sockets are still active
     void CheckSockets(){
 
         if (socketList.size() > 0) {
@@ -341,6 +348,8 @@ class Server {
         }
     }
 
+
+    //Check for new client connections
     private class ServerConnection implements Runnable{
 
 
@@ -359,20 +368,22 @@ class Server {
             try {
                 while(true){
 
+                    //Accept any incoming connection
                     Socket clientSocket = serverSocket.accept();
 
                     System.out.println("Connection has been established!");
 
                     System.out.println(clientSocket.getInetAddress());
 
+                    //Add the socket to the socket list and start a new thread
+                    //The socket will be used to identify a thread, thus added in a hash map
                     server.socketList.add(clientSocket);
-
                     Thread localThread = new Thread(new ServerThread(clientSocket, server));
-
                     server.socketThreadMap.put(clientSocket, localThread);
 
                     localThread.start();
 
+                    //Log the incoming client connection
                     requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
                             ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
 

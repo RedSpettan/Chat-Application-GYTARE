@@ -15,10 +15,13 @@ class DebugServerThread implements Runnable{
 
         String line;
 
+
+        //Initialize a scanner to check for console inputs
         Scanner inputScanner = new Scanner(System.in);
 
-
+        //Wait for new line to be written in the console
         while((line = inputScanner.nextLine()) != null){
+            //Check if the word corresponds with "sockets" which will print all connected socket's port number
             if(line.equals("sockets")){
                 for(Socket socket : activeServer.socketList){
                     System.out.println(socket.getPort());
