@@ -86,7 +86,7 @@ class Server {
 
         try{
             //Get the current date by a specific pattern
-            String currentDate = getCurrentDate("EEE yyyy'-'MM'-'dd 'at' HH-mm-ss z");
+            String currentDate = getCurrentDate("EEE yyyy'-'MM'-'dd 'at' HH.mm.ss z");
 
             //Get the project path
             String projectPath = new File(".").getCanonicalPath();
@@ -162,7 +162,7 @@ class Server {
             errorLogger.info("Logger initialized \r\n");
 
             //Initialize and add a new shutdown hook thread to the Runtime, used for when the program is shutdown.
-            shutdownHookThread = new Thread(new ShutdownHook(requestFileHandler));
+            shutdownHookThread = new Thread(new ShutdownHook(requestFileHandler, errorFileHandler));
             Runtime.getRuntime().addShutdownHook(shutdownHookThread);
 
 

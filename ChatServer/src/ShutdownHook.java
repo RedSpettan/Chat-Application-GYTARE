@@ -2,18 +2,21 @@ import java.util.logging.FileHandler;
 
 public class ShutdownHook implements Runnable {
 
-    FileHandler fileHandler;
+    FileHandler errorFileHandler;
+    FileHandler requestFileHandler;
 
-    public ShutdownHook(FileHandler fileHandler){
+    public ShutdownHook(FileHandler requestFileHandler, FileHandler errorFileHandler){
 
-        this.fileHandler = fileHandler;
+        this.requestFileHandler = requestFileHandler;
+        this.errorFileHandler = errorFileHandler;
 
     }
 
     @Override
     public void run() {
         try{
-            fileHandler.close();
+            requestFileHandler.close();
+            errorFileHandler.close();
             System.out.println("Yeet exit!");
         }catch(SecurityException e){
             e.printStackTrace();
