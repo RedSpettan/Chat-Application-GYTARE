@@ -4,6 +4,9 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -20,6 +23,7 @@ class Server {
     Map<Socket, Thread> socketThreadMap = new HashMap<>();
 
     private ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
+
 
     private Thread sendMessageThread;
 
@@ -368,26 +372,27 @@ class Server {
             try {
                 while(true){
 
-                    //Accept any incoming connection
-                    Socket clientSocket = serverSocket.accept();
 
-                    System.out.println("Connection has been established!");
+                    if (socketList.size() < 2) {
+                        //Accept any incoming connection
+                        Socket clientSocket = serverSocket.accept();
 
-                    System.out.println(clientSocket.getInetAddress());
+                        System.out.println("Connection has been established!");
 
-                    //Add the socket to the socket list and start a new thread
-                    //The socket will be used to identify a thread, thus added in a hash map
-                    server.socketList.add(clientSocket);
-                    Thread localThread = new Thread(new ServerThread(clientSocket, server));
-                    server.socketThreadMap.put(clientSocket, localThread);
+                        System.out.println(clientSocket.getInetAddress());
 
-                    localThread.start();
+                        //Add the socket to the socket list and start a new thread
+                        //The socket will be used to identify a thread, thus added in a hash map
+                        server.socketList.add(clientSocket);
+                        Thread localThread = new Thread(new ServerThread(clientSocket, server));
+                        server.socketThreadMap.put(clientSocket, localThread);
 
-                    //Log the incoming client connection
-                    requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
-                            ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
+                        localThread.start();
 
-
+                        //Log the incoming client connection
+                        requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
+                                ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
+                    }
 
 
                 }
