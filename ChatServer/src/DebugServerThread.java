@@ -23,8 +23,8 @@ class DebugServerThread implements Runnable{
         while((line = inputScanner.nextLine()) != null){
             //Check if the word corresponds with "sockets" which will print all connected socket's port number
             if(line.equals("sockets")){
-                for(Socket socket : activeServer.socketList){
-                    System.out.println(socket.getPort());
+                for(User user : activeServer.userList){
+                    System.out.println(user.socket.getPort());
                 }
             }else{
                 activeServer.ReceiveMessages(line, "SERVER");
