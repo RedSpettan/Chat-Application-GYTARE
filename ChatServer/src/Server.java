@@ -24,6 +24,8 @@ class Server {
 
     private ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
 
+    private List<User> userList = new ArrayList<>();
+
 
     private Thread sendMessageThread;
 
@@ -386,6 +388,9 @@ class Server {
                         server.socketList.add(clientSocket);
                         Thread localThread = new Thread(new ServerThread(clientSocket, server));
                         server.socketThreadMap.put(clientSocket, localThread);
+
+                        User localUser = new User("Test", localThread, clientSocket);
+                        userList.add(localUser);
 
                         localThread.start();
 
