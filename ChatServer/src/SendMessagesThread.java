@@ -35,7 +35,6 @@ public class SendMessagesThread implements Runnable{
                 //System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
 
                 //Print the retrieved message to all connected clients
-
                 for(User user : activeServer.userList){
                     if(!user.socket.isClosed()){
                         try{

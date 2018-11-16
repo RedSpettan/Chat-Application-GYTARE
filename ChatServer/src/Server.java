@@ -319,6 +319,8 @@ class Server {
     //Check if connected sockets are still active
     void CheckSockets(){
 
+
+        //Check if any user's socket are currently closed, which will result in the user be removed from the "userList"
         if(!userList.isEmpty()){
 
             for(User user : userList){
@@ -327,6 +329,7 @@ class Server {
                     System.out.println("Is the Thread Alive?: " + user.serverThread.isAlive());
                     System.out.println("User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");
 
+                    //Log the user disconnecting
                     requestLogger.info("User has disconnected. " +
                             "\r\n Username:" + user.username +
                             "\r\n PortNumber: " + user.socket.getPort() +
@@ -414,17 +417,11 @@ class Server {
 
                     System.out.println(clientSocket.getInetAddress());
 
-                    //Add the socket to the socket list and start a new thread
-                    //The socket will be used to identify a thread, thus added in a hash map
-                    //server.socketList.add(clientSocket);
+                    //Create a new Thread to run a ServerThread
                     Thread localThread = new Thread(new ServerThread(clientSocket, server));
 
-                    User localUser = new User("Test", localThread, clientSocket);
-                    userList.add(localUser);
-
-                    System.out.println("Username: " + userList.get(userList.indexOf(localUser)).username + "\nThread: " +
-                            userList.get(userList.indexOf(localUser)).serverThread   + "\nSocket: "+
-                            userList.get(userList.indexOf(localUser)).socket);
+                    //Add the user to the "userList"
+                    userList.add( new User("Test", localThread, clientSocket));
 
                     localThread.start();
 
@@ -434,7 +431,9 @@ class Server {
                     requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
                             ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
 
-
+                    /*System.out.println("Username: " + userList.get(userList.indexOf(localUser)).username + "\nThread: " +
+                                        userList.get(userList.indexOf(localUser)).serverThread   + "\nSocket: "+
+                                        userList.get(userList.indexOf(localUser)).socket);*/
 
                 }
 
