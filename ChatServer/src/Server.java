@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -218,6 +219,7 @@ class Server {
 
 
             //Start threads
+            new Thread(new ConnectionRequests()).start();
             new Thread(new ServerConnection(serverSocket, this)).start();
             new Thread(new DebugServerThread(this)).start();
 
@@ -386,6 +388,47 @@ class Server {
 
 
 
+    }
+
+
+
+
+
+    private class ConnectionRequests implements Runnable{
+
+        @Override
+        public void run() {
+
+
+            System.out.println("Listening for requests");
+            try(DatagramSocket socket = new DatagramSocket(remotePort)) {
+
+                while(true){
+                    DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
+                    socket.receive(request);
+
+                    String clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
+
+                    byte[] responsMessage = new byte[5];
+
+                    for(User user : userList){
+                        if(!user.username.equalsIgnoreCase(clientUsername)){
+                            responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
+                        }
+                    }
+
+
+                    DatagramPacket response = new DatagramPacket(responsMessage, responsMessage.length, request.getAddress(), request.getPort());
+                    socket.send(response);
+
+                }
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

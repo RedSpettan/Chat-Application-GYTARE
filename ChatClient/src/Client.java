@@ -1,7 +1,9 @@
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.lang.reflect.Array;
+import java.net.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
@@ -10,6 +12,8 @@ public class Client {
 
     private int remotePort;
     private String serverHost;
+    private String username = "UsernameTest";
+
 
     Socket clientSocket;
 
@@ -122,8 +126,45 @@ public class Client {
         }
     }
 
+    private boolean requestConnection(){
+
+
+        try(DatagramSocket socket = new DatagramSocket(0)) {
+
+            //Wait a specified amount of time for response
+            socket.setSoTimeout(5000);
+
+            //Construct server message, client's username
+            String message = username;
+            byte[] messageInBytes= message.getBytes(StandardCharsets.ISO_8859_1);
+
+            //DatagramPackets for outgoing message to the server and one for incoming message
+            DatagramPacket request = new DatagramPacket(messageInBytes, messageInBytes.length, InetAddress.getByName(serverHost), remotePort);
+            DatagramPacket response = new DatagramPacket(new byte[5], 5 );
+
+            //Send and receive DatagramPackets
+            socket.send(request);
+            socket.receive(response);
+
+            //Return whether the data is containing something
+            return response.getData().length != 0;
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("No response from server");
+            return false;
+        }
+
+    }
 
     void startClient(){
+
+        if(!requestConnection()){
+            System.exit(0);
+        }
 
         Socket socket = new Socket();
 
@@ -172,7 +213,10 @@ public class Client {
             if(System.currentTimeMillis() - currentTime > 5000){
                 System.out.println("\n--RECONNECTING--\n");
 
-                //Check if socket can be bound to the server, an exception thrown indicates the server is not open
+                return requestConnection();
+
+
+                /*//Check if socket can be bound to the server, an exception thrown indicates the server is not open
                 try(Socket socket = new Socket(serverHost, remotePort)) {
 
                     socket.close();
@@ -182,7 +226,7 @@ public class Client {
                     System.err.println("\n--RECONNECTION FAILED--\n");
                     return false;
 
-                }
+                }*/
 
             }
         }
