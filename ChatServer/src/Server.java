@@ -24,7 +24,7 @@ class Server {
 
     private ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
 
-    private List<User> userList = new ArrayList<>();
+    List<User> userList = new ArrayList<>();
 
 
     private Thread sendMessageThread;
@@ -319,7 +319,33 @@ class Server {
     //Check if connected sockets are still active
     void CheckSockets(){
 
-        if (socketList.size() > 0) {
+        if(!userList.isEmpty()){
+
+            for(User user : userList){
+
+                if(user.socket.isClosed()){
+                    System.out.println("Is the Thread Alive?: " + user.serverThread.isAlive());
+                    System.out.println("User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");
+
+                    requestLogger.info("User has disconnected. " +
+                            "\r\n Username:" + user.username +
+                            "\r\n PortNumber: " + user.socket.getPort() +
+                            "\r\n Host Address: " + user.inetAddress.getHostAddress() +
+                            "\r\n Host name: " + user.inetAddress.getHostName());
+
+                    userList.remove(user);
+                    System.out.println("User removed!");
+
+                    break;
+                }
+
+            }
+
+        }
+
+
+
+        /*if (socketList.size() > 0) {
             //System.out.println("Hello!");
             for (int x = 0; x < socketList.size(); x++) {
                 //System.out.println("Socket " + x + " is closed: " + socketList.get(x).isClosed());
@@ -330,6 +356,8 @@ class Server {
                     //System.out.println(socketThreadMap.get(activeServer.socketList.get(x)).isAlive());
 
                     socketThreadMap.remove(socketList.get(x));
+
+
 
                     //System.out.println("Is Alive?: " + socketThreadMap.get(activeServer.socketList.get(x)).isAlive());
 
@@ -351,7 +379,10 @@ class Server {
             }
         } else {
             //System.out.println("SocketList is empty!");
-        }
+        }*/
+
+
+
     }
 
 
@@ -375,29 +406,34 @@ class Server {
                 while(true){
 
 
-                    if (socketList.size() < 2) {
-                        //Accept any incoming connection
-                        Socket clientSocket = serverSocket.accept();
 
-                        System.out.println("Connection has been established!");
+                    //Accept any incoming connection
+                    Socket clientSocket = serverSocket.accept();
 
-                        System.out.println(clientSocket.getInetAddress());
+                    System.out.println("Connection has been established!");
 
-                        //Add the socket to the socket list and start a new thread
-                        //The socket will be used to identify a thread, thus added in a hash map
-                        server.socketList.add(clientSocket);
-                        Thread localThread = new Thread(new ServerThread(clientSocket, server));
-                        server.socketThreadMap.put(clientSocket, localThread);
+                    System.out.println(clientSocket.getInetAddress());
 
-                        User localUser = new User("Test", localThread, clientSocket);
-                        userList.add(localUser);
+                    //Add the socket to the socket list and start a new thread
+                    //The socket will be used to identify a thread, thus added in a hash map
+                    //server.socketList.add(clientSocket);
+                    Thread localThread = new Thread(new ServerThread(clientSocket, server));
 
-                        localThread.start();
+                    User localUser = new User("Test", localThread, clientSocket);
+                    userList.add(localUser);
 
-                        //Log the incoming client connection
-                        requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
-                                ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
-                    }
+                    System.out.println("Username: " + userList.get(userList.indexOf(localUser)).username + "\nThread: " +
+                            userList.get(userList.indexOf(localUser)).serverThread   + "\nSocket: "+
+                            userList.get(userList.indexOf(localUser)).socket);
+
+                    localThread.start();
+
+
+
+                    //Log the incoming client connection
+                    requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
+                            ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
+
 
 
                 }

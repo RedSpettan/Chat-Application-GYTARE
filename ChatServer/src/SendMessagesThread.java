@@ -35,7 +35,27 @@ public class SendMessagesThread implements Runnable{
                 //System.out.println("Amount of connected sockets: " + activeServer.socketList.size());
 
                 //Print the retrieved message to all connected clients
-                for(Socket s : activeServer.socketList){
+
+                for(User user : activeServer.userList){
+                    if(!user.socket.isClosed()){
+                        try{
+
+                            PrintWriter out = new PrintWriter(user.socket.getOutputStream(), true);
+
+                            out.println(messageToBeSent);
+
+                            out.flush();
+
+                        } catch (IOException e) {
+                            System.out.println("Crash here!");
+                            e.printStackTrace();
+                        }
+                    }else{
+                        activeServer.CheckSockets();
+                    }
+                }
+
+                /*for(Socket s : activeServer.socketList){
 
                     if(!s.isClosed()){
                         try{
@@ -53,7 +73,7 @@ public class SendMessagesThread implements Runnable{
                     }else{
                         activeServer.CheckSockets();
                     }
-                }
+                }*/
             }
         }
     }
