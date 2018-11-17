@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -20,19 +21,42 @@ public class ReceiveMessagesThread implements Runnable{
     public void run() {
 
         //This run method will check for any incoming messages from the associated connected socket's input stream
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(activeClient.clientSocket.getOutputStream(), true)) {
+
+            //checkForUsernameRequest();
+
+            String serverMessage;
 
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream()))) {
+            if((serverMessage = reader.readLine()) != null){
+                System.out.println(serverMessage);
+                if(serverMessage.equalsIgnoreCase("Username")){
 
+                    out.println(activeClient.username);
+                    out.flush();
+
+
+                }
+
+            }
 
             String line;
+
+
 
             //Wait and read incoming lines on the socket's input stream
             while((line = reader.readLine()) != null){
 
+                if(line.equalsIgnoreCase("Username")){
+                    System.out.println("Got here!");
+                }
+
                 System.out.println(line);
             }
 
+            System.out.println(line);
+            System.out.println("Is the socket closed?: " + activeClient.clientSocket.isClosed());
             System.out.println("Receive message thread has been terminated!");
 
             //Catch the error which is caused by the server shutting down
@@ -52,4 +76,17 @@ public class ReceiveMessagesThread implements Runnable{
         }
 
     }
+
+    /*private void checkForUsernameRequest() throws IOException {
+
+        String serverMessage;
+
+
+
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream()));
+            {
+
+
+        }
+    }*/
 }

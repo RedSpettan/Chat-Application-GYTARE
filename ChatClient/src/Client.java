@@ -12,7 +12,7 @@ public class Client {
 
     private int remotePort;
     private String serverHost;
-    private String username = "UsernameTest";
+    public String username = "UsernameTest";
 
 
     Socket clientSocket;
@@ -132,7 +132,7 @@ public class Client {
         try(DatagramSocket socket = new DatagramSocket(0)) {
 
             //Wait a specified amount of time for response
-            socket.setSoTimeout(5000);
+            socket.setSoTimeout(15000);
 
             //Construct server message, client's username
             String message = username;
@@ -173,7 +173,7 @@ public class Client {
             socket = new Socket(serverHost, remotePort);
             this.clientSocket = socket;
 
-            System.out.println("\n--Connection has been established--");
+            System.out.println("\n--TCP connection has been established--");
 
             //Initialize a new SendMessageThread and start a new thread using it
             sendMessageThreadClass = new SendMessageThread(this.clientSocket, this);

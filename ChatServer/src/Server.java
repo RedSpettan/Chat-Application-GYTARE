@@ -305,9 +305,24 @@ class Server {
     //Methods used by threads to transfer incoming messages
     void ReceiveMessages(String message, Socket socket){
 
-        System.out.println("***" + socket.getPort() + ": " + message);
+       // System.out.println("***" + socket.getPort() + ": " + message);
 
-        messageList.add("***" + socket.getPort() + ": " + message);
+        User senderUser = null;
+
+        for(User user : userList){
+            if(user.socket.equals(socket)){
+                senderUser = user;
+            }
+        }
+
+        if(senderUser != null){
+            System.out.println("***" + senderUser.username + ": " + message);
+            messageList.add("***" + senderUser.username + ": " + message);
+        }else{
+            messageList.add("***" +"[USERNAME UNAVAILABLE]"+ ": " + message);
+        }
+
+
 
     }
     void ReceiveMessages(String message, String sender){
@@ -411,11 +426,18 @@ class Server {
 
                     byte[] responsMessage = new byte[5];
 
+                    boolean usernameExist = false;
+
                     for(User user : userList){
-                        if(!user.username.equalsIgnoreCase(clientUsername)){
-                            responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
+                        if(user.username.equalsIgnoreCase(clientUsername)){
+                            usernameExist = true;
                         }
                     }
+
+                    if(!usernameExist){
+                        responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
+                    }
+
 
 
                     DatagramPacket response = new DatagramPacket(responsMessage, responsMessage.length, request.getAddress(), request.getPort());
