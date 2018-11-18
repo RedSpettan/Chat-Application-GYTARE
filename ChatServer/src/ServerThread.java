@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
 
 
 //This thread is used to receive messages from the client which has been associated with this thread
@@ -25,25 +26,9 @@ public class ServerThread implements Runnable{
     public void run() {
 
         //Initialize a new BufferedReader which will read any incoming data on the socket's input stream
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-
-
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.ISO_8859_1))) {
 
             SendUsernameMessage(reader);
-
-            //out.flush();
-
-
-
-
-
-
-            /*if((username = reader.readLine()) != null){
-                System.out.println(username);
-                associateUsername(username);
-
-            }*/
-
 
             String line;
 
@@ -66,17 +51,10 @@ public class ServerThread implements Runnable{
     private void SendUsernameMessage(BufferedReader reader){
 
 
-
-
-        //out.flush();
-
-
-
-
         System.out.println("Is the socket closed?: " + clientSocket.isClosed());
 
         try {
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
 
             out.println("Username");
 

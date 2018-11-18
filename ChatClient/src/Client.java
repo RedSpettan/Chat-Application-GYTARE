@@ -12,7 +12,7 @@ public class Client {
 
     private int remotePort;
     private String serverHost;
-    public String username = "UsernameTest";
+    public String username; /*"UsernameTest";*/
 
 
     Socket clientSocket;
@@ -26,7 +26,7 @@ public class Client {
 
 
     //Constructor for Client, checks that the port is non-negative and prints the computers IP address
-    Client(String host, int port){
+    Client(String host, int port, String username){
 
         //Check if the port is valid
         if(port < 0){
@@ -48,6 +48,13 @@ public class Client {
             }
         }else{
             serverHost = host;
+        }
+
+        //Username should not be null
+        if(username.isEmpty()){
+            this.username = "username";
+        }else{
+            this.username = username;
         }
     }
 
@@ -132,7 +139,7 @@ public class Client {
         try(DatagramSocket socket = new DatagramSocket(0)) {
 
             //Wait a specified amount of time for response
-            socket.setSoTimeout(15000);
+            socket.setSoTimeout(5000);
 
             //Construct server message, client's username
             String message = username;
@@ -140,14 +147,28 @@ public class Client {
 
             //DatagramPackets for outgoing message to the server and one for incoming message
             DatagramPacket request = new DatagramPacket(messageInBytes, messageInBytes.length, InetAddress.getByName(serverHost), remotePort);
-            DatagramPacket response = new DatagramPacket(new byte[5], 5 );
+            DatagramPacket response = new DatagramPacket(new byte[1], 1 );
 
             //Send and receive DatagramPackets
             socket.send(request);
             socket.receive(response);
 
-            //Return whether the data is containing something
-            return response.getData().length != 0;
+            //Response converted to String
+            String responseString = new String(response.getData(), StandardCharsets.ISO_8859_1);
+
+
+            // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect. "f" for "The server is full"
+            if(responseString.equalsIgnoreCase("y")){
+                return true;
+            }else if(responseString.equalsIgnoreCase("u")){
+                System.err.println("Username already taken");
+                return false;
+            }else if(responseString.equalsIgnoreCase("f")){
+                System.err.println("The server is full");
+            }
+
+            return false;
+
 
 
 

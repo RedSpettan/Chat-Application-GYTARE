@@ -16,6 +16,8 @@ class Server {
 
     //Store the Servers listening port
     private int remotePort;
+    private int maximumUsers;
+
 
     //List used to store all connected client sockets
     List<Socket> socketList = new ArrayList<>();
@@ -46,7 +48,13 @@ class Server {
     private Thread shutdownHookThread;
 
     //Constructor
-    Server(int port){
+    Server(int port, int maximumUsers){
+
+        if(maximumUsers <= 0){
+            System.err.println("INVALID AMOUNT OF USERS!");
+            System.exit(0);
+        }
+        this.maximumUsers = maximumUsers;
 
         //Check if the port is not below 0, since that is not a valid port
         if(port < 0){
@@ -422,21 +430,35 @@ class Server {
                     DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
                     socket.receive(request);
 
-                    String clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
+                    byte[] responsMessage;
 
-                    byte[] responsMessage = new byte[5];
+                    if(userList.size() >= maximumUsers){
+                        //"f" for "The server is full"
+                        responsMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
+                    }else{
+                        String clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
 
-                    boolean usernameExist = false;
+                        clientUsername = clientUsername.trim();
 
-                    for(User user : userList){
-                        if(user.username.equalsIgnoreCase(clientUsername)){
-                            usernameExist = true;
+                        boolean usernameExist = false;
+
+                        for(User user : userList){
+                            if(user.username.equalsIgnoreCase(clientUsername)){
+                                usernameExist = true;
+                            }
+                        }
+
+                        // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
+
+                        if(!usernameExist){
+                            responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
+                        }else{
+                            responsMessage = "u".getBytes(StandardCharsets.ISO_8859_1);
                         }
                     }
 
-                    if(!usernameExist){
-                        responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
-                    }
+
+
 
 
 

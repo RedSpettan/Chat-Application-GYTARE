@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -39,7 +40,7 @@ public class SendMessagesThread implements Runnable{
                     if(!user.socket.isClosed()){
                         try{
 
-                            PrintWriter out = new PrintWriter(user.socket.getOutputStream(), true);
+                            PrintWriter out = new PrintWriter(user.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
 
                             out.println(messageToBeSent);
 

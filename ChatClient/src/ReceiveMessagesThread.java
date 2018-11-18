@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 public class ReceiveMessagesThread implements Runnable{
 
@@ -21,8 +22,8 @@ public class ReceiveMessagesThread implements Runnable{
     public void run() {
 
         //This run method will check for any incoming messages from the associated connected socket's input stream
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(activeClient.clientSocket.getOutputStream(), true)) {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream(), StandardCharsets.ISO_8859_1));
+            PrintWriter out = new PrintWriter(activeClient.clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1)) {
 
             //checkForUsernameRequest();
 
@@ -30,7 +31,6 @@ public class ReceiveMessagesThread implements Runnable{
 
 
             if((serverMessage = reader.readLine()) != null){
-                System.out.println(serverMessage);
                 if(serverMessage.equalsIgnoreCase("Username")){
 
                     out.println(activeClient.username);
@@ -45,12 +45,9 @@ public class ReceiveMessagesThread implements Runnable{
 
 
 
+
             //Wait and read incoming lines on the socket's input stream
             while((line = reader.readLine()) != null){
-
-                if(line.equalsIgnoreCase("Username")){
-                    System.out.println("Got here!");
-                }
 
                 System.out.println(line);
             }

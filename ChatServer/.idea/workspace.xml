@@ -4,8 +4,11 @@
     <list default="true" id="43e692ec-2177-4db5-8864-a7dd87efcb5b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../ChatClient/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ChatClient/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ChatClient/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ChatClient/src/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ChatClient/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ChatClient/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ChatClient/src/ReceiveMessagesThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ChatClient/src/ReceiveMessagesThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SendMessagesThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SendMessagesThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerThread.java" afterDir="false" />
     </list>
@@ -32,45 +35,46 @@
     <session id="2130953806">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="64" />
+          <entry key="project.closed" value="65" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="22" />
           <entry key="project.open.time.10" value="9" />
           <entry key="project.open.time.11" value="8" />
           <entry key="project.open.time.12" value="1" />
-          <entry key="project.open.time.14" value="1" />
+          <entry key="project.open.time.14" value="2" />
           <entry key="project.open.time.16" value="1" />
           <entry key="project.open.time.17" value="2" />
           <entry key="project.open.time.2" value="2" />
           <entry key="project.open.time.30" value="1" />
+          <entry key="project.open.time.33" value="1" />
           <entry key="project.open.time.7" value="5" />
           <entry key="project.open.time.8" value="6" />
           <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="64" />
+          <entry key="project.opened" value="66" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="iml" value="1" />
-          <entry key="java" value="21" />
+          <entry key="java" value="22" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IDEA_MODULE" value="1" />
-          <entry key="JAVA" value="21" />
+          <entry key="JAVA" value="22" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="11" />
-          <entry key="java" value="22341" />
+          <entry key="java" value="22923" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="22341" />
+          <entry key="JAVA" value="22923" />
           <entry key="PLAIN_TEXT" value="12" />
         </counts>
       </usages-collector>
@@ -84,17 +88,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            <state relative-caret-position="80">
+              <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Server.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="307" column="9" selection-start-line="307" selection-start-column="9" selection-end-line="307" selection-end-column="9" />
+            <state relative-caret-position="559">
+              <caret line="436" column="29" selection-start-line="436" selection-start-column="28" selection-end-line="436" selection-end-column="29" />
               <folding>
                 <element signature="method#Server#0;class#Server#0" />
                 <element signature="method#getCurrentDate#0;class#Server#0" />
@@ -102,9 +106,9 @@
                 <element signature="method#CheckRemotePortAvailability#0;class#Server#0" />
                 <element signature="method#StartServer#0;class#Server#0" />
                 <element signature="method#UpdateServer#0;class#Server#0" />
+                <element signature="method#ReceiveMessages#0;class#Server#0" />
                 <element signature="method#ReceiveMessages#1;class#Server#0" />
                 <element signature="method#CheckSockets#0;class#Server#0" />
-                <element signature="class#ConnectionRequests#0;class#Server#0" />
                 <element signature="class#ServerConnection#0;class#Server#0" />
                 <element signature="method#ServerConnection#0;class#ServerConnection#0;class#Server#0" />
               </folding>
@@ -113,13 +117,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/util/ArrayList.java">
+        <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/net/DatagramSocket.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="975" selection-start-line="975" selection-end-line="975" />
-              <folding>
-                <element signature="e#34972#34973#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-2527">
+              <caret line="729" column="29" selection-start-line="729" selection-start-column="29" selection-end-line="729" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -175,8 +176,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ServerThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-128">
-              <caret line="31" column="38" selection-start-line="31" selection-start-column="38" selection-end-line="31" selection-end-column="38" />
+            <state relative-caret-position="909">
+              <caret line="63" column="45" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -184,11 +185,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SendMessagesThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="445">
-              <caret line="45" column="40" selection-start-line="45" selection-start-column="40" selection-end-line="45" selection-end-column="40" />
+            <state relative-caret-position="314">
+              <caret line="42" column="126" selection-start-line="42" selection-start-column="126" selection-end-line="42" selection-end-column="126" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -230,13 +231,13 @@
         <option value="$PROJECT_DIR$/src/RemoveSocketThread.java" />
         <option value="$PROJECT_DIR$/src/GUI.java" />
         <option value="$PROJECT_DIR$/src/Interface.java" />
-        <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/ShutdownHook.java" />
         <option value="$PROJECT_DIR$/src/User.java" />
-        <option value="$PROJECT_DIR$/src/SendMessagesThread.java" />
         <option value="$PROJECT_DIR$/src/DebugServerThread.java" />
         <option value="$PROJECT_DIR$/src/ServerThread.java" />
         <option value="$PROJECT_DIR$/src/Server.java" />
+        <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/SendMessagesThread.java" />
       </list>
     </option>
   </component>
@@ -252,7 +253,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -269,11 +270,11 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542466568983" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542568176296" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../ChatClient" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
@@ -340,7 +341,7 @@
     <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4990403" visible="true" weight="0.12953092" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4990403" visible="true" weight="0.13166311" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -349,7 +350,7 @@
       <window_info id="Favorites" order="6" sideWeight="0.5009597" side_tool="true" weight="0.10660981" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286334" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49840087" weight="0.29175705" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49840087" visible="true" weight="0.29175705" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991323" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -404,10 +405,27 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Interface.java" />
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
+    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/io/BufferedReader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        <state relative-caret-position="-135">
+          <caret line="322" column="22" lean-forward="true" selection-start-line="322" selection-start-column="22" selection-end-line="322" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14736">
+          <caret line="975" selection-start-line="975" selection-end-line="975" />
+          <folding>
+            <element signature="e#34972#34973#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/lang/Object.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
         </state>
       </provider>
     </entry>
@@ -425,47 +443,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/SendMessagesThread.java">
+    <entry file="file://$PROJECT_DIR$/src/ShutdownHook.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="445">
-          <caret line="45" column="40" selection-start-line="45" selection-start-column="40" selection-end-line="45" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/io/BufferedReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-135">
-          <caret line="322" column="22" lean-forward="true" selection-start-line="322" selection-start-column="22" selection-end-line="322" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/lang/Object.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/util/ArrayList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="975" selection-start-line="975" selection-end-line="975" />
-          <folding>
-            <element signature="e#34972#34973#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ServerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-128">
-          <caret line="31" column="38" selection-start-line="31" selection-start-column="38" selection-end-line="31" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="32">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -479,17 +460,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ShutdownHook.java">
+    <entry file="jar://C:/Program Files/Java/jdk-11/lib/src.zip!/java.base/java/net/DatagramSocket.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        <state relative-caret-position="-2527">
+          <caret line="729" column="29" selection-start-line="729" selection-start-column="29" selection-end-line="729" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ServerThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="909">
+          <caret line="63" column="45" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Server.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="307" column="9" selection-start-line="307" selection-start-column="9" selection-end-line="307" selection-end-column="9" />
+        <state relative-caret-position="559">
+          <caret line="436" column="29" selection-start-line="436" selection-start-column="28" selection-end-line="436" selection-end-column="29" />
           <folding>
             <element signature="method#Server#0;class#Server#0" />
             <element signature="method#getCurrentDate#0;class#Server#0" />
@@ -497,11 +495,21 @@
             <element signature="method#CheckRemotePortAvailability#0;class#Server#0" />
             <element signature="method#StartServer#0;class#Server#0" />
             <element signature="method#UpdateServer#0;class#Server#0" />
+            <element signature="method#ReceiveMessages#0;class#Server#0" />
             <element signature="method#ReceiveMessages#1;class#Server#0" />
             <element signature="method#CheckSockets#0;class#Server#0" />
-            <element signature="class#ConnectionRequests#0;class#Server#0" />
             <element signature="class#ServerConnection#0;class#Server#0" />
             <element signature="method#ServerConnection#0;class#ServerConnection#0;class#Server#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/SendMessagesThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="42" column="126" selection-start-line="42" selection-start-column="126" selection-end-line="42" selection-end-column="126" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
