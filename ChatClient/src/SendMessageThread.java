@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class SendMessageThread implements Runnable{
@@ -33,7 +34,7 @@ public class SendMessageThread implements Runnable{
             //Wait for a new line to be read by the scanner
             while((line = scanner.nextLine()) != null){
                 //Print the message to the socket connected with the client
-                output = new PrintWriter(activeClient.clientSocket.getOutputStream(), true);
+                output = new PrintWriter(activeClient.clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
                 output.println(line);
 
             }

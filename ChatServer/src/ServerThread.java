@@ -37,6 +37,7 @@ public class ServerThread implements Runnable{
 
                 //Send the message to the server
                 activeServer.ReceiveMessages(line, clientSocket);
+                System.out.println("Got this messages from the user: " + line);
             }
 
 

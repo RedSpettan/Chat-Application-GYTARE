@@ -40,6 +40,8 @@ public class SendMessagesThread implements Runnable{
                     if(!user.socket.isClosed()){
                         try{
 
+                            //System.out.println("This is the message which is to be sent: " + messageToBeSent);
+
                             PrintWriter out = new PrintWriter(user.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
 
                             out.println(messageToBeSent);

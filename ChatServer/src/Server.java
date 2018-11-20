@@ -427,17 +427,20 @@ class Server {
             try(DatagramSocket socket = new DatagramSocket(remotePort)) {
 
                 while(true){
-                    DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
+                    DatagramPacket request = new DatagramPacket(new byte[50], 50);
                     socket.receive(request);
 
-                    byte[] responsMessage;
+                    System.out.println("Request Received! ");
 
+                    byte[] responsMessage;
+                    String clientUsername = "[UNDECIDED]";
                     if(userList.size() >= maximumUsers){
                         //"f" for "The server is full"
                         responsMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
                     }else{
-                        String clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
+                         clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
 
+                        //Remove white characters
                         clientUsername = clientUsername.trim();
 
                         boolean usernameExist = false;
@@ -445,6 +448,7 @@ class Server {
                         for(User user : userList){
                             if(user.username.equalsIgnoreCase(clientUsername)){
                                 usernameExist = true;
+                                break;
                             }
                         }
 
@@ -458,7 +462,14 @@ class Server {
                     }
 
 
+                    // ------ Log Request ------
 
+                    requestLogger.info("\r\nRequest Received!\r\n" +
+                            "Host Address: " + request.getAddress().getHostAddress() +
+                            "\r\nHost Name: " + request.getAddress().getHostName() +
+                            "\r\nUsername submitted: " + clientUsername +
+                            "\r\nResponse Message: " + new String(responsMessage, StandardCharsets.ISO_8859_1 ) +
+                            "\r\n\r\n");
 
 
 
