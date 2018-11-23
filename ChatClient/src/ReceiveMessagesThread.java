@@ -18,33 +18,17 @@ public class ReceiveMessagesThread implements Runnable{
         this.activeClient = client;
     }
 
+    //This run method will check for any incoming messages from the associated connected socket's input stream
     @Override
     public void run() {
 
-        //This run method will check for any incoming messages from the associated connected socket's input stream
+
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream(), StandardCharsets.ISO_8859_1));
             PrintWriter out = new PrintWriter(activeClient.clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1)) {
 
-            //checkForUsernameRequest();
-
-            String serverMessage;
-
-
-            if((serverMessage = reader.readLine()) != null){
-                if(serverMessage.equalsIgnoreCase("Username")){
-
-                    out.println(activeClient.username);
-                    out.flush();
-
-
-                }
-
-            }
+            checkForUsernameRequest(reader, out);
 
             String line;
-
-
-
 
             //Wait and read incoming lines on the socket's input stream
             while((line = reader.readLine()) != null){
@@ -52,20 +36,16 @@ public class ReceiveMessagesThread implements Runnable{
                 System.out.println(line);
             }
 
-            System.out.println(line);
+            //The line read is null, shutting down thread
+
             System.out.println("Is the socket closed?: " + activeClient.clientSocket.isClosed());
             System.out.println("Receive message thread has been terminated!");
 
             //Catch the error which is caused by the server shutting down
         } catch(SocketException e){
 
-
             System.err.println("\n--CONNECTION HAS BEEN DISRUPTED--\n");
             System.out.println("\n***AUTOMATIC RECONNECTION WILL COMMENCE***\n");
-            //e.printStackTrace();
-            /*System.out.println("Socket ERROR!");
-
-            System.out.println("Is the socket closed: " + clientSocket.isClosed());*/
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -74,16 +54,23 @@ public class ReceiveMessagesThread implements Runnable{
 
     }
 
-    /*private void checkForUsernameRequest() throws IOException {
+    //Send username on server request
+    private void checkForUsernameRequest(BufferedReader reader, PrintWriter out) {
 
         String serverMessage;
 
+        //Check server message "Username", send the username to the server
+        try {
+            if((serverMessage = reader.readLine()) != null){
+                if(serverMessage.equalsIgnoreCase("Username")){
 
+                    out.println(activeClient.username);
+                    out.flush();
+                }
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream()));
-            {
-
-
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }*/
+    }
 }

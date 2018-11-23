@@ -5,8 +5,7 @@ public class Main {
     public static void main(String[] args) {
 	// write your code here
 
-
-
+        //Get username from console
         String username = RetrieveUsername();
 
         Client mainClient = new Client("LAPTOP-9V1U1J17", 9543, username);
@@ -25,6 +24,8 @@ public class Main {
         String username = null;
 
         while(true){
+
+            //Username cannot be 20 characters or longer
             for(;;){
                 if((line = scanner.nextLine()) != null){
                     if(line.length() < 20){
@@ -35,6 +36,7 @@ public class Main {
                 }
             }
 
+            //Remove any special characters, only latin characters, numbers and spaces are allowed
             if(!username.equals(username.replaceAll("[^a-zA-Z0-9\\s]",""))){
                 System.err.println("Username uses illegal characters, try again!");
                 System.out.println("Previous username: " + username + "\nNew usersame: " + username.replaceAll("[^a-zA-Z0-9\\s]",""));
@@ -43,11 +45,6 @@ public class Main {
                 break;
             }
         }
-
-
-
-
-
 
         return username;
 

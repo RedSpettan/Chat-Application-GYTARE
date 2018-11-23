@@ -5,34 +5,29 @@ import java.util.Scanner;
 
 public class SendMessageThread implements Runnable{
 
-    private Socket clientSocket;
     private Client activeClient;
 
     Scanner scanner;
 
-    SendMessageThread(Socket socket, Client client){
+    SendMessageThread(Client client){
 
-
-        this.clientSocket = socket;
         this.activeClient = client;
 
-    }
-
-    void setClientSocket(Socket clientSocket) {
-        this.clientSocket = clientSocket;
     }
 
     @Override
     public void run() {
         PrintWriter output = null;
+
         try{
 
-            //Start a new scanner which reads incoming lines from the console
+            //"Scan" console input
             scanner = new Scanner(System.in);
             String line;
 
-            //Wait for a new line to be read by the scanner
+            //Read new lines from the console
             while((line = scanner.nextLine()) != null){
+
                 //Print the message to the socket connected with the client
                 output = new PrintWriter(activeClient.clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
                 output.println(line);

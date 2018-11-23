@@ -434,7 +434,9 @@ class Server {
 
                     byte[] responsMessage;
                     String clientUsername = "[UNDECIDED]";
+                    System.out.println("Amount of users: " + userList.size());
                     if(userList.size() >= maximumUsers){
+
                         //"f" for "The server is full"
                         responsMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
                     }else{
@@ -511,27 +513,30 @@ class Server {
                     //Accept any incoming connection
                     Socket clientSocket = serverSocket.accept();
 
-                    System.out.println("Connection has been established!");
+                    if(userList.size() < maximumUsers){
 
-                    System.out.println(clientSocket.getInetAddress());
+                        System.out.println("Connection has been established!");
 
-                    //Create a new Thread to run a ServerThread
-                    Thread localThread = new Thread(new ServerThread(clientSocket, server));
+                        System.out.println(clientSocket.getInetAddress());
 
-                    //Add the user to the "userList"
-                    userList.add( new User("Test", localThread, clientSocket));
+                        //Create a new Thread to run a ServerThread
+                        Thread localThread = new Thread(new ServerThread(clientSocket, server));
 
-                    localThread.start();
+                        //Add the user to the "userList"
+                        userList.add( new User("Test", localThread, clientSocket));
+
+                        localThread.start();
 
 
 
-                    //Log the incoming client connection
-                    requestLogger.info("A new client has connected. \r\n Port number: " + clientSocket.getPort() +
-                            ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
+                        //Log the incoming client connection
+                        requestLogger.info("A new client has connected. \r\n " +
+                                "Port number: " + clientSocket.getPort() +
+                                ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +
+                                ".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
+                    }
 
-                    /*System.out.println("Username: " + userList.get(userList.indexOf(localUser)).username + "\nThread: " +
-                                        userList.get(userList.indexOf(localUser)).serverThread   + "\nSocket: "+
-                                        userList.get(userList.indexOf(localUser)).socket);*/
+
 
                 }
 

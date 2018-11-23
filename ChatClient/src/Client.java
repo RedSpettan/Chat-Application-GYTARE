@@ -112,13 +112,13 @@ public class Client {
 
             //Will initialize a SendMessageThread and start a new thread, if a send message thread was never assigned or shut down
             if(sendMessageThread == null || !sendMessageThread.isAlive()){
-                sendMessageThreadClass = new SendMessageThread(clientSocket, this);
+                sendMessageThreadClass = new SendMessageThread(this);
                 sendMessageThread = new Thread(sendMessageThreadClass);
                 sendMessageThread.start();
             }
 
             //Update the current clientSocket
-            sendMessageThreadClass.setClientSocket(this.clientSocket);
+            //endMessageThreadClass.setClientSocket(this.clientSocket);
 
             //Start a new thread for a ReceiveMessagesThread
             new Thread(new ReceiveMessagesThread(this.clientSocket, this)).start();
@@ -197,7 +197,7 @@ public class Client {
             System.out.println("\n--TCP connection has been established--");
 
             //Initialize a new SendMessageThread and start a new thread using it
-            sendMessageThreadClass = new SendMessageThread(this.clientSocket, this);
+            sendMessageThreadClass = new SendMessageThread(this);
             sendMessageThread = new Thread(sendMessageThreadClass);
             sendMessageThread.start();
 
