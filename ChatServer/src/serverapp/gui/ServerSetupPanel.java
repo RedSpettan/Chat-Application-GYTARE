@@ -1,4 +1,4 @@
-package GUI;
+package serverapp.gui;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;

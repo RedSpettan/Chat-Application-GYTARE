@@ -1,4 +1,7 @@
-import GUI.MainFrame;
+package serverapp;
+
+import serverapp.gui.MainFrame;
+import serverapp.server.Server;
 
 import javax.swing.*;
 

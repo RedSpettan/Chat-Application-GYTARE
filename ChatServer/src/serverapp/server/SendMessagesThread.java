@@ -1,8 +1,7 @@
+package serverapp.server;
+
 import java.io.*;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SendMessagesThread implements Runnable{

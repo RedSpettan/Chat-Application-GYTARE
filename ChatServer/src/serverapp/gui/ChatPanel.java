@@ -1,16 +1,12 @@
-package GUI;
+package serverapp.gui;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
-import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ChatPanel extends JPanel implements ActionListener {
-
-
-
 
     JTextField textField;
     JTextArea textArea;
@@ -20,19 +16,21 @@ public class ChatPanel extends JPanel implements ActionListener {
 
         Dimension size = getPreferredSize();
 
+        //Set the size 90% of the current window width
         size.width = (int) (currentFrame.getWidth() * 0.9f);
         size.height = 250;
 
         setPreferredSize(size);
-
         setSize(size);
 
-
+        //Set border
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
+        //Create Text field
         textField = new JTextField(20);
         textField.addActionListener(this);
 
+        //Create text area and use it in a scroll pane
         textArea = new JTextArea(20, 20);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -42,7 +40,7 @@ public class ChatPanel extends JPanel implements ActionListener {
         GridBagConstraints constraints = new GridBagConstraints();
 
 
-        ///// Text Area ///////////////////////////////////////
+        // <--- Text Area ---------------->
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
 
@@ -57,7 +55,7 @@ public class ChatPanel extends JPanel implements ActionListener {
         add(scrollPane, constraints);
 
 
-        ////// TEXT FIELD ////////////////////////////////////////////
+        // <--- Text Field ---------------->
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
 

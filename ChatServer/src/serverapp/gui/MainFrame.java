@@ -1,4 +1,4 @@
-package GUI;
+package serverapp.gui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +12,9 @@ public class MainFrame extends JFrame implements ActionListener {
     ServerSetupPanel serverSetupPanel;
     ChatPanel chatPanel;
     Container container;
+
+    //Server
+
     public MainFrame(String title){
         super(title);
 
@@ -43,30 +46,35 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+    private void CreateChatPanel(){
+        chatPanel = new ChatPanel(this);
+
+        constraints = new GridBagConstraints();
+
+        constraints.weighty = 0.5;
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+
+        //constraints.anchor = GridBagConstraints.LINE_END;
+
+        constraints.anchor = GridBagConstraints.PAGE_END;
+
+        constraints.insets = new Insets(0,0,10,0);
+
+        container.add(chatPanel, constraints);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverSetupPanel.submitButton){
             System.out.println("The button got pressed!");
             //serverSetupPanel.setVisible(false);
             container.remove(serverSetupPanel);
-            chatPanel = new ChatPanel(this);
 
-            constraints = new GridBagConstraints();
-
-            constraints.weighty = 0.5;
-
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-
-            constraints.gridx = 0;
-            constraints.gridy = 0;
-
-            //constraints.anchor = GridBagConstraints.LINE_END;
-
-            constraints.anchor = GridBagConstraints.PAGE_END;
-
-            constraints.insets = new Insets(0,0,10,0);
-
-            container.add(chatPanel, constraints);
+            CreateChatPanel();
 
             container.revalidate();
             container.repaint();

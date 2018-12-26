@@ -1,3 +1,5 @@
+package serverapp.server;
+
 import java.util.logging.FileHandler;
 
 public class ShutdownHook implements Runnable {

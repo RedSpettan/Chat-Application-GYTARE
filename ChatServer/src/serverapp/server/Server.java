@@ -1,3 +1,5 @@
+package serverapp.server;
+
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -5,14 +7,11 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-class Server {
+public class Server {
 
     //Store the Servers listening port
     private int remotePort;
@@ -48,7 +47,7 @@ class Server {
     private Thread shutdownHookThread;
 
     //Constructor
-    Server(int port, int maximumUsers){
+    public Server(int port, int maximumUsers){
 
         if(maximumUsers <= 0){
             System.err.println("INVALID AMOUNT OF USERS!");
@@ -212,14 +211,14 @@ class Server {
     }
 
     //Initialises the server and it's associated threads
-    void StartServer(){
+    public void StartServer(){
 
 
         setUpLogger();
 
         System.out.println("Remote port: " + remotePort);
 
-        //Starts a new Server Socket
+        //Starts a new serverapp.server.Server Socket
         try(ServerSocket serverSocket = new ServerSocket(remotePort)){
 
             System.out.println("Socket has been opened, awaiting connections...");
@@ -352,17 +351,17 @@ class Server {
 
                 if(user.socket.isClosed()){
                     System.out.println("Is the Thread Alive?: " + user.serverThread.isAlive());
-                    System.out.println("User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");
+                    System.out.println("serverapp.server.User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");
 
                     //Log the user disconnecting
-                    requestLogger.info("User has disconnected. " +
+                    requestLogger.info("serverapp.server.User has disconnected. " +
                             "\r\n Username:" + user.username +
                             "\r\n PortNumber: " + user.socket.getPort() +
                             "\r\n Host Address: " + user.inetAddress.getHostAddress() +
                             "\r\n Host name: " + user.inetAddress.getHostName());
 
                     userList.remove(user);
-                    System.out.println("User removed!");
+                    System.out.println("serverapp.server.User removed!");
 
                     break;
                 }
@@ -389,7 +388,7 @@ class Server {
 
                     //System.out.println("Is Alive?: " + socketThreadMap.get(activeServer.socketList.get(x)).isAlive());
 
-                    requestLogger.info("User has disconnected. \r\n Port Number: " +
+                    requestLogger.info("serverapp.server.User has disconnected. \r\n Port Number: " +
                             socketList.get(x).getPort() +
                             "\r\n Host Address: " + socketList.get(x).getInetAddress().getHostAddress() + "\r\n Host name: " + socketList.get(x).getInetAddress().getHostName() + "\r\n");
                     System.out.print("Socket " + socketList.get(x).getPort());
@@ -519,7 +518,7 @@ class Server {
 
                         System.out.println(clientSocket.getInetAddress());
 
-                        //Create a new Thread to run a ServerThread
+                        //Create a new Thread to run a serverapp.server.ServerThread
                         Thread localThread = new Thread(new ServerThread(clientSocket, server));
 
                         //Add the user to the "userList"

@@ -1,4 +1,5 @@
-import java.net.Socket;
+package serverapp.server;
+
 import java.util.Scanner;
 
 class DebugServerThread implements Runnable{
