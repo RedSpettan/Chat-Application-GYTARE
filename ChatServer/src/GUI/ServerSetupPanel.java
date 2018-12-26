@@ -3,8 +3,12 @@ package GUI;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ServerSetupPanel extends JPanel {
+public class ServerSetupPanel extends JPanel implements ActionListener {
+
+    public JButton submitButton;
 
     public ServerSetupPanel(JFrame currentFrame){
         Dimension size = getPreferredSize();
@@ -17,12 +21,14 @@ public class ServerSetupPanel extends JPanel {
 
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-        //Submit button
-        JButton button = new JButton("Start Server");
+        //Submit submitButton
+        submitButton = new JButton("Start Server");
+
+        submitButton.addActionListener((ActionListener) currentFrame);
 
         //Create a label an text field for port number
         JLabel portLabel = new JLabel("Port Number: ");
-        JTextField portTextField = new JTextField(10);
+        JTextField portTextField = new JTextField(0);
 
         JLabel maximumUserLabel = new JLabel("Maximum Users: ");
         JTextField maximumUserField = new JTextField(10);
@@ -61,7 +67,7 @@ public class ServerSetupPanel extends JPanel {
         constraints.gridy = 2;
 
         constraints.gridwidth = 3;
-        add(button, constraints);
+        add(submitButton, constraints);
 
         // <--- Second Column ---------------->
 
@@ -85,14 +91,19 @@ public class ServerSetupPanel extends JPanel {
         constraints.gridx = 1;
         constraints.gridy = 1;
 
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+
         add(portTextField, constraints);
-
-
-
-
-
     }
 
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
+        if(e.getSource() == submitButton){
+            System.out.println("Button has been pressed");
+
+        }
+
+    }
 }

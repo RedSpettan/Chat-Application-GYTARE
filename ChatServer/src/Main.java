@@ -1,4 +1,4 @@
-import GUI.InformationFrame;
+import GUI.MainFrame;
 
 import javax.swing.*;
 
@@ -11,7 +11,8 @@ public class Main {
 
 
         SwingUtilities.invokeLater(() ->{
-            new InformationFrame("Test");
+            MainFrame mainFrame = new MainFrame("Test");
+            //mainFrame.setVisible(false);
         });
 
         server.StartServer();
