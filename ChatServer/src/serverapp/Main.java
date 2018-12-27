@@ -14,7 +14,7 @@ public class Main {
 
 
         SwingUtilities.invokeLater(() ->{
-            MainFrame mainFrame = new MainFrame("Test");
+            MainFrame mainFrame = new MainFrame("Test", server);
             //mainFrame.setVisible(false);
         });
 

@@ -24,7 +24,10 @@ public class Server {
     //Hash map used to associate a client socket to a specific Thread
     Map<Socket, Thread> socketThreadMap = new HashMap<>();
 
-    private ConcurrentLinkedQueue<String> messageList = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<String> messageToBeSentList = new ConcurrentLinkedQueue<>();
+
+    public ConcurrentLinkedQueue<String> messagesToBeDisplayed = new ConcurrentLinkedQueue<>();
+
 
     List<User> userList = new ArrayList<>();
 
@@ -213,7 +216,6 @@ public class Server {
     //Initialises the server and it's associated threads
     public void StartServer(){
 
-
         setUpLogger();
 
         System.out.println("Remote port: " + remotePort);
@@ -230,7 +232,7 @@ public class Server {
             new Thread(new ServerConnection(serverSocket, this)).start();
             new Thread(new DebugServerThread(this)).start();
 
-            sendMessageThread = new Thread(new SendMessagesThread(this, messageList));
+            sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
             sendMessageThread.start();
 
 
@@ -253,7 +255,7 @@ public class Server {
 
                     System.err.print("*** Send Messages is not alive, attempting restart...*** ");
 
-                    sendMessageThread = new Thread(new SendMessagesThread(this, messageList));
+                    sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
                     sendMessageThread.start();
                 }
 
@@ -287,11 +289,11 @@ public class Server {
 
 
 
-        /*if(!messageList.isEmpty()){
+        /*if(!messageToBeSentList.isEmpty()){
 
-               System.out.println("Size of list: " + messageList.size());
+               System.out.println("Size of list: " + messageToBeSentList.size());
 
-               String message = messageList.poll();
+               String message = messageToBeSentList.poll();
 
                for(Socket socket : socketList){
                    try {
@@ -322,12 +324,21 @@ public class Server {
             }
         }
 
+        String completeMessage;
+
         if(senderUser != null){
-            System.out.println("***" + senderUser.username + ": " + message);
-            messageList.add("***" + senderUser.username + ": " + message);
+            System.out.println(senderUser.username + ": " + message);
+            completeMessage =senderUser.username + ": " + message;
+            //messageToBeSentList.add("***" + senderUser.username + ": " + message);
         }else{
-            messageList.add("***" +"[USERNAME UNAVAILABLE]"+ ": " + message);
+            completeMessage = "[USERNAME UNAVAILABLE]"+ ": " + message;
+            //messageToBeSentList.add("***" +"[USERNAME UNAVAILABLE]"+ ": " + message);
         }
+
+        messageToBeSentList.add(completeMessage);
+        messagesToBeDisplayed.add(completeMessage);
+
+
 
 
 
@@ -337,7 +348,8 @@ public class Server {
 
         String completeMessage = sender +": " + message;
         System.out.println(completeMessage);
-        messageList.add(completeMessage);
+        messageToBeSentList.add(completeMessage);
+        messagesToBeDisplayed.add(completeMessage);
     }
 
     //Check if connected sockets are still active

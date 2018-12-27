@@ -1,5 +1,7 @@
 package serverapp.gui;
 
+import serverapp.server.Server;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,10 +15,16 @@ public class MainFrame extends JFrame implements ActionListener {
     ChatPanel chatPanel;
     Container container;
 
-    //Server
+    private Thread chatUpdateThread;
 
-    public MainFrame(String title){
+    boolean updateChat = false;
+
+    public Server server;
+
+    public MainFrame(String title, Server activeServer){
         super(title);
+
+        this.server = activeServer;
 
         setVisible(true);
 
@@ -44,6 +52,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
         container.add(serverSetupPanel, constraints);
 
+
+
+
     }
 
     private void CreateChatPanel(){
@@ -65,6 +76,12 @@ public class MainFrame extends JFrame implements ActionListener {
         constraints.insets = new Insets(0,0,10,0);
 
         container.add(chatPanel, constraints);
+
+        updateChat = true;
+
+        chatUpdateThread = new Thread(new UpdateChat(this));
+        chatUpdateThread.start();
+
     }
 
     @Override

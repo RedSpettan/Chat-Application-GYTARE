@@ -10,6 +10,7 @@ public class ChatPanel extends JPanel implements ActionListener {
 
     JTextField textField;
     JTextArea textArea;
+    JScrollPane scrollPane;
 
     public ChatPanel(JFrame currentFrame) {
 
@@ -31,9 +32,9 @@ public class ChatPanel extends JPanel implements ActionListener {
         textField.addActionListener(this);
 
         //Create text area and use it in a scroll pane
-        textArea = new JTextArea(20, 20);
+        textArea = new JTextArea(2, 20);
         textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane = new JScrollPane(textArea);
 
 
         setLayout(new GridBagLayout());
@@ -70,7 +71,9 @@ public class ChatPanel extends JPanel implements ActionListener {
         add(textField, constraints);
 
 
-        textArea.append("AnotherOne: Hello there \nTestPerson13: Wow, it sure is empty in here");
+        //textArea.append("AnotherOne: Hello there \nTestPerson13: Wow, it sure is empty in here");
+
+
 
 
     }
