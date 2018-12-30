@@ -15,7 +15,7 @@ public class Server {
 
     //Store the Servers listening port
     private int remotePort;
-    private int maximumUsers;
+    public int maximumUsers;
 
 
     //List used to store all connected client sockets

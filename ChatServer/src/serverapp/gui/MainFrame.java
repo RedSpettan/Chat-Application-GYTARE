@@ -13,6 +13,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
     ServerSetupPanel serverSetupPanel;
     ChatPanel chatPanel;
+    UserInformationPanel informationPanel;
+
     Container container;
 
     private Thread chatUpdateThread;
@@ -57,6 +59,27 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+
+    private void createInformationPanel(){
+        informationPanel = new UserInformationPanel(this);
+
+        constraints = new GridBagConstraints();
+
+
+        constraints.weightx = 0.0;
+        constraints.weighty = 0.0;
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+
+        constraints.anchor = GridBagConstraints.LINE_START;
+
+        constraints.insets = new Insets(10,0,0,0);
+
+        container.add(informationPanel, constraints);
+
+    }
+
     private void CreateChatPanel(){
         chatPanel = new ChatPanel(this);
 
@@ -67,7 +90,7 @@ public class MainFrame extends JFrame implements ActionListener {
         constraints.fill = GridBagConstraints.HORIZONTAL;
 
         constraints.gridx = 0;
-        constraints.gridy = 0;
+        constraints.gridy = 1;
 
         //constraints.anchor = GridBagConstraints.LINE_END;
 
@@ -92,6 +115,8 @@ public class MainFrame extends JFrame implements ActionListener {
             container.remove(serverSetupPanel);
 
             CreateChatPanel();
+
+            createInformationPanel();
 
             container.revalidate();
             container.repaint();
