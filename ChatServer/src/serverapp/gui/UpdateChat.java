@@ -9,7 +9,7 @@ public class UpdateChat implements Runnable {
 
     private MainFrame frame;
 
-    int scrollInitialMaximum;
+    int scrollInitialMaximum = 0;
     int scrollValue;
 
     long timeInitilaized;
@@ -23,6 +23,26 @@ public class UpdateChat implements Runnable {
 
     }
 
+    private void updateInformationPanel(){
+        if(System.currentTimeMillis() - timeInitilaized > 2000){
+
+            frame.informationPanel.clearTextAreas();
+
+            for(User user : frame.server.userList){
+
+                frame.informationPanel.usernameTextArea.append(user.username + "\n");
+                frame.informationPanel.ipAddressTextArea.append(user.inetAddress.toString()+ "\n");
+                frame.informationPanel.portTextArea.append(user.socket.getPort() + "\n");
+                frame.informationPanel.timeTextArea.append(user.formattedTimeConnected + "\n");
+
+            }
+
+            //frame.informationPanel.usernameTextArea.append("Hello\n");
+
+            timeInitilaized = System.currentTimeMillis();
+        }
+    }
+
     @Override
     public void run() {
 
@@ -32,23 +52,7 @@ public class UpdateChat implements Runnable {
 
         while(frame.updateChat){
 
-            if(System.currentTimeMillis() - timeInitilaized > 2000){
-
-                frame.informationPanel.clearTextAreas();
-
-                for(User user : frame.server.userList){
-
-                    frame.informationPanel.usernameTextArea.append(user.username + "\n");
-                    frame.informationPanel.ipAddressTextArea.append(user.inetAddress.toString()+ "\n");
-                    frame.informationPanel.portTextArea.append(user.socket.getPort() + "\n");
-                    frame.informationPanel.timeTextArea.append(user.formattedTimeConnected + "\n");
-
-                }
-
-                //frame.informationPanel.usernameTextArea.append("Hello\n");
-
-                timeInitilaized = System.currentTimeMillis();
-            }
+            updateInformationPanel();
 
             if(!frame.server.messagesToBeDisplayed.isEmpty()){
 
@@ -75,11 +79,13 @@ public class UpdateChat implements Runnable {
                 frame.chatPanel.textArea.append("\n"+ messageToBeSent);
                 //frame.chatPanel.textArea.setFont(font);
 
-                /*if(moveScrollBar){
+                if(moveScrollBar){
+                    frame.chatPanel.textArea.setCaretPosition(frame.chatPanel.textArea.getDocument().getLength());
+                }
 
-                }*/
+                //frame.chatPanel.scrollPane.getVerticalScrollBar().setValue(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum());
 
-                frame.chatPanel.scrollPane.getVerticalScrollBar().setValue(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum());
+
 
                 /*System.out.println("Scrollbars value: " + frame.chatPanel.scrollPane.getVerticalScrollBar().getValue());
 
@@ -94,46 +100,4 @@ public class UpdateChat implements Runnable {
 
         }
     }
-
-
-   /* static void quickSort(List<User> userList, int minimum, int maximum){
-
-        long[] userTimes = new long[userList.size()];
-
-
-        for(int x = 0; x < userList.size(); x++){
-            userTimes[x] = userList.get(x).amountOfTimeConnected;
-        }
-
-        //Get the middle pivot point
-        long pivot = userTimes[(minimum+maximum) / 2];
-
-
-        int leftHold = minimum;
-        int rightHold = maximum;
-
-        while(leftHold < rightHold){
-
-            while((userTimes[leftHold] < pivot) && (leftHold <= rightHold)){
-                leftHold++;
-            }
-            while((userTimes[rightHold] > pivot) && (rightHold >= leftHold)){
-                rightHold--;
-            }
-
-            if(leftHold < rightHold){
-
-                long tmp = userTimes[leftHold];
-                userTimes[leftHold] = userTimes[rightHold];
-                userTimes[rightHold] = tmp;
-
-                if((userTimes[leftHold] == pivot) && (userTimes[rightHold] == pivot)){
-                    leftHold++;
-                }
-            }
-
-            if((minimum < (leftHold - 1))
-
-        }
-    }*/
 }
