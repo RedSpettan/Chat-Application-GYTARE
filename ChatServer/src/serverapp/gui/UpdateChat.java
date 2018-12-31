@@ -1,5 +1,9 @@
 package serverapp.gui;
 
+import serverapp.server.User;
+
+import java.util.List;
+
 public class UpdateChat implements Runnable {
 
 
@@ -8,11 +12,14 @@ public class UpdateChat implements Runnable {
     int scrollInitialMaximum;
     int scrollValue;
 
+    long timeInitilaized;
 
     //Font font = new Font("Comic Sans MS", Font.BOLD, 30);
     public UpdateChat(MainFrame mainFrame){
 
         this.frame = mainFrame;
+
+        timeInitilaized = System.currentTimeMillis();
 
     }
 
@@ -23,8 +30,25 @@ public class UpdateChat implements Runnable {
 
 
 
-
         while(frame.updateChat){
+
+            if(System.currentTimeMillis() - timeInitilaized > 2000){
+
+                frame.informationPanel.clearTextAreas();
+
+                for(User user : frame.server.userList){
+
+                    frame.informationPanel.usernameTextArea.append(user.username + "\n");
+                    frame.informationPanel.ipAddressTextArea.append(user.inetAddress.toString()+ "\n");
+                    frame.informationPanel.portTextArea.append(user.socket.getPort() + "\n");
+                    frame.informationPanel.timeTextArea.append(user.formattedTimeConnected + "\n");
+
+                }
+
+                //frame.informationPanel.usernameTextArea.append("Hello\n");
+
+                timeInitilaized = System.currentTimeMillis();
+            }
 
             if(!frame.server.messagesToBeDisplayed.isEmpty()){
 
@@ -70,4 +94,46 @@ public class UpdateChat implements Runnable {
 
         }
     }
+
+
+   /* static void quickSort(List<User> userList, int minimum, int maximum){
+
+        long[] userTimes = new long[userList.size()];
+
+
+        for(int x = 0; x < userList.size(); x++){
+            userTimes[x] = userList.get(x).amountOfTimeConnected;
+        }
+
+        //Get the middle pivot point
+        long pivot = userTimes[(minimum+maximum) / 2];
+
+
+        int leftHold = minimum;
+        int rightHold = maximum;
+
+        while(leftHold < rightHold){
+
+            while((userTimes[leftHold] < pivot) && (leftHold <= rightHold)){
+                leftHold++;
+            }
+            while((userTimes[rightHold] > pivot) && (rightHold >= leftHold)){
+                rightHold--;
+            }
+
+            if(leftHold < rightHold){
+
+                long tmp = userTimes[leftHold];
+                userTimes[leftHold] = userTimes[rightHold];
+                userTimes[rightHold] = tmp;
+
+                if((userTimes[leftHold] == pivot) && (userTimes[rightHold] == pivot)){
+                    leftHold++;
+                }
+            }
+
+            if((minimum < (leftHold - 1))
+
+        }
+    }*/
 }

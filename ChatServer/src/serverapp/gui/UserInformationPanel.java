@@ -24,7 +24,13 @@ public class UserInformationPanel extends JPanel {
     JScrollPane timeScrollPane;
 
 
+    void clearTextAreas(){
+        usernameTextArea.setText("");
+        ipAddressTextArea.setText("");
+        portTextArea.setText("");
+        timeTextArea.setText("");
 
+    }
 
     public UserInformationPanel(MainFrame mainFrame) {
 
@@ -150,7 +156,7 @@ public class UserInformationPanel extends JPanel {
         // <--- First Column (IP address) ----->
         constraints = new GridBagConstraints();
 
-        constraints.weightx = 0.3;
+        constraints.weightx = 0.4;
         constraints.weighty = 1.0;
 
         constraints.gridheight = GridBagConstraints.REMAINDER;
@@ -166,7 +172,7 @@ public class UserInformationPanel extends JPanel {
         // <--- First Column (Port) ----->
         constraints = new GridBagConstraints();
 
-        constraints.weightx = 0.1;
+        constraints.weightx = 0.05;
         constraints.weighty = 1.0;
 
         constraints.gridheight = GridBagConstraints.REMAINDER;
@@ -182,7 +188,7 @@ public class UserInformationPanel extends JPanel {
         // <--- First Column (Time) ----->
         constraints = new GridBagConstraints();
 
-        constraints.weightx = 0.8;
+        constraints.weightx = 0.2;
         constraints.weighty = 1.0;
 
         constraints.gridheight = GridBagConstraints.REMAINDER;

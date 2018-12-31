@@ -29,7 +29,7 @@ public class Server {
     public ConcurrentLinkedQueue<String> messagesToBeDisplayed = new ConcurrentLinkedQueue<>();
 
 
-    List<User> userList = new ArrayList<>();
+    public List<User> userList = new ArrayList<>();
 
 
     private Thread sendMessageThread;
@@ -248,6 +248,11 @@ public class Server {
                 if(System.currentTimeMillis() - systemTime >= 5000){
                     CheckSockets();
                     systemTime = System.currentTimeMillis();
+
+                    for(User user: userList){
+                        user.calculateTime();
+                        System.out.println(user.formattedTimeConnected);
+                    }
                 }
 
                 //Check if the send message is still alive. If not, the thread will attempt a restart

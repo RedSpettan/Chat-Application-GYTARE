@@ -23,6 +23,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public Server server;
 
+
     public MainFrame(String title, Server activeServer){
         super(title);
 

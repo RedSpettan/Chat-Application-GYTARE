@@ -73,7 +73,7 @@ public class ChatPanel extends JPanel implements ActionListener {
 
         //textArea.append("AnotherOne: Hello there \nTestPerson13: Wow, it sure is empty in here");
 
-        textArea.append("\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj");
+        //textArea.append("\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj");
 
 
     }
