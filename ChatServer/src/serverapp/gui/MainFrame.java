@@ -1,6 +1,7 @@
 package serverapp.gui;
 
 import serverapp.server.Server;
+import serverapp.server.StartServerThread;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,19 +16,21 @@ public class MainFrame extends JFrame implements ActionListener {
     ChatPanel chatPanel;
     UserInformationPanel informationPanel;
 
+    JButton shutDownServerButton;
+
     Container container;
 
     private Thread chatUpdateThread;
 
     boolean updateChat = false;
 
+    public boolean runServer = false;
+
     public Server server;
 
 
-    public MainFrame(String title, Server activeServer){
+    public MainFrame(String title){
         super(title);
-
-        this.server = activeServer;
 
         setVisible(true);
 
@@ -81,7 +84,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
-    private void CreateChatPanel(){
+    private void createChatPanel(){
         chatPanel = new ChatPanel(this);
 
         constraints = new GridBagConstraints();
@@ -108,23 +111,67 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+    private void createShutDownButton(){
+        shutDownServerButton = new JButton("Shut down Server");
+
+        shutDownServerButton.addActionListener(this);
+
+        constraints = new GridBagConstraints();
+
+        constraints.weightx = 0.0;
+        constraints.weighty = 0.0;
+
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+
+        constraints.anchor = GridBagConstraints.PAGE_END;
+
+        constraints.insets = new Insets(0,0,10,0);
+
+        container.add(shutDownServerButton, constraints);
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverSetupPanel.submitButton){
             System.out.println("The button got pressed!");
-            //serverSetupPanel.setVisible(false);
-            container.remove(serverSetupPanel);
 
-            CreateChatPanel();
+            if(serverSetupPanel.validatePortField() && serverSetupPanel.validateMaximumUsersField()){
+                //serverSetupPanel.setVisible(false);
 
-            createInformationPanel();
+                int responsMessage = JOptionPane.showConfirmDialog(null,
+                        "Are these values correct? \n Port Number: " + serverSetupPanel.port + "\n Maximum Users: " + serverSetupPanel.maximumUsers + "\n Press 'Yes' to proceed",
+                        "Information",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE);
 
-            container.revalidate();
-            container.repaint();
+                if(responsMessage == JOptionPane.YES_OPTION){
+                    container.remove(serverSetupPanel);
+
+                    server = new Server(serverSetupPanel.port, serverSetupPanel.maximumUsers);
+
+                    runServer = true;
+
+                    new Thread(new StartServerThread(this, server)).start();
+
+                    createChatPanel();
+                    createInformationPanel();
+                    createShutDownButton();
+
+                    container.revalidate();
+                    container.repaint();
+                }
 
 
+            }
 
+        }
 
+        if(e.getSource() == shutDownServerButton){
+            runServer = false;
+            System.out.println("Run Server");
         }
     }
 }

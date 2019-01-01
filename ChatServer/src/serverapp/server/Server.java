@@ -1,5 +1,7 @@
 package serverapp.server;
 
+import serverapp.gui.MainFrame;
+
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +14,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class Server {
+
+
+    boolean serverIsRunning = false;
 
     //Store the Servers listening port
     private int remotePort;
@@ -190,9 +195,30 @@ public class Server {
     }
 
     //Check if a socket is currently not used
-    private boolean CheckRemotePortAvailability(int portToCheck){
+    public static boolean CheckRemotePortAvailability(int portToCheck){
 
-        try{
+        try(Socket socket = new Socket(InetAddress.getLocalHost(),portToCheck )){
+
+            System.out.println("Remote port is NOT available");
+
+            return false;
+
+        } catch (UnknownHostException e) {
+            System.out.println("Remote port is NOT available");
+
+            return false;
+
+        } catch (IOException e) {
+            System.out.println("Remote port is available");
+
+            return true;
+        }catch (IllegalArgumentException e){
+            System.out.println("Illegal Argument");
+
+            return false;
+        }
+
+        /*try{
             Socket socket = new Socket(InetAddress.getLocalHost(),portToCheck );
             socket.close();
 
@@ -210,13 +236,16 @@ public class Server {
             System.out.println("Remote port is available");
 
             return true;
-        }
+        }*/
     }
 
     //Initialises the server and it's associated threads
-    public void StartServer(){
+    public void StartServer(MainFrame frame){
 
         setUpLogger();
+
+
+
 
         System.out.println("Remote port: " + remotePort);
 
@@ -240,7 +269,9 @@ public class Server {
             long systemTime = System.currentTimeMillis();
 
 
-            while(true){
+            while(frame.runServer){
+
+                System.out.println(serverIsRunning);
 
                 //System.out.println(systemTime % 5000);
 

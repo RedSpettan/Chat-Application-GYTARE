@@ -10,7 +10,24 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
 
     public JButton submitButton;
 
-    public ServerSetupPanel(JFrame currentFrame){
+    public JLabel maximumUserLabel;
+    public JLabel portLabel;
+
+    public int port;
+
+    public JTextField portTextField;
+    public JTextField maximumUserField;
+
+
+    public int maximumUsers;
+
+    MainFrame frame;
+
+
+    public ServerSetupPanel(MainFrame currentFrame){
+
+        frame = currentFrame;
+
         Dimension size = getPreferredSize();
         size.width = (currentFrame.getSize().width / 2);
         size.height = (currentFrame.getSize().height / 2);
@@ -27,11 +44,15 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
         submitButton.addActionListener((ActionListener) currentFrame);
 
         //Create a label an text field for port number
-        JLabel portLabel = new JLabel("Port Number: ");
-        JTextField portTextField = new JTextField(0);
 
-        JLabel maximumUserLabel = new JLabel("Maximum Users: ");
-        JTextField maximumUserField = new JTextField(10);
+        portLabel = new JLabel("Port Number: ");
+
+        portTextField = new JTextField(0);
+
+
+        maximumUserLabel = new JLabel("Maximum Users: ");
+
+        maximumUserField = new JTextField(10);
 
         setLayout(new GridBagLayout());
 
@@ -77,12 +98,14 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
 
         constraints.anchor = GridBagConstraints.LINE_START;
 
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+
         constraints.gridx = 1;
         constraints.gridy = 0;
 
         constraints.gridwidth = 1;
 
-        add(maximumUserField, constraints);
+        add(portTextField, constraints);
 
         // <--- Second Row ----->
 
@@ -91,17 +114,85 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
         constraints.gridx = 1;
         constraints.gridy = 1;
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
 
-        add(portTextField, constraints);
+        add(maximumUserField, constraints);
+    }
+
+    public boolean validatePortField(){
+
+        int port;
+
+        if(!portTextField.getText().isEmpty()){
+
+            try{
+                port = Math.abs(Integer.parseInt(portTextField.getText()));
+            }catch(NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "Port Number: Only numbers 0-9 is allowed. \n Please try again", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            if(frame.server.CheckRemotePortAvailability(port)){
+
+            }else{
+                System.out.println("Not a valid port!");
+
+                JOptionPane.showMessageDialog(null, "Please enter a valid port!", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+        }else{
+            System.out.println("Enter a valid port!");
+
+            JOptionPane.showMessageDialog(null, "'Port Number' text field is empty. \n Please enter a valid port.", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+            portTextField.requestFocus();
+            return false;
+        }
+
+        this.port = port;
+
+        return true;
+    }
+
+    public boolean validateMaximumUsersField(){
+        if(!maximumUserField.getText().isEmpty()){
+
+            int maximumUsers;
+
+            try{
+                maximumUsers = Math.abs(Integer.parseInt(maximumUserField.getText()));
+            }catch(NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "Maximum Users: Only numbers 0-9 is allowed. \n Please try again", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            this.maximumUsers = maximumUsers;
+
+            return true;
+
+        }else{
+            JOptionPane.showMessageDialog(null, "'Maximum Users' text field is empty. \n Please enter a number.", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+            portTextField.requestFocus();
+
+            return false;
+        }
+
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
+
+
         if(e.getSource() == submitButton){
             System.out.println("Button has been pressed");
+
+
+
+
+
 
         }
 
