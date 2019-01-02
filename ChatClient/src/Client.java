@@ -139,7 +139,7 @@ public class Client {
         try(DatagramSocket socket = new DatagramSocket(0)) {
 
             //Wait a specified amount of time for response
-            socket.setSoTimeout(5000);
+            socket.setSoTimeout(10000);
 
             //Construct server message, client's username
             String message = username;

@@ -1,5 +1,8 @@
 package serverapp.server;
 
+
+
+
 import serverapp.gui.MainFrame;
 
 import java.io.*;
@@ -12,6 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import serverapp.gui.*;
 
 public class Server {
 
@@ -33,6 +37,8 @@ public class Server {
 
     public ConcurrentLinkedQueue<String> messagesToBeDisplayed = new ConcurrentLinkedQueue<>();
 
+
+    public MainFrame mainframe;
 
     public List<User> userList = new ArrayList<>();
 
@@ -244,7 +250,7 @@ public class Server {
 
         setUpLogger();
 
-
+        this.mainframe = frame;
 
 
         System.out.println("Remote port: " + remotePort);
@@ -256,10 +262,12 @@ public class Server {
             System.out.println("IP address: " + Inet4Address.getLocalHost());
 
 
+            serverIsRunning = frame.runServer;
+
             //Start threads
             new Thread(new ConnectionRequests()).start();
             new Thread(new ServerConnection(serverSocket, this)).start();
-            new Thread(new DebugServerThread(this)).start();
+            //new Thread(new DebugServerThread(this)).start();
 
             sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
             sendMessageThread.start();
@@ -269,11 +277,12 @@ public class Server {
             long systemTime = System.currentTimeMillis();
 
 
-            while(frame.runServer){
 
-                System.out.println(serverIsRunning);
+            while(serverIsRunning){
 
                 //System.out.println(systemTime % 5000);
+
+                serverIsRunning = frame.runServer;
 
                 //If 5 seconds have surpassed, check if sockets are still connected
                 if(System.currentTimeMillis() - systemTime >= 5000){
@@ -297,6 +306,8 @@ public class Server {
 
             }
 
+            ShutdownServer();
+
             //updateServer = true;
 
             //UpdateServer();
@@ -309,6 +320,19 @@ public class Server {
 
     }
 
+
+    private void ShutdownServer(){
+        try {
+
+            for(User user : userList){
+                user.socket.close();
+                //userList.remove(user);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void UpdateServer(){
 
@@ -473,59 +497,80 @@ public class Server {
             System.out.println("Listening for requests");
             try(DatagramSocket socket = new DatagramSocket(remotePort)) {
 
-                while(true){
+                socket.setSoTimeout(5000);
+
+                while(serverIsRunning){
                     DatagramPacket request = new DatagramPacket(new byte[50], 50);
-                    socket.receive(request);
 
-                    System.out.println("Request Received! ");
+                    boolean requestRecieved = false;
+                    try{
 
-                    byte[] responsMessage;
-                    String clientUsername = "[UNDECIDED]";
-                    System.out.println("Amount of users: " + userList.size());
-                    if(userList.size() >= maximumUsers){
+                        System.out.println("Looking for requests");
+                        socket.receive(request);
+                        requestRecieved = true;
 
-                        //"f" for "The server is full"
-                        responsMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
-                    }else{
-                         clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
+                    }catch(SocketTimeoutException e){
 
-                        //Remove white characters
-                        clientUsername = clientUsername.trim();
+                        System.out.println("Failed to get message");
 
-                        boolean usernameExist = false;
-
-                        for(User user : userList){
-                            if(user.username.equalsIgnoreCase(clientUsername)){
-                                usernameExist = true;
-                                break;
-                            }
-                        }
-
-                        // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
-
-                        if(!usernameExist){
-                            responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
-                        }else{
-                            responsMessage = "u".getBytes(StandardCharsets.ISO_8859_1);
-                        }
                     }
 
 
-                    // ------ Log Request ------
+                    if(requestRecieved){
+                        System.out.println("Request Received! ");
 
-                    requestLogger.info("\r\nRequest Received!\r\n" +
-                            "Host Address: " + request.getAddress().getHostAddress() +
-                            "\r\nHost Name: " + request.getAddress().getHostName() +
-                            "\r\nUsername submitted: " + clientUsername +
-                            "\r\nResponse Message: " + new String(responsMessage, StandardCharsets.ISO_8859_1 ) +
-                            "\r\n\r\n");
+                        byte[] responsMessage;
+                        String clientUsername = "[UNDECIDED]";
+                        System.out.println("Amount of users: " + userList.size());
+                        if(userList.size() >= maximumUsers){
+
+                            //"f" for "The server is full"
+                            responsMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
+                        }else{
+                            clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
+
+                            //Remove white characters
+                            clientUsername = clientUsername.trim();
+
+                            boolean usernameExist = false;
+
+                            for(User user : userList){
+                                if(user.username.equalsIgnoreCase(clientUsername)){
+                                    usernameExist = true;
+                                    break;
+                                }
+                            }
+
+                            // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
+
+                            if(!usernameExist){
+                                responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
+                            }else{
+                                responsMessage = "u".getBytes(StandardCharsets.ISO_8859_1);
+                            }
+                        }
+
+
+                        // ------ Log Request ------
+
+                        requestLogger.info("\r\nRequest Received!\r\n" +
+                                "Host Address: " + request.getAddress().getHostAddress() +
+                                "\r\nHost Name: " + request.getAddress().getHostName() +
+                                "\r\nUsername submitted: " + clientUsername +
+                                "\r\nResponse Message: " + new String(responsMessage, StandardCharsets.ISO_8859_1 ) +
+                                "\r\n\r\n");
 
 
 
-                    DatagramPacket response = new DatagramPacket(responsMessage, responsMessage.length, request.getAddress(), request.getPort());
-                    socket.send(response);
+                        DatagramPacket response = new DatagramPacket(responsMessage, responsMessage.length, request.getAddress(), request.getPort());
+                        socket.send(response);
+                    }
+
+
 
                 }
+
+                System.out.println("Connection Request thread has been shut down!");
 
 
 
@@ -553,7 +598,7 @@ public class Server {
         public void run() {
 
             try {
-                while(true){
+                while(serverIsRunning){
 
 
 
@@ -589,6 +634,8 @@ public class Server {
 
             } catch (IOException e) {
                 e.printStackTrace();
+
+                System.out.println("Server connection thread has been shutdown!");
             }
 
         }

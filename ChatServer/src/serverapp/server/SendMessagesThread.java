@@ -21,7 +21,7 @@ public class SendMessagesThread implements Runnable{
 
 
 
-        while(true){
+        while(activeServer.serverIsRunning){
 
             //Check if the message queue in the server class (the class which started this thread) currently has any message.
             if(!messageQueue.isEmpty()){
@@ -77,5 +77,7 @@ public class SendMessagesThread implements Runnable{
                 }*/
             }
         }
+
+        System.out.println("Send message thread has been terminated!");
     }
 }
