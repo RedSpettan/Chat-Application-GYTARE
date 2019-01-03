@@ -405,7 +405,7 @@ public class Server {
 
 
     }
-    void ReceiveMessages(String message, String sender){
+    public void ReceiveMessages(String message, String sender){
         //This method is primarily used by the server to send message to clients
 
         String completeMessage = sender +": " + message;
@@ -499,7 +499,7 @@ public class Server {
             System.out.println("Listening for requests");
             try(DatagramSocket socket = new DatagramSocket(remotePort)) {
 
-                socket.setSoTimeout(5000);
+                socket.setSoTimeout(1000);
 
                 while(serverIsRunning){
                     DatagramPacket request = new DatagramPacket(new byte[50], 50);
@@ -507,13 +507,13 @@ public class Server {
                     boolean requestRecieved = false;
                     try{
 
-                        System.out.println("Looking for requests");
+                        //System.out.println("Looking for requests");
                         socket.receive(request);
                         requestRecieved = true;
 
                     }catch(SocketTimeoutException e){
 
-                        System.out.println("Failed to get message");
+                        //System.out.println("Failed to get message");
 
                     }
 

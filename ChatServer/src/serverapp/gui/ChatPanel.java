@@ -12,8 +12,12 @@ public class ChatPanel extends JPanel implements ActionListener {
     JTextArea textArea;
     JScrollPane scrollPane;
 
-    public ChatPanel(JFrame currentFrame) {
+    MainFrame frame;
 
+    public ChatPanel(MainFrame currentFrame) {
+
+
+        this.frame = currentFrame;
 
         Dimension size = getPreferredSize();
 
@@ -82,6 +86,15 @@ public class ChatPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(!textField.getText().isEmpty()){
+            String message = textField.getText();
 
+            frame.server.ReceiveMessages(message, "SERVER");
+
+            textField.setText("");
+
+            textField.requestFocus();
+
+        }
     }
 }

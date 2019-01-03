@@ -190,6 +190,8 @@ public class MainFrame extends JFrame implements ActionListener {
             if(responseMessage == JOptionPane.YES_OPTION){
                 container.remove(serverSetupPanel);
 
+                server = null;
+
                 server = new Server(serverSetupPanel.port, serverSetupPanel.maximumUsers);
 
                 runServer = true;
@@ -207,6 +209,23 @@ public class MainFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+
+        /*if(updateChat && runServer){
+            if(!chatPanel.textField.getText().isEmpty()){
+                String message = chatPanel.textField.getText();
+
+                server.ReceiveMessages(message, "SERVER");
+
+                chatPanel.textField.setText("");
+
+                chatPanel.textField.requestFocus();
+
+            }
+        }*/
+
+
+
         if(e.getSource() == serverSetupPanel.submitButton){
             System.out.println("The button got pressed!");
 
@@ -218,6 +237,8 @@ public class MainFrame extends JFrame implements ActionListener {
             validateServerShutdown();
 
         }
+
+
     }
 
     WindowAdapter wa = new WindowAdapter() {
