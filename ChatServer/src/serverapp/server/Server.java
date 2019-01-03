@@ -332,6 +332,8 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Server has been shutdown!");
     }
 
     private void UpdateServer(){
@@ -388,7 +390,7 @@ public class Server {
 
         if(senderUser != null){
             System.out.println(senderUser.username + ": " + message);
-            completeMessage =senderUser.username + ": " + message;
+            completeMessage = senderUser.username + ": " + message;
             //messageToBeSentList.add("***" + senderUser.username + ": " + message);
         }else{
             completeMessage = "[USERNAME UNAVAILABLE]"+ ": " + message;

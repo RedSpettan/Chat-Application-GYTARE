@@ -20,7 +20,7 @@ public class StartServerThread implements Runnable {
 
         server.StartServer(frame);
 
-        System.out.println("Server has been shutdown!");
+        System.out.println("StartServerThread has been shutdown!");
 
     }
 }

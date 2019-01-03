@@ -34,7 +34,7 @@ public class ServerThread implements Runnable{
             String line;
 
             //Will become true when the "readLine" method gives back a string which is not null
-            while((line = reader.readLine()) !=null){
+            while((line = reader.readLine()) != null){
 
                 //Send the message to the server
                 activeServer.ReceiveMessages(line, clientSocket);
