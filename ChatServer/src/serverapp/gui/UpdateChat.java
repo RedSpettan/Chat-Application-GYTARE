@@ -96,6 +96,8 @@ public class UpdateChat implements Runnable {
 
 
                     //System.out.println("The amount of Rows: " +frame.chatPanel.textArea.getRows() );
+                }else{
+                    System.out.println("Nullllll: " + messageToBeSent);
                 }
 
 

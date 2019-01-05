@@ -388,6 +388,10 @@ public class Server {
 
         String completeMessage;
 
+        if(message == null){
+            System.out.println("Message is null?");
+        }
+
         if(senderUser != null){
             System.out.println(senderUser.username + ": " + message);
             completeMessage = senderUser.username + ": " + message;

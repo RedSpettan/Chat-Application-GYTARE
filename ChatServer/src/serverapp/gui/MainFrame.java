@@ -210,22 +210,6 @@ public class MainFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
-        /*if(updateChat && runServer){
-            if(!chatPanel.textField.getText().isEmpty()){
-                String message = chatPanel.textField.getText();
-
-                server.ReceiveMessages(message, "SERVER");
-
-                chatPanel.textField.setText("");
-
-                chatPanel.textField.requestFocus();
-
-            }
-        }*/
-
-
-
         if(e.getSource() == serverSetupPanel.submitButton){
             System.out.println("The button got pressed!");
 
@@ -247,7 +231,7 @@ public class MainFrame extends JFrame implements ActionListener {
             super.windowClosing(e);
 
             int response = JOptionPane.showConfirmDialog(null,
-                    "The server and program will shutdown.\nDo you want to proceed?",
+                    "The server and program will shut down.\nDo you want to proceed?",
                     "Exit",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.INFORMATION_MESSAGE);

@@ -1,12 +1,8 @@
+package clientapp.client;
+
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.*;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.logging.Logger;
 
 public class Client {
 
@@ -25,8 +21,8 @@ public class Client {
     private int amountOfRetries;
 
 
-    //Constructor for Client, checks that the port is non-negative and prints the computers IP address
-    Client(String host, int port, String username){
+    //Constructor for clientapp.client.Client, checks that the port is non-negative and prints the computers IP address
+    public Client(String host, int port, String username){
 
         //Check if the port is valid
         if(port < 0){
@@ -110,7 +106,7 @@ public class Client {
 
             System.out.println("\n--RECONNECTION SUCCESSFUL--\n");
 
-            //Will initialize a SendMessageThread and start a new thread, if a send message thread was never assigned or shut down
+            //Will initialize a clientapp.client.SendMessageThread and start a new thread, if a send message thread was never assigned or shut down
             if(sendMessageThread == null || !sendMessageThread.isAlive()){
                 sendMessageThreadClass = new SendMessageThread(this);
                 sendMessageThread = new Thread(sendMessageThreadClass);
@@ -120,7 +116,7 @@ public class Client {
             //Update the current clientSocket
             //endMessageThreadClass.setClientSocket(this.clientSocket);
 
-            //Start a new thread for a ReceiveMessagesThread
+            //Start a new thread for a clientapp.client.ReceiveMessagesThread
             new Thread(new ReceiveMessagesThread(this.clientSocket, this)).start();
 
         } catch (IOException e) {
@@ -181,7 +177,7 @@ public class Client {
 
     }
 
-    void startClient(){
+    public void startClient(){
 
         if(!requestConnection()){
             System.exit(0);
@@ -196,7 +192,7 @@ public class Client {
 
             System.out.println("\n--TCP connection has been established--");
 
-            //Initialize a new SendMessageThread and start a new thread using it
+            //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
             sendMessageThreadClass = new SendMessageThread(this);
             sendMessageThread = new Thread(sendMessageThreadClass);
             sendMessageThread.start();
@@ -207,8 +203,13 @@ public class Client {
 
             UpdateClient();
 
-        } catch (IOException e) {
+        }catch(UnknownHostException e){
+            System.out.println("Weird Host");
+        }
+        catch (IOException e) {
             e.printStackTrace();
+
+
             try{
                 socket.close();
             } catch (IOException e1) {
