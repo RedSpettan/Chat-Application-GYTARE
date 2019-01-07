@@ -23,11 +23,6 @@ public class Main {
 
         mainClient.startClient();
 
-
-
-
-
-
     }
 
     private static String RetrieveUsername(){
@@ -44,7 +39,7 @@ public class Main {
             //Username cannot be 20 characters or longer
             for(;;){
                 if((line = scanner.nextLine()) != null){
-                    if(line.length() < 20){
+                    if(line.length() <= 20){
                         username = line;
                         break;
                     }

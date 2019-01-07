@@ -1,5 +1,7 @@
 package serverapp.gui;
 
+import serverapp.server.Server;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
@@ -131,7 +133,7 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
                 return false;
             }
 
-            if(frame.server.CheckRemotePortAvailability(port)){
+            if(Server.CheckRemotePortAvailability(port)){
 
             }else{
                 System.out.println("Not a valid port!");

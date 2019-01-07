@@ -3,6 +3,9 @@ package clientapp.gui;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 
 public class ClientConnectPanel extends JPanel {
 
@@ -16,7 +19,7 @@ public class ClientConnectPanel extends JPanel {
     JTextField usernameTextField;
 
 
-    JButton connectButton;
+    public JButton connectButton;
 
     MainFrame frame;
 
@@ -50,6 +53,7 @@ public class ClientConnectPanel extends JPanel {
 
 
         connectButton = new JButton("Connect");
+        connectButton.addActionListener(currentFrame);
 
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -117,7 +121,7 @@ public class ClientConnectPanel extends JPanel {
 
 
 
-        // <--- First Column ---------------->
+        // <--- Second Column ---------------->
 
         // <--- First Row ----->
         constraints = new GridBagConstraints();
@@ -176,4 +180,137 @@ public class ClientConnectPanel extends JPanel {
 
 
     }
+
+
+    public boolean validateHostAddress(){
+
+        if(!hostTextField.getText().isEmpty()){
+            return true;
+        }
+
+
+        JOptionPane.showMessageDialog(null,
+                "The 'Host Address' text field is empty. \nPlease enter a valid host address. ",
+                "Host Address", JOptionPane.ERROR_MESSAGE);
+        return false;
+    }
+
+    public boolean validatePortNumber(){
+
+
+        int port;
+
+        if(!portTextField.getText().isEmpty()){
+
+
+            try{
+                port = Math.abs(Integer.parseInt(portTextField.getText()));
+            }catch(NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "Port Number: Only numbers 0-9 is allowed. \n Please try again", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            if( port > 0xFFFF){
+                JOptionPane.showMessageDialog(null, "Port number is out of range. \nLargest port allowed: 65534", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+
+            }
+
+            return true;
+
+        }else{
+            JOptionPane.showMessageDialog(null, "'Port Number' text field is empty. \n Please enter a valid port.", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+            portTextField.requestFocus();
+            return false;
+        }
+
+    }
+
+
+    public boolean validateUsername(){
+
+
+        String username;
+
+        if(!usernameTextField.getText().isEmpty()){
+
+            username = usernameTextField.getText();
+
+            if(username.length() > 20){
+
+                JOptionPane.showMessageDialog(null, "Username is too long. \nMaximum amount of characters is 20.", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+
+            //Remove any special characters, only latin characters, numbers and spaces are allowed
+            if(!username.equals(username.replaceAll("[^a-zA-Z0-9\\s]",""))){
+
+                JOptionPane.showMessageDialog(null,
+                        "Username uses illegal characters\n" +
+                                "Acceptable characters: \n" +
+                                "•Latin alphabet (A-Z and a-z)\n" +
+                                "•Numbers (0-9) \n" +
+                                "•White spaces\n" +
+                                "Do not use these characters: \n" +
+                                showIllegalCharacters(username) ,
+                        "ERROR", JOptionPane.ERROR_MESSAGE);
+
+                return false;
+
+               /* System.err.println("Username uses illegal characters, try again!");
+                System.out.println("Previous username: " + username + "\nNew usersame: " + username.replaceAll("[^a-zA-Z0-9\\s]",""));*/
+            }/*else{
+                //username = username.replaceAll("[^a-zA-Z0-9\\s]","");
+            }*/
+
+            return true;
+
+
+
+        }else{
+            JOptionPane.showMessageDialog(null, "'Username' text field is empty. \n Please enter a username.", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+            usernameTextField.requestFocus();
+            return false;
+        }
+
+    }
+
+
+    private String showIllegalCharacters(String username){
+
+        String s = username;
+
+        s = s.replaceAll("[a-zA-Z0-9\\s]","");
+
+        char[] chars = s.toCharArray();
+
+        String illegalChars = "";
+
+        for(int x = 0; x < chars.length; x++){
+
+            if(illegalChars.indexOf(chars[x]) == -1){
+                illegalChars = illegalChars + (chars[x]);
+
+                if(x != (chars.length -1)){
+                    illegalChars = illegalChars + ", ";
+                }
+
+            }
+
+
+
+        }
+
+        int i = illegalChars.lastIndexOf(",");
+
+
+        return illegalChars;
+
+
+
+    }
+
+
+
 }
