@@ -25,8 +25,8 @@ public class ReceiveMessagesThread implements Runnable{
     public void run() {
 
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.clientSocket.getInputStream(), StandardCharsets.ISO_8859_1));
-            PrintWriter out = new PrintWriter(activeClient.clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1)) {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(activeClient.socket.getInputStream(), StandardCharsets.ISO_8859_1));
+            PrintWriter out = new PrintWriter(activeClient.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1)) {
 
             checkForUsernameRequest(reader, out);
 
@@ -35,12 +35,14 @@ public class ReceiveMessagesThread implements Runnable{
             //Wait and read incoming lines on the socket's input stream
             while((line = reader.readLine()) != null){
 
+                activeClient.messageToBeDisplayedList.add(line);
+
                 System.out.println(line);
             }
 
             //The line read is null, shutting down thread
 
-            System.out.println("Is the socket closed?: " + activeClient.clientSocket.isClosed());
+            System.out.println("Is the socket closed?: " + activeClient.socket.isClosed());
             System.out.println("Receive message thread has been terminated!");
 
             //Catch the error which is caused by the server shutting down
@@ -53,6 +55,8 @@ public class ReceiveMessagesThread implements Runnable{
             e.printStackTrace();
 
         }
+
+
 
     }
 

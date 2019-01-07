@@ -9,6 +9,10 @@ import java.net.Socket;
 
 public class ClientConnectPanel extends JPanel {
 
+    public String hostAddress;
+    public int port;
+    public String username;
+
 
     JLabel hostLabel;
     JLabel portLabel;
@@ -185,13 +189,16 @@ public class ClientConnectPanel extends JPanel {
     public boolean validateHostAddress(){
 
         if(!hostTextField.getText().isEmpty()){
+
+            this.hostAddress = hostTextField.getText();
             return true;
+
         }
 
 
         JOptionPane.showMessageDialog(null,
                 "The 'Host Address' text field is empty. \nPlease enter a valid host address. ",
-                "Host Address", JOptionPane.ERROR_MESSAGE);
+                "ERROR", JOptionPane.ERROR_MESSAGE);
         return false;
     }
 
@@ -216,6 +223,8 @@ public class ClientConnectPanel extends JPanel {
 
             }
 
+            this.port = port;
+
             return true;
 
         }else{
@@ -226,7 +235,6 @@ public class ClientConnectPanel extends JPanel {
         }
 
     }
-
 
     public boolean validateUsername(){
 
@@ -263,6 +271,7 @@ public class ClientConnectPanel extends JPanel {
                 //username = username.replaceAll("[^a-zA-Z0-9\\s]","");
             }*/
 
+            this.username = username;
             return true;
 
 
@@ -297,13 +306,7 @@ public class ClientConnectPanel extends JPanel {
                 }
 
             }
-
-
-
         }
-
-        int i = illegalChars.lastIndexOf(",");
-
 
         return illegalChars;
 

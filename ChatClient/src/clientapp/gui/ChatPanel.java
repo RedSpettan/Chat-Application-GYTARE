@@ -93,5 +93,16 @@ public class ChatPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+        if(!textField.getText().isEmpty()){
+            String message = textField.getText();
+
+            frame.client.messageToBeSentQueue.add(message);
+
+            textField.setText("");
+
+            textField.requestFocus();
+
+        }
+
     }
 }

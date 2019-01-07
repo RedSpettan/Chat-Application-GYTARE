@@ -1,8 +1,11 @@
 package clientapp.client;
 
+import clientapp.gui.MainFrame;
+
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
 
@@ -11,7 +14,14 @@ public class Client {
     public String username; /*"UsernameTest";*/
 
 
-    Socket clientSocket;
+    public ConcurrentLinkedQueue<String> messageToBeSentQueue = new ConcurrentLinkedQueue<>();
+    public ConcurrentLinkedQueue<String> messageToBeDisplayedList = new ConcurrentLinkedQueue<>();
+
+    boolean clientIsRunning = false;
+
+    MainFrame frame;
+
+    Socket socket;
 
     private Thread sendMessageThread;
     private Thread receiveMessageThread;
@@ -59,10 +69,15 @@ public class Client {
 
 
 
-        while(true){
+        while(clientIsRunning){
+
+            clientIsRunning = frame.runClient;
+
 
             //Check if the socket connected to the socket is closed. If the socket is in fact closed the program will try to reconnect to the server
-            if(this.clientSocket.isClosed()){
+            if(this.socket.isClosed()){
+
+
 
                 //If the client has attempted over 5 unsuccessful reconnects the client will shut down
                 if(amountOfRetries >= 5 ){
@@ -100,7 +115,7 @@ public class Client {
             //Tries to bind the socket to the server
             socket = new Socket(serverHost, remotePort);
 
-            this.clientSocket = socket;
+            this.socket = socket;
 
             amountOfRetries = 0;
 
@@ -113,11 +128,11 @@ public class Client {
                 sendMessageThread.start();
             }
 
-            //Update the current clientSocket
-            //endMessageThreadClass.setClientSocket(this.clientSocket);
+            //Update the current socket
+            //endMessageThreadClass.setClientSocket(this.socket);
 
             //Start a new thread for a clientapp.client.ReceiveMessagesThread
-            new Thread(new ReceiveMessagesThread(this.clientSocket, this)).start();
+            new Thread(new ReceiveMessagesThread(this.socket, this)).start();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -129,13 +144,17 @@ public class Client {
         }
     }
 
+    private void shutDownClient(){
+
+    }
+
     private boolean requestConnection(){
 
 
         try(DatagramSocket socket = new DatagramSocket(0)) {
 
             //Wait a specified amount of time for response
-            socket.setSoTimeout(10000);
+            socket.setSoTimeout(30000);
 
             //Construct server message, client's username
             String message = username;
@@ -158,64 +177,93 @@ public class Client {
                 return true;
             }else if(responseString.equalsIgnoreCase("u")){
                 System.err.println("Username already taken");
+                frame.displayUsernameTakenError();
                 return false;
             }else if(responseString.equalsIgnoreCase("f")){
                 System.err.println("The server is full");
+                frame.displayServerFullError();
+
             }
 
             return false;
 
-
-
-
-
-        } catch (IOException e) {
+        }catch(SocketTimeoutException e){
+            frame.displayServerRespondError();
+            return false;
+        }
+        catch(UnknownHostException e){
+            frame.displayUnknownHostError();
+            return false;
+        }
+        catch (IOException e) {
             e.printStackTrace();
-            System.out.println("No response from server");
+
+            frame.runClient = false;
+
             return false;
         }
 
     }
 
-    public void startClient(){
+    public void startClient(MainFrame frame){
+
+       /* if(!requestConnection()){
+            System.exit(0);
+        }*/
+
+        this.frame = frame;
 
         if(!requestConnection()){
-            System.exit(0);
+            frame.runClient = false;
         }
 
-        Socket socket = new Socket();
+        clientIsRunning = frame.runClient;
 
-        try{
-            //Tries to connect to the server
-            socket = new Socket(serverHost, remotePort);
-            this.clientSocket = socket;
 
-            System.out.println("\n--TCP connection has been established--");
+        if(frame.runClient){
 
-            //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
-            sendMessageThreadClass = new SendMessageThread(this);
-            sendMessageThread = new Thread(sendMessageThreadClass);
-            sendMessageThread.start();
-
-            //Start a new thread using an locally initialized RecieveMessageThread
-            receiveMessageThread = new Thread(new ReceiveMessagesThread(clientSocket, this));
-            receiveMessageThread.start();
-
-            UpdateClient();
-
-        }catch(UnknownHostException e){
-            System.out.println("Weird Host");
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-
+            Socket socket = new Socket();
 
             try{
-                socket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                //Tries to connect to the server
+                socket = new Socket(serverHost, remotePort);
+                this.socket = socket;
+
+                System.out.println("\n--TCP connection has been established--");
+
+                //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
+                sendMessageThreadClass = new SendMessageThread(this);
+                sendMessageThread = new Thread(sendMessageThreadClass);
+                sendMessageThread.start();
+
+                //Start a new thread using an locally initialized RecieveMessageThread
+                receiveMessageThread = new Thread(new ReceiveMessagesThread(this.socket, this));
+                receiveMessageThread.start();
+
+                UpdateClient();
+
+            }catch(UnknownHostException e){
+                frame.displayServerRespondError();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+
+
+                try{
+                    socket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
+
+
+
+
+
+
+
+
 
 
 

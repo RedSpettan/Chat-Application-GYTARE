@@ -19,9 +19,9 @@ public class Main {
         //Get username from console
         String username = RetrieveUsername();
 
-        Client mainClient = new Client("LAPTOP-9V1U1J17", 9543, username);
+        //Client mainClient = new Client("LAPTOP-9V1U1J17", 9543, username);
 
-        mainClient.startClient();
+        //mainClient.startClient();
 
     }
 

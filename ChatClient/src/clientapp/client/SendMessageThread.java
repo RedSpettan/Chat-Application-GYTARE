@@ -1,6 +1,7 @@
 package clientapp.client;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
@@ -18,7 +19,33 @@ public class SendMessageThread implements Runnable{
 
     @Override
     public void run() {
-        PrintWriter output = null;
+
+        PrintWriter out = null;
+
+        while(activeClient.clientIsRunning){
+
+            if(!activeClient.messageToBeSentQueue.isEmpty()){
+
+                String messageToBeSent = activeClient.messageToBeSentQueue.poll();
+
+                try{
+                    out = new PrintWriter(activeClient.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
+
+                    out.println(messageToBeSent);
+                    out.flush();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    System.out.println("Output stream error in Send message thread");
+                }
+
+
+            }
+        }
+
+
+        /*PrintWriter output = null;
 
         try{
 
@@ -30,7 +57,7 @@ public class SendMessageThread implements Runnable{
             while((line = scanner.nextLine()) != null){
 
                 //Print the message to the socket connected with the client
-                output = new PrintWriter(activeClient.clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
+                output = new PrintWriter(activeClient.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
                 output.println(line);
 
             }
@@ -40,7 +67,7 @@ public class SendMessageThread implements Runnable{
                 output.close();
             }
 
-        }
+        }*/
 
     }
 }
