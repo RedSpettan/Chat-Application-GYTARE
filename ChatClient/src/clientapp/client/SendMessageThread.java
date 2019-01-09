@@ -44,6 +44,8 @@ public class SendMessageThread implements Runnable{
             }
         }
 
+        System.out.println("Send Message Thread has now been shut down!");
+
 
         /*PrintWriter output = null;
 

@@ -18,6 +18,9 @@ public class Client {
     public ConcurrentLinkedQueue<String> messageToBeDisplayedList = new ConcurrentLinkedQueue<>();
 
     boolean clientIsRunning = false;
+    public boolean clientConnected = false;
+
+    public int socketTimeoutTime = 10000;
 
     MainFrame frame;
 
@@ -73,6 +76,10 @@ public class Client {
 
             clientIsRunning = frame.runClient;
 
+            if(!frame.runClient){
+                break;
+            }
+
 
             //Check if the socket connected to the socket is closed. If the socket is in fact closed the program will try to reconnect to the server
             if(this.socket.isClosed()){
@@ -100,6 +107,8 @@ public class Client {
 
             }
         }
+
+        shutDownClient();
 
         /*restartClient();
         System.out.println("Updated method has been closed!");*/
@@ -146,6 +155,16 @@ public class Client {
 
     private void shutDownClient(){
 
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Something went wrong, shutting down....");
+            System.exit(0);
+        }
+
+        System.out.println("Client has now been shut down!");
+
     }
 
     private boolean requestConnection(){
@@ -154,7 +173,7 @@ public class Client {
         try(DatagramSocket socket = new DatagramSocket(0)) {
 
             //Wait a specified amount of time for response
-            socket.setSoTimeout(30000);
+            socket.setSoTimeout(socketTimeoutTime);
 
             //Construct server message, client's username
             String message = username;
@@ -229,6 +248,8 @@ public class Client {
                 socket = new Socket(serverHost, remotePort);
                 this.socket = socket;
 
+                clientConnected = true;
+
                 System.out.println("\n--TCP connection has been established--");
 
                 //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
@@ -240,7 +261,11 @@ public class Client {
                 receiveMessageThread = new Thread(new ReceiveMessagesThread(this.socket, this));
                 receiveMessageThread.start();
 
+
+
                 UpdateClient();
+
+
 
             }catch(UnknownHostException e){
                 frame.displayServerRespondError();
@@ -256,6 +281,8 @@ public class Client {
                 }
             }
         }
+
+        System.out.println("Client failed to connect");
 
 
 

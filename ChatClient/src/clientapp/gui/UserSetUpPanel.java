@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ClientConnectPanel extends JPanel {
+public class UserSetUpPanel extends JPanel {
 
     public String hostAddress;
     public int port;
@@ -28,7 +28,7 @@ public class ClientConnectPanel extends JPanel {
     MainFrame frame;
 
 
-    public ClientConnectPanel(MainFrame currentFrame) {
+    public UserSetUpPanel(MainFrame currentFrame) {
 
 
         this.frame = currentFrame;

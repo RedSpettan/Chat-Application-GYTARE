@@ -42,14 +42,15 @@ public class ReceiveMessagesThread implements Runnable{
 
             //The line read is null, shutting down thread
 
-            System.out.println("Is the socket closed?: " + activeClient.socket.isClosed());
-            System.out.println("Receive message thread has been terminated!");
+            /*System.out.println("Is the socket closed?: " + activeClient.socket.isClosed());
+            System.out.println("Receive message thread has been terminated!");*/
 
             //Catch the error which is caused by the server shutting down
         } catch(SocketException e){
 
             System.err.println("\n--CONNECTION HAS BEEN DISRUPTED--\n");
-            System.out.println("\n***AUTOMATIC RECONNECTION WILL COMMENCE***\n");
+            System.out.println("Receive Message Thread has been shut down");
+            //System.out.println("\n***AUTOMATIC RECONNECTION WILL COMMENCE***\n");
         }
         catch (IOException e) {
             e.printStackTrace();
