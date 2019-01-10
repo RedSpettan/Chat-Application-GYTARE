@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
 
-    private int remotePort;
-    private String serverHost;
+    public int remotePort;
+    public String serverHost;
     public String username; /*"UsernameTest";*/
 
 
@@ -20,7 +20,7 @@ public class Client {
     boolean clientIsRunning = false;
     public boolean clientConnected = false;
 
-    public int socketTimeoutTime = 10000;
+    public int socketTimeoutTime = 3000;
 
     MainFrame frame;
 
@@ -207,7 +207,7 @@ public class Client {
             return false;
 
         }catch(SocketTimeoutException e){
-            frame.displayServerRespondError();
+            frame.displayServerRespondError(this);
             return false;
         }
         catch(UnknownHostException e){
@@ -244,6 +244,9 @@ public class Client {
             Socket socket = new Socket();
 
             try{
+
+                System.out.println("Tries TCP");
+
                 //Tries to connect to the server
                 socket = new Socket(serverHost, remotePort);
                 this.socket = socket;
@@ -268,7 +271,7 @@ public class Client {
 
 
             }catch(UnknownHostException e){
-                frame.displayServerRespondError();
+                frame.displayServerRespondError(this);
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -282,18 +285,7 @@ public class Client {
             }
         }
 
-        System.out.println("Client failed to connect");
-
-
-
-
-
-
-
-
-
-
-
+        System.out.println("startClient method has been terminated!");
     }
 
     //Check if the client can reconnect to a server

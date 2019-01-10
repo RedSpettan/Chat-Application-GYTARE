@@ -18,7 +18,7 @@ public class UpdateChat implements Runnable {
     public void run() {
         System.out.println("Runnable is running!");
 
-        while(frame.updatechat){
+        while(frame.updateChat){
 
             if(!frame.client.messageToBeDisplayedList.isEmpty()){
 

@@ -20,7 +20,21 @@ public class MainFrame extends JFrame implements ActionListener {
 
     GridBagConstraints constraints;
 
-    JOptionPane pane;
+
+
+
+    String host = "";
+
+    int port = 0;
+
+    String username = "";
+
+
+
+
+
+
+    Timer connectTimer;
 
 
     Container container;
@@ -30,7 +44,7 @@ public class MainFrame extends JFrame implements ActionListener {
     Thread updateChatThread;
 
 
-    public boolean updatechat = false;
+    public boolean updateChat = false;
 
     public boolean runClient = false;
 
@@ -50,10 +64,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
         setLocation((dim.width/2) - (getSize().width /2), (dim.height /2) - getSize().height / 2);
 
-        connectPanel = new UserSetUpPanel(this);
-
-
         container = getContentPane();
+
+        /*connectPanel = new UserSetUpPanel(this);
 
         constraints = new GridBagConstraints();
 
@@ -61,10 +74,37 @@ public class MainFrame extends JFrame implements ActionListener {
         constraints.gridx = 0;
         constraints.gridy = 0;
 
-        container.add(connectPanel, constraints);
+        container.add(connectPanel, constraints);*/
+
+
+        createSetupGUI();
+
+        connectTimer = new Timer(2000, drawChatGUITask);
+        connectTimer.setRepeats(false);
     }
 
 
+
+    private void createSetupPanel(){
+        connectPanel = new UserSetUpPanel(this);
+
+        constraints = new GridBagConstraints();
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+
+        container.add(connectPanel, constraints);
+    }
+
+    private void createSetupGUI(){
+        createSetupPanel();
+
+        container.revalidate();
+        container.repaint();
+
+
+
+    }
 
     public void createChatGUI(){
         container.remove(connectPanel);
@@ -76,7 +116,7 @@ public class MainFrame extends JFrame implements ActionListener {
         container.revalidate();
         container.repaint();
 
-        updatechat = true;
+        updateChat = true;
 
 
         updateChatThread = new Thread(new UpdateChat(this));
@@ -146,9 +186,34 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
 
-    public void displayServerRespondError(){
-        JOptionPane.showMessageDialog(null, "Server failed to respond.\nMake sure all information is correct and try again.", "HOST ADDRESS ERROR", JOptionPane.ERROR_MESSAGE);
+    public void displayServerRespondError(Client client){
+        JOptionPane.showMessageDialog(null,
+                "Server failed to respond.\nMake sure all information is correct and try again.",
+                "HOST ADDRESS ERROR",
+                JOptionPane.ERROR_MESSAGE);
+
+
         runClient = false;
+
+        /*int respons = JOptionPane.showConfirmDialog(null,
+                "Server failed to respond.\nDo you want to retry?",
+                "ERROR",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.ERROR_MESSAGE);
+
+        if(respons == JOptionPane.YES_OPTION){
+            System.out.println("Yes, retry sounds perfect!\n");
+
+            //connectClient(client.serverHost, client.remotePort, client.username);
+
+            connectPanel.connectButton.doClick();
+
+
+        }else{
+            System.out.println("Nope, I don't want that sweet retry\n");
+        }*/
+
+
 
 
     }
@@ -170,6 +235,83 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
 
+
+    ActionListener drawChatGUITask = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            System.out.println("Attempt to draw GUI");
+
+            if(client.clientConnected){
+
+
+
+                createChatGUI();
+                System.out.println("Drew the chat GUI!");
+
+                container.revalidate();
+                container.repaint();
+
+                host = client.serverHost;
+                port = client.remotePort;
+                username = client.username;
+
+            }
+        }
+    };
+
+
+    private void connectClient(){
+
+        client = null;
+
+        client = new Client(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
+        runClient = true;
+        new Thread(new StartClientThread(this,client)).start();
+
+        System.out.println("Client has been started, tries to connect...");
+
+        connectTimer.setDelay(client.socketTimeoutTime);
+
+        connectTimer.start();
+    }
+
+    private void connectClient(String host, int port, String username){
+        client = null;
+
+        client = new Client(host, port, username);
+        runClient = true;
+        new Thread(new StartClientThread(this,client)).start();
+
+        System.out.println("Client has been started, tries to connect...");
+
+        connectTimer.setDelay(client.socketTimeoutTime);
+
+        connectTimer.start();
+    }
+
+
+    private void validateClientShutdown(){
+
+        int response = JOptionPane.showConfirmDialog(null,
+                "The Client will be disconnected.\nDo you want to proceed?",
+                "Disconnect?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
+
+        if(response == JOptionPane.YES_OPTION){
+            runClient = false;
+
+            container.remove(usersPanel);
+            container.remove(chatPanel);
+            container.remove(disconnectButton);
+
+            createSetupGUI();
+        }
+
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -177,47 +319,16 @@ public class MainFrame extends JFrame implements ActionListener {
         if(e.getSource() == connectPanel.connectButton){
 
 
+            if(connectTimer.isRunning()){
+                System.out.println("The timer is running");
+                return;
+            }
+
+            System.out.println("The timer is not running!");
 
             if(connectPanel.validateHostAddress() && connectPanel.validatePortNumber() && connectPanel.validateUsername()){
-
-
-                client = null;
-
-                client = new Client(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
-                runClient = true;
-                new Thread(new StartClientThread(this,client)).start();
-
-                createChatGUI();
-
-                container.revalidate();
-                container.repaint();
-
-                //TODO add a Swing timer here!
-
-
-                /*long initializedTime = System.currentTimeMillis();
-
-                while((System.currentTimeMillis() - initializedTime) < client.socketTimeoutTime){
-
-
-                    //System.out.println((System.currentTimeMillis() - initializedTime));
-
-                    if(client.clientConnected){
-                        createChatGUI();
-
-                        container.revalidate();
-                        container.repaint();
-                        break;
-                    }
-
-                }*/
-
-
-                /*createChatGUI();
-
-                container.revalidate();
-                container.repaint();*/
-
+                //connectClient();
+                connectClient(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
             }
 
 
@@ -225,9 +336,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
         if(e.getSource() == disconnectButton){
-            runClient = false;
 
-            System.out.println("Coolio a button got pressed!");
+
+            validateClientShutdown();
+
+            //System.out.println("Coolio a button got pressed!");
+
+
+
         }
 
 
