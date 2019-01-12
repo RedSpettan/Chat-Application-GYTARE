@@ -21,8 +21,6 @@ public class MainFrame extends JFrame implements ActionListener {
     GridBagConstraints constraints;
 
 
-
-
     String host = "";
 
     int port = 0;
@@ -30,11 +28,9 @@ public class MainFrame extends JFrame implements ActionListener {
     String username = "";
 
 
-
-
-
-
     Timer connectTimer;
+
+    Timer checkConnectionTimer;
 
 
     Container container;
@@ -80,6 +76,10 @@ public class MainFrame extends JFrame implements ActionListener {
         createSetupGUI();
 
         connectTimer = new Timer(2000, drawChatGUITask);
+        connectTimer.setRepeats(false);
+
+
+        checkConnectionTimer = new Timer(1000, checkUserConnection);
         connectTimer.setRepeats(false);
     }
 
@@ -256,6 +256,43 @@ public class MainFrame extends JFrame implements ActionListener {
                 port = client.remotePort;
                 username = client.username;
 
+                checkConnectionTimer.start();
+
+            }
+        }
+    };
+
+
+    ActionListener checkUserConnection = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+
+            if(!runClient){
+                checkConnectionTimer.stop();
+                System.out.println("Timer stoppppped!");
+
+            }else {
+                if(client.socket.isClosed() || !client.clientConnected){
+
+                    runClient = false;
+
+
+                    JOptionPane.showMessageDialog(null,
+                            "The server connection has been disrupted.",
+                            "ERROR",
+                            JOptionPane.ERROR_MESSAGE);
+
+                    container.remove(usersPanel);
+                    container.remove(chatPanel);
+                    container.remove(disconnectButton);
+
+                    createSetupGUI();
+
+                }else{
+                    checkConnectionTimer.start();
+                    System.out.println("Start a new timer!");
+                }
             }
         }
     };

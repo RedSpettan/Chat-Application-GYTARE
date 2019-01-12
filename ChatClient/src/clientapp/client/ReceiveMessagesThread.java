@@ -56,9 +56,7 @@ public class ReceiveMessagesThread implements Runnable{
             e.printStackTrace();
 
         }
-
-
-
+        System.out.println("Receive Message Thread has been shut down");
     }
 
     //Send username on server request

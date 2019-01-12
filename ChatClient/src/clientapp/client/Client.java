@@ -24,7 +24,7 @@ public class Client {
 
     MainFrame frame;
 
-    Socket socket;
+    public Socket socket;
 
     private Thread sendMessageThread;
     private Thread receiveMessageThread;
@@ -84,9 +84,9 @@ public class Client {
             //Check if the socket connected to the socket is closed. If the socket is in fact closed the program will try to reconnect to the server
             if(this.socket.isClosed()){
 
+                clientConnected = false;
 
-
-                //If the client has attempted over 5 unsuccessful reconnects the client will shut down
+                /*//If the client has attempted over 5 unsuccessful reconnects the client will shut down
                 if(amountOfRetries >= 5 ){
                     System.err.println("The amount of reconnects has exceeded its limit");
                     System.exit(0);
@@ -103,7 +103,10 @@ public class Client {
                     restartClient();
 
                     //break;
-                }
+                }*/
+
+                //System.out.println("Socket is closed!");
+                break;
 
             }
         }
@@ -154,6 +157,8 @@ public class Client {
     }
 
     private void shutDownClient(){
+
+        clientIsRunning = false;
 
         try {
             socket.close();
