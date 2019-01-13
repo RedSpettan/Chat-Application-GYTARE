@@ -515,6 +515,8 @@ public class Server {
                         socket.receive(request);
                         requestRecieved = true;
 
+                        //System.out.println("Request received ");
+
                     }catch(SocketTimeoutException e){
 
                         //System.out.println("Failed to get message");
@@ -523,53 +525,84 @@ public class Server {
 
 
                     if(requestRecieved){
-                        System.out.println("Request Received! ");
+                       // System.out.println("Request Received! ");
 
-                        byte[] responsMessage;
-                        String clientUsername = "[UNDECIDED]";
-                        System.out.println("Amount of users: " + userList.size());
-                        if(userList.size() >= maximumUsers){
 
-                            //"f" for "The server is full"
-                            responsMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
+                        String requestMessage = new String(request.getData(), StandardCharsets.ISO_8859_1);
+                        requestMessage = requestMessage.trim();
+
+                        if(requestMessage.equals("%USERS%")){
+
+                            String responseText = "";
+
+                            if(!userList.isEmpty()){
+                                for(User user : userList){
+
+                                    responseText = responseText + user.username + ",";
+
+                                }
+                            }
+                            byte[] responseMessage = responseText.getBytes(StandardCharsets.ISO_8859_1);
+
+                            System.out.println("Username request received");
+
+                            DatagramPacket response = new DatagramPacket(responseMessage, responseMessage.length, request.getAddress(), request.getPort());
+                            socket.send(response);
+
                         }else{
-                            clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
 
-                            //Remove white characters
-                            clientUsername = clientUsername.trim();
+                            System.out.println("Connection request received ");
 
-                            boolean usernameExist = false;
+                            byte[] responseMessage;
+                            String clientUsername = "[UNDECIDED]";
+                            System.out.println("Amount of users: " + userList.size());
+                            if(userList.size() >= maximumUsers){
 
-                            for(User user : userList){
-                                if(user.username.equalsIgnoreCase(clientUsername)){
-                                    usernameExist = true;
-                                    break;
+                                //"f" for "The server is full"
+                                responseMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
+                            }else{
+                                clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
+
+                                //Remove white characters
+                                clientUsername = clientUsername.trim();
+
+                                boolean usernameExist = false;
+
+                                for(User user : userList){
+                                    if(user.username.equalsIgnoreCase(clientUsername)){
+                                        usernameExist = true;
+                                        break;
+                                    }
+                                }
+
+                                // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
+
+                                if(!usernameExist){
+                                    responseMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
+                                }else{
+                                    responseMessage = "u".getBytes(StandardCharsets.ISO_8859_1);
                                 }
                             }
 
-                            // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
 
-                            if(!usernameExist){
-                                responsMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
-                            }else{
-                                responsMessage = "u".getBytes(StandardCharsets.ISO_8859_1);
-                            }
+                            // ------ Log Request ------
+
+                            requestLogger.info("\r\nRequest Received!\r\n" +
+                                    "Host Address: " + request.getAddress().getHostAddress() +
+                                    "\r\nHost Name: " + request.getAddress().getHostName() +
+                                    "\r\nUsername submitted: " + clientUsername +
+                                    "\r\nResponse Message: " + new String(responseMessage, StandardCharsets.ISO_8859_1 ) +
+                                    "\r\n\r\n");
+
+
+
+                            DatagramPacket response = new DatagramPacket(responseMessage, responseMessage.length, request.getAddress(), request.getPort());
+                            socket.send(response);
                         }
 
 
-                        // ------ Log Request ------
-
-                        requestLogger.info("\r\nRequest Received!\r\n" +
-                                "Host Address: " + request.getAddress().getHostAddress() +
-                                "\r\nHost Name: " + request.getAddress().getHostName() +
-                                "\r\nUsername submitted: " + clientUsername +
-                                "\r\nResponse Message: " + new String(responsMessage, StandardCharsets.ISO_8859_1 ) +
-                                "\r\n\r\n");
 
 
-
-                        DatagramPacket response = new DatagramPacket(responsMessage, responsMessage.length, request.getAddress(), request.getPort());
-                        socket.send(response);
                     }
 
 

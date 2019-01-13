@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 
 public class MainFrame extends JFrame implements ActionListener {
 
@@ -20,6 +23,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
     GridBagConstraints constraints;
 
+    String connectedUsers = "";
+
 
     String host = "";
 
@@ -32,6 +37,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
     Timer checkConnectionTimer;
 
+    Timer updateUserListTimer;
+
+    int updateUserList = 2000;
 
     Container container;
 
@@ -80,7 +88,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
         checkConnectionTimer = new Timer(1000, checkUserConnection);
-        connectTimer.setRepeats(false);
+        checkConnectionTimer.setRepeats(false);
     }
 
 
@@ -258,6 +266,10 @@ public class MainFrame extends JFrame implements ActionListener {
 
                 checkConnectionTimer.start();
 
+                updateUserListTimer = new Timer(updateUserList, updateConnectedUsers);
+                updateUserListTimer.setRepeats(false);
+                updateUserListTimer.start();
+
             }
         }
     };
@@ -290,10 +302,40 @@ public class MainFrame extends JFrame implements ActionListener {
                     createSetupGUI();
 
                 }else{
+
+
+
                     checkConnectionTimer.start();
-                    System.out.println("Start a new timer!");
+                    //System.out.println("Start a new timer!");
                 }
             }
+        }
+    };
+
+    ActionListener updateConnectedUsers = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if(runClient){
+                getConnectedUsers();
+                if(!connectedUsers.isEmpty()){
+
+                    usersPanel.usersTextArea.setText("");
+                    usersPanel.usersTextArea.append(connectedUsers);
+                }else{
+                    //usersPanel.usersTextArea.append("*** FAILED TO GET USERS ***");
+                    usersPanel.usersTextArea.setText("");
+                }
+
+                updateUserListTimer.start();
+
+            }else{
+                updateUserListTimer.stop();
+            }
+
+
+
+
         }
     };
 
@@ -322,9 +364,56 @@ public class MainFrame extends JFrame implements ActionListener {
 
         System.out.println("Client has been started, tries to connect...");
 
-        connectTimer.setDelay(client.socketTimeoutTime);
+        connectTimer = new Timer(client.socketTimeoutTime, drawChatGUITask);
+
+        connectTimer.setRepeats(false);
 
         connectTimer.start();
+    }
+
+
+    private void getConnectedUsers(){
+
+
+        try(DatagramSocket socket = new DatagramSocket(0)){
+
+
+            socket.setSoTimeout(updateUserList);
+
+
+            String message = "%USERS%";
+
+            byte[] messageInBytes = message.getBytes(StandardCharsets.ISO_8859_1);
+
+            DatagramPacket request = new DatagramPacket(messageInBytes, messageInBytes.length, InetAddress.getByName(client.serverHost), client.remotePort);
+            DatagramPacket response = new DatagramPacket(new byte[1024], 1024);
+
+            socket.send(request);
+            socket.receive(response);
+
+            String responseMessage = new String(response.getData(), StandardCharsets.ISO_8859_1);
+
+            if(!responseMessage.isEmpty()){
+                responseMessage = responseMessage.replace(",", "\n");
+
+                connectedUsers = responseMessage;
+
+
+
+            }else{
+                connectedUsers = "";
+            }
+
+
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

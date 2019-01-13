@@ -20,7 +20,7 @@ public class Client {
     boolean clientIsRunning = false;
     public boolean clientConnected = false;
 
-    public int socketTimeoutTime = 3000;
+    public int socketTimeoutTime = 10000;
 
     MainFrame frame;
 
