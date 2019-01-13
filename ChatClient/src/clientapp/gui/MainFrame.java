@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -60,7 +62,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
         setSize(800,600);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        addWindowListener(wa);
 
         setLayout(new GridBagLayout());
 
@@ -474,4 +478,24 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
     }
+
+
+    WindowAdapter wa = new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            super.windowClosing(e);
+
+            int response = JOptionPane.showConfirmDialog(null,
+                    "The client will be disconnected and the program will shut down.\nDo you want to proceed?",
+                    "Exit",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            if(response == JOptionPane.YES_OPTION){
+                System.exit(0);
+            }
+
+        }
+    };
+
 }

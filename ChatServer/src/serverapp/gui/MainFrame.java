@@ -1,6 +1,7 @@
 package serverapp.gui;
 
 import serverapp.server.Server;
+import serverapp.server.ShutdownHook;
 import serverapp.server.StartServerThread;
 
 import javax.swing.*;
@@ -34,7 +35,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         //Set size and the program will close upon pressing the X
         setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         setLayout(new GridBagLayout());
 
