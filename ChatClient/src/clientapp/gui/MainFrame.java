@@ -23,10 +23,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
     JButton disconnectButton;
 
+
     GridBagConstraints constraints;
+    Container container;
 
     String connectedUsers = "";
-
 
     String host = "";
 
@@ -41,13 +42,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
     Timer updateUserListTimer;
 
+    //How often the Userlist should update (in millis)
     int updateUserList = 2000;
 
-    Container container;
 
     Client client;
 
     Thread updateChatThread;
+
 
 
     public boolean updateChat = false;
@@ -60,36 +62,28 @@ public class MainFrame extends JFrame implements ActionListener {
 
         setVisible(true);
 
+        //Set window size
         setSize(800,600);
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         addWindowListener(wa);
 
+        //Set GridBagLayout
         setLayout(new GridBagLayout());
 
+        //Place the window in the middle of the main screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
         setLocation((dim.width/2) - (getSize().width /2), (dim.height /2) - getSize().height / 2);
 
         container = getContentPane();
 
-        /*connectPanel = new UserSetUpPanel(this);
-
-        constraints = new GridBagConstraints();
-
-
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-
-        container.add(connectPanel, constraints);*/
-
-
         createSetupGUI();
+
+            //Instantiate the timers
 
         connectTimer = new Timer(2000, drawChatGUITask);
         connectTimer.setRepeats(false);
-
 
         checkConnectionTimer = new Timer(1000, checkUserConnection);
         checkConnectionTimer.setRepeats(false);
@@ -97,6 +91,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
 
+    //Create the Set up screen GUI
     private void createSetupPanel(){
         connectPanel = new UserSetUpPanel(this);
 
@@ -108,36 +103,7 @@ public class MainFrame extends JFrame implements ActionListener {
         container.add(connectPanel, constraints);
     }
 
-    private void createSetupGUI(){
-        createSetupPanel();
-
-        container.revalidate();
-        container.repaint();
-
-
-
-    }
-
-    public void createChatGUI(){
-        container.remove(connectPanel);
-
-        createChatPanel();
-        createUsersPanel();
-        createDisconnectButton();
-
-        container.revalidate();
-        container.repaint();
-
-        updateChat = true;
-
-
-        updateChatThread = new Thread(new UpdateChat(this));
-        updateChatThread.start();
-
-
-
-    }
-
+        //Create the different panels of the chat GUI
 
     private void createUsersPanel(){
 
@@ -198,6 +164,38 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
 
+        //Create the different GUIs, either the set up or the chat GUI
+
+    private void createSetupGUI(){
+        createSetupPanel();
+
+        container.revalidate();
+        container.repaint();
+    }
+
+    public void createChatGUI(){
+        container.remove(connectPanel);
+
+        createChatPanel();
+        createUsersPanel();
+        createDisconnectButton();
+
+        container.revalidate();
+        container.repaint();
+
+        updateChat = true;
+
+
+        updateChatThread = new Thread(new UpdateChat(this));
+        updateChatThread.start();
+
+
+
+    }
+
+
+        //Methods to display different error the client can encounter
+
     public void displayServerRespondError(Client client){
         JOptionPane.showMessageDialog(null,
                 "Server failed to respond.\nMake sure all information is correct and try again.",
@@ -206,27 +204,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
         runClient = false;
-
-        /*int respons = JOptionPane.showConfirmDialog(null,
-                "Server failed to respond.\nDo you want to retry?",
-                "ERROR",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.ERROR_MESSAGE);
-
-        if(respons == JOptionPane.YES_OPTION){
-            System.out.println("Yes, retry sounds perfect!\n");
-
-            //connectClient(client.serverHost, client.remotePort, client.username);
-
-            connectPanel.connectButton.doClick();
-
-
-        }else{
-            System.out.println("Nope, I don't want that sweet retry\n");
-        }*/
-
-
-
 
     }
 
@@ -244,104 +221,6 @@ public class MainFrame extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(null, "Server is currently full.\nAttempt a reconnect in a while.", "HOST ADDRESS ERROR", JOptionPane.ERROR_MESSAGE);
         runClient = false;
     }
-
-
-
-
-    ActionListener drawChatGUITask = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            System.out.println("Attempt to draw GUI");
-
-            if(client.clientConnected){
-
-
-
-                createChatGUI();
-                System.out.println("Drew the chat GUI!");
-
-                container.revalidate();
-                container.repaint();
-
-                host = client.serverHost;
-                port = client.remotePort;
-                username = client.username;
-
-                checkConnectionTimer.start();
-
-                updateUserListTimer = new Timer(updateUserList, updateConnectedUsers);
-                updateUserListTimer.setRepeats(false);
-                updateUserListTimer.start();
-
-            }
-        }
-    };
-
-
-    ActionListener checkUserConnection = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-
-            if(!runClient){
-                checkConnectionTimer.stop();
-                System.out.println("Timer stoppppped!");
-
-            }else {
-                if(client.socket.isClosed() || !client.clientConnected){
-
-                    runClient = false;
-
-
-                    JOptionPane.showMessageDialog(null,
-                            "The server connection has been disrupted.",
-                            "ERROR",
-                            JOptionPane.ERROR_MESSAGE);
-
-                    container.remove(usersPanel);
-                    container.remove(chatPanel);
-                    container.remove(disconnectButton);
-
-                    createSetupGUI();
-
-                }else{
-
-
-
-                    checkConnectionTimer.start();
-                    //System.out.println("Start a new timer!");
-                }
-            }
-        }
-    };
-
-    ActionListener updateConnectedUsers = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            if(runClient){
-                getConnectedUsers();
-                if(!connectedUsers.isEmpty()){
-
-                    usersPanel.usersTextArea.setText("");
-                    usersPanel.usersTextArea.append(connectedUsers);
-                }else{
-                    //usersPanel.usersTextArea.append("*** FAILED TO GET USERS ***");
-                    usersPanel.usersTextArea.setText("");
-                }
-
-                updateUserListTimer.start();
-
-            }else{
-                updateUserListTimer.stop();
-            }
-
-
-
-
-        }
-    };
 
 
     private void connectClient(){
@@ -362,28 +241,28 @@ public class MainFrame extends JFrame implements ActionListener {
     private void connectClient(String host, int port, String username){
         client = null;
 
+        //Instantiate a new client and start a new thread to run the client
         client = new Client(host, port, username);
         runClient = true;
         new Thread(new StartClientThread(this,client)).start();
 
         System.out.println("Client has been started, tries to connect...");
 
+        //Start a timer which checks if the client has successfully connected to the server
         connectTimer = new Timer(client.socketTimeoutTime, drawChatGUITask);
-
         connectTimer.setRepeats(false);
-
         connectTimer.start();
     }
 
 
+    //Get the usernames of all connected clients
     private void getConnectedUsers(){
 
 
         try(DatagramSocket socket = new DatagramSocket(0)){
 
-
+            //Set socket time out
             socket.setSoTimeout(updateUserList);
-
 
             String message = "%USERS%";
 
@@ -392,24 +271,20 @@ public class MainFrame extends JFrame implements ActionListener {
             DatagramPacket request = new DatagramPacket(messageInBytes, messageInBytes.length, InetAddress.getByName(client.serverHost), client.remotePort);
             DatagramPacket response = new DatagramPacket(new byte[1024], 1024);
 
+            //Send and receive a response
             socket.send(request);
             socket.receive(response);
 
             String responseMessage = new String(response.getData(), StandardCharsets.ISO_8859_1);
 
+            //Assign the incoming usernames to the connectedUsers string variable
             if(!responseMessage.isEmpty()){
                 responseMessage = responseMessage.replace(",", "\n");
 
                 connectedUsers = responseMessage;
-
-
-
             }else{
                 connectedUsers = "";
             }
-
-
-
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {
@@ -421,6 +296,7 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
 
+    //Asks if the users are sure shutting down the client
     private void validateClientShutdown(){
 
         int response = JOptionPane.showConfirmDialog(null,
@@ -429,6 +305,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE);
 
+        //Remove chat GUI and draw set up GUI
         if(response == JOptionPane.YES_OPTION){
             runClient = false;
 
@@ -441,14 +318,114 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+    //Draws the chat GUI if the client has connected
+    ActionListener drawChatGUITask = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            System.out.println("Attempt to draw GUI");
+
+            //Check if the client has connected
+            if(client.clientConnected){
+
+                createChatGUI();
+                System.out.println("Drew the chat GUI!");
+
+                container.revalidate();
+                container.repaint();
+
+                //Save current values
+                host = client.serverHost;
+                port = client.remotePort;
+                username = client.username;
+
+                //Start new timers for updating the currently connected users
+                //and a timer to check if the server is still running
+
+                checkConnectionTimer.start();
+
+                updateUserListTimer = new Timer(updateUserList, updateConnectedUsers);
+                updateUserListTimer.setRepeats(false);
+                updateUserListTimer.start();
+
+            }
+        }
+    };
+
+    //Check if the server connection hasn't been disrupted
+    ActionListener checkUserConnection = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            //Stop the timer if the client is no longer running
+            if(!runClient){
+                checkConnectionTimer.stop();
+                System.out.println("Timer stoppppped!");
+
+            }else {
+
+                //Check if the socket is no longer connected
+                if(client.socket.isClosed() || !client.clientConnected){
+
+                    runClient = false;
+
+
+                    JOptionPane.showMessageDialog(null,
+                            "The server connection has been disrupted.",
+                            "ERROR",
+                            JOptionPane.ERROR_MESSAGE);
+
+                    //Remove the chat GUI and draw the Set up GUI
+
+                    container.remove(usersPanel);
+                    container.remove(chatPanel);
+                    container.remove(disconnectButton);
+
+                    createSetupGUI();
+
+                }else{
+
+                    //Restart the timer
+                    checkConnectionTimer.start();
+
+                }
+            }
+        }
+    };
+
+    //Get the currently connected clients' username
+    ActionListener updateConnectedUsers = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            //If the client is still running, try and get usernames
+            if(runClient){
+                getConnectedUsers();
+                if(!connectedUsers.isEmpty()){
+
+                    //Display the usernames
+                    usersPanel.usersTextArea.setText("");
+                    usersPanel.usersTextArea.append(connectedUsers);
+                }else{
+                    //usersPanel.usersTextArea.append("*** FAILED TO GET USERS ***");
+                    usersPanel.usersTextArea.setText("");
+                }
+
+                updateUserListTimer.start();
+
+            }else{
+                updateUserListTimer.stop();
+            }
+        }
+    };
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
+        //Check if the connected button has been pressed in the set up GUI
         if(e.getSource() == connectPanel.connectButton){
 
-
+            //Prevent spam presses
             if(connectTimer.isRunning()){
                 System.out.println("The timer is running");
                 return;
@@ -456,23 +433,17 @@ public class MainFrame extends JFrame implements ActionListener {
 
             System.out.println("The timer is not running!");
 
+            //Validate the 3 different text fields
             if(connectPanel.validateHostAddress() && connectPanel.validatePortNumber() && connectPanel.validateUsername()){
                 //connectClient();
                 connectClient(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
             }
-
-
         }
 
-
+        //Disconnect button
         if(e.getSource() == disconnectButton){
 
-
             validateClientShutdown();
-
-            //System.out.println("Coolio a button got pressed!");
-
-
 
         }
 
@@ -480,6 +451,7 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
 
+    //Display a prompt when pressing the X in the top right corner
     WindowAdapter wa = new WindowAdapter() {
         @Override
         public void windowClosing(WindowEvent e) {

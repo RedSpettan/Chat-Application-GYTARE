@@ -20,59 +20,45 @@ public class UpdateChat implements Runnable {
 
         while(frame.updateChat){
 
+            //Check if any message is pending to be sent
             if(!frame.client.messageToBeDisplayedList.isEmpty()){
 
+                //Get the message in the front of the queue
                 String messageToBeSent = frame.client.messageToBeDisplayedList.poll();
 
                 System.out.println("Message to be sent: " + messageToBeSent);
 
+                //Confirm the message is not a null value
                 if(messageToBeSent != null){
 
+                    //Get the scroll panes current initial scroll maximum, when no message are present
                     if(scrollInitialMaximum == 0){
                         scrollInitialMaximum = frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum();
                     }
 
+                    //Store the current scroll value
                     scrollValue = frame.chatPanel.scrollPane.getVerticalScrollBar().getValue();
 
                     boolean moveScrollBar = false;
 
+
+                    //If the current maximum - the initial maximum is equal to current scroll value, that means the scroll bar is at bottom and the scroll pane should auto scroll
                     if((scrollValue ==(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum)) || (scrollValue == 1)){
                         moveScrollBar = true;
                         System.out.println("Scroll bar will be moved!");
 
                     }
 
-                    /*System.out.println("Scroll value: " + scrollValue);
-                    System.out.println("Maximum: " + frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum());
-                    System.out.println("Maximum - inital: " + (frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum));*/
-
+                    //Post the message
                     frame.chatPanel.textArea.append("\n"+ messageToBeSent);
-                    //frame.chatPanel.textArea.setFont(font);
 
+                    //Move the scroll bar to the bottom
                     if(moveScrollBar){
                         frame.chatPanel.textArea.setCaretPosition(frame.chatPanel.textArea.getDocument().getLength());
                     }
 
-                    //frame.chatPanel.scrollPane.getVerticalScrollBar().setValue(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum());
-
-
-
-                    /*System.out.println("Scrollbars value: " + frame.chatPanel.scrollPane.getVerticalScrollBar().getValue());
-
-                    System.out.println("Scrollbar max: " + frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum());*/
-
-
-
-                    //System.out.println("The amount of Rows: " +frame.chatPanel.textArea.getRows() );
-                }else{
-                    System.out.println("Nullllll: " + messageToBeSent);
                 }
-
-
-
             }
-
-
         }
     }
 }

@@ -6,14 +6,14 @@ import java.awt.*;
 
 public class UsersPanel extends JPanel {
 
-    MainFrame frame;
 
-
-    JTextField usersTextField;
+    private JTextField usersTextField;
 
     JTextArea usersTextArea;
 
-    JScrollPane usersScrollPane;
+    private JScrollPane usersScrollPane;
+
+    private MainFrame frame;
 
 
     public UsersPanel(MainFrame mainFrame) {
@@ -22,20 +22,19 @@ public class UsersPanel extends JPanel {
 
         Dimension size = getPreferredSize();
 
+        //Set width half of the current window size and height as 250
         size.width = (int)(mainFrame.getWidth() * 0.5f);
         size.height = 250;
 
+        //Set size
         setPreferredSize(size);
-
         setSize(size);
 
-        //setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-
-
+        //Create text field, text area and scroll pane
         createComponents();
 
-
+        //Set layout as GridBagLayout
         setLayout(new GridBagLayout());
         GridBagConstraints constraints;
 
@@ -79,13 +78,16 @@ public class UsersPanel extends JPanel {
 
     private void createComponents(){
 
+        //Text field
         usersTextField = new JTextField(10);
         usersTextField.setEditable(false);
 
+        //Text area
         usersTextArea = new JTextArea();
         usersTextArea.setPreferredSize(new Dimension(200,0));
         usersTextArea.setEditable(false);
 
+        //The scrubbers will only appear as they are needed
         usersScrollPane = new JScrollPane(usersTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         //usersScrollPane.setPreferredSize(new Dimension(200,0));
 

@@ -5,36 +5,38 @@ import clientapp.gui.MainFrame;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
 
     public int remotePort;
     public String serverHost;
-    public String username; /*"UsernameTest";*/
+    public String username;
 
-
+    //Stores message which will be sent to the server
     public ConcurrentLinkedQueue<String> messageToBeSentQueue = new ConcurrentLinkedQueue<>();
+
+    //Store message which will be displayed by the GUI
     public ConcurrentLinkedQueue<String> messageToBeDisplayedList = new ConcurrentLinkedQueue<>();
 
+    //Toggle if the client should be running
     boolean clientIsRunning = false;
     public boolean clientConnected = false;
 
+
+    //Time in millis of how long the socket should wait for response from the server
     public int socketTimeoutTime = 10000;
 
-    MainFrame frame;
-
+    //Socket connected to the server
     public Socket socket;
 
-    private Thread sendMessageThread;
-    private Thread receiveMessageThread;
-
-    private SendMessageThread sendMessageThreadClass;
-
-    private int amountOfRetries;
+    private MainFrame frame;
 
 
-    //Constructor for clientapp.client.Client, checks that the port is non-negative and prints the computers IP address
+
+    //Constructor for Client, checks that the port is non-negative and prints the computers IP address
     public Client(String host, int port, String username){
 
         //Check if the port is valid
@@ -67,111 +69,68 @@ public class Client {
         }
     }
 
-    //Method used to update the client
-    private void UpdateClient(){
+    //Attempting and configures a connection
+    void startClient(MainFrame frame){
 
 
 
-        while(clientIsRunning){
+        this.frame = frame;
 
-            clientIsRunning = frame.runClient;
-
-            if(!frame.runClient){
-                break;
-            }
-
-
-            //Check if the socket connected to the socket is closed. If the socket is in fact closed the program will try to reconnect to the server
-            if(this.socket.isClosed()){
-
-                clientConnected = false;
-
-                /*//If the client has attempted over 5 unsuccessful reconnects the client will shut down
-                if(amountOfRetries >= 5 ){
-                    System.err.println("The amount of reconnects has exceeded its limit");
-                    System.exit(0);
-                }
-
-
-
-                //Attempt to reconnect to the server, if successful, will call upon restartClient
-                if(!reconnectClient()){
-                    amountOfRetries++;
-
-                }else{
-
-                    restartClient();
-
-                    //break;
-                }*/
-
-                //System.out.println("Socket is closed!");
-                break;
-
-            }
+        //Check if the server responds
+        if(!requestConnection()){
+            frame.runClient = false;
         }
 
-        shutDownClient();
-
-        /*restartClient();
-        System.out.println("Updated method has been closed!");*/
-    }
-
-    //Establishes a new connection and restarts closed threads
-    private void restartClient(){
+        clientIsRunning = frame.runClient;
 
 
-        Socket socket = new Socket();
+        if(frame.runClient){
 
-        try {
-            //Tries to bind the socket to the server
-            socket = new Socket(serverHost, remotePort);
+            Socket socket = new Socket();
 
-            this.socket = socket;
+            try{
 
-            amountOfRetries = 0;
+                System.out.println("Tries TCP");
 
-            System.out.println("\n--RECONNECTION SUCCESSFUL--\n");
+                //Tries to connect to the server
+                socket = new Socket(serverHost, remotePort);
+                this.socket = socket;
 
-            //Will initialize a clientapp.client.SendMessageThread and start a new thread, if a send message thread was never assigned or shut down
-            if(sendMessageThread == null || !sendMessageThread.isAlive()){
-                sendMessageThreadClass = new SendMessageThread(this);
-                sendMessageThread = new Thread(sendMessageThreadClass);
+                clientConnected = true;
+
+                System.out.println("\n--TCP connection has been established--");
+
+                //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
+                SendMessageThread sendMessageThreadClass = new SendMessageThread(this);
+                Thread sendMessageThread = new Thread(sendMessageThreadClass);
                 sendMessageThread.start();
+
+                //Start a new thread using an locally initialized RecieveMessageThread
+                Thread receiveMessageThread = new Thread(new ReceiveMessagesThread(this.socket, this));
+                receiveMessageThread.start();
+
+                UpdateClient();
+
+
+
+            }catch(UnknownHostException e){
+                frame.displayServerRespondError(this);
             }
-
-            //Update the current socket
-            //endMessageThreadClass.setClientSocket(this.socket);
-
-            //Start a new thread for a clientapp.client.ReceiveMessagesThread
-            new Thread(new ReceiveMessagesThread(this.socket, this)).start();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            try {
-                socket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            catch (IOException e) {
+                e.printStackTrace();
+                try{
+                    socket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
+
+        System.out.println("startClient method has been terminated!");
     }
 
-    private void shutDownClient(){
 
-        clientIsRunning = false;
-
-        try {
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Something went wrong, shutting down....");
-            System.exit(0);
-        }
-
-        System.out.println("Client has now been shut down!");
-
-    }
-
+    //Send a connection request to the server
     private boolean requestConnection(){
 
 
@@ -223,106 +182,72 @@ public class Client {
             e.printStackTrace();
 
             frame.runClient = false;
-
             return false;
         }
 
     }
 
-    public void startClient(MainFrame frame){
+    //Method used to update the client
+    private void UpdateClient(){
 
-       /* if(!requestConnection()){
+
+        /*Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("hello");
+            }
+
+
+        }, 1000, 1000);*/
+
+
+        //Check if the server should be running
+        while(clientIsRunning){
+
+            clientIsRunning = frame.runClient;
+
+            //Stop updating if the MainFrame boolean variable is false
+            if(!frame.runClient){
+                break;
+            }
+
+
+            //Stop updating if the socket has been closed
+            if(this.socket.isClosed()){
+
+                clientConnected = false;
+                break;
+
+            }
+        }
+
+        shutDownClient();
+
+        /*restartClient();
+        System.out.println("Updated method has been closed!");*/
+    }
+
+    //Close the connected socket
+    private void shutDownClient(){
+
+        clientIsRunning = false;
+
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Something went wrong, shutting down....");
             System.exit(0);
-        }*/
-
-        this.frame = frame;
-
-        if(!requestConnection()){
-            frame.runClient = false;
         }
 
-        clientIsRunning = frame.runClient;
+        System.out.println("Client has now been shut down!");
 
-
-        if(frame.runClient){
-
-            Socket socket = new Socket();
-
-            try{
-
-                System.out.println("Tries TCP");
-
-                //Tries to connect to the server
-                socket = new Socket(serverHost, remotePort);
-                this.socket = socket;
-
-                clientConnected = true;
-
-                System.out.println("\n--TCP connection has been established--");
-
-                //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
-                sendMessageThreadClass = new SendMessageThread(this);
-                sendMessageThread = new Thread(sendMessageThreadClass);
-                sendMessageThread.start();
-
-                //Start a new thread using an locally initialized RecieveMessageThread
-                receiveMessageThread = new Thread(new ReceiveMessagesThread(this.socket, this));
-                receiveMessageThread.start();
-
-
-
-                UpdateClient();
-
-
-
-            }catch(UnknownHostException e){
-                frame.displayServerRespondError(this);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-
-
-                try{
-                    socket.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-
-        System.out.println("startClient method has been terminated!");
     }
 
-    //Check if the client can reconnect to a server
-    public boolean reconnectClient(){
-
-        //System.out.println(System.currentTimeMillis());
-
-        //Store the current time
-        long currentTime = System.currentTimeMillis();
-
-        while(true){
-
-            //Check if the 5 seconds has gone by since the method was called
-            if(System.currentTimeMillis() - currentTime > 5000){
-                System.out.println("\n--RECONNECTING--\n");
-
-                return requestConnection();
 
 
-                /*//Check if socket can be bound to the server, an exception thrown indicates the server is not open
-                try(Socket socket = new Socket(serverHost, remotePort)) {
 
-                    socket.close();
 
-                    return true;
-                } catch (IOException e) {
-                    System.err.println("\n--RECONNECTION FAILED--\n");
-                    return false;
-
-                }*/
-
-            }
-        }
-    }
 }
