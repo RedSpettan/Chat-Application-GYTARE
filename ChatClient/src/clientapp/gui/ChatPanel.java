@@ -13,6 +13,8 @@ public class ChatPanel extends JPanel implements ActionListener {
     JTextArea textArea;
     JScrollPane scrollPane;
 
+    JButton sendButton;
+
     MainFrame frame;
 
 
@@ -42,6 +44,8 @@ public class ChatPanel extends JPanel implements ActionListener {
         textArea.setEditable(false);
         scrollPane = new JScrollPane(textArea);
 
+        sendButton = new JButton("Send");
+        sendButton.addActionListener(this);
 
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -62,11 +66,26 @@ public class ChatPanel extends JPanel implements ActionListener {
         add(scrollPane, constraints);
 
 
+        // <--- Send button ---------------->
+
+        constraints = new GridBagConstraints();
+
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+
+        constraints.weightx = 0.0;
+        constraints.anchor = GridBagConstraints.LINE_END;
+
+        add(sendButton, constraints);
+
+
         // <--- Text Field ---------------->
+
+        constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
 
-        constraints.weightx = 0.0;
+        constraints.weightx = 1.0;
         constraints.weighty = 0.0;
 
         constraints.gridx = 0;
@@ -75,6 +94,9 @@ public class ChatPanel extends JPanel implements ActionListener {
         constraints.anchor = GridBagConstraints.EAST;
 
         add(textField, constraints);
+
+
+
 
 
         //textArea.append("AnotherOne: Hello there \nTestPerson13: Wow, it sure is empty in here");
