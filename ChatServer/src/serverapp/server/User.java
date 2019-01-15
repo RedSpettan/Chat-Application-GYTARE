@@ -37,12 +37,6 @@ public class User {
 
         amountOfTimeConnected = currentTime - timeConnected;
 
-        /*formattedTimeConnected = String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(amountOfTimeConnected),
-                TimeUnit.MILLISECONDS.toMinutes(amountOfTimeConnected) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timeConnected)),
-                TimeUnit.MILLISECONDS.toSeconds(amountOfTimeConnected) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeConnected)));*/
-
-
         formattedTimeConnected = String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(amountOfTimeConnected),
                 TimeUnit.MILLISECONDS.toMinutes(amountOfTimeConnected) % TimeUnit.HOURS.toMinutes(1),

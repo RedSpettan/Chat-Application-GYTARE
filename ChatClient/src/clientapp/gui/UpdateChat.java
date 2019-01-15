@@ -23,7 +23,7 @@ public class UpdateChat implements Runnable {
             //Check if any message is pending to be sent
             if(!frame.client.messageToBeDisplayedList.isEmpty()){
 
-                //Get the message in the front of the queue
+                //Get the message at the front of the queue
                 String messageToBeSent = frame.client.messageToBeDisplayedList.poll();
 
                 System.out.println("Message to be sent: " + messageToBeSent);

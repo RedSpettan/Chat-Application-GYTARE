@@ -253,11 +253,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+
+    //Used to show a confirmation prompt if the player pressed the close button in the top corner
     WindowAdapter wa = new WindowAdapter() {
         @Override
         public void windowClosing(WindowEvent e) {
             super.windowClosing(e);
 
+            //Show prompt
             int response = JOptionPane.showConfirmDialog(null,
                     "The server and program will shut down.\nDo you want to proceed?",
                     "Exit",

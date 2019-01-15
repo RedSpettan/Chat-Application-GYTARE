@@ -39,8 +39,8 @@ public class SendMessagesThread implements Runnable{
                     if(!user.socket.isClosed()){
                         try{
 
-                            //System.out.println("This is the message which is to be sent: " + messageToBeSent);
 
+                            //Print the message onto the socket user's output stream
                             PrintWriter out = new PrintWriter(user.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
 
                             out.println(messageToBeSent);
@@ -55,26 +55,6 @@ public class SendMessagesThread implements Runnable{
                         activeServer.CheckSockets();
                     }
                 }
-
-                /*for(Socket s : activeServer.socketList){
-
-                    if(!s.isClosed()){
-                        try{
-
-                            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-
-                            out.println(messageToBeSent);
-
-                            out.flush();
-
-                        } catch (IOException e) {
-                            System.out.println("Crash here!");
-                            e.printStackTrace();
-                        }
-                    }else{
-                        activeServer.CheckSockets();
-                    }
-                }*/
             }
         }
 

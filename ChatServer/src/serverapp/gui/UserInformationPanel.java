@@ -38,23 +38,25 @@ public class UserInformationPanel extends JPanel {
 
         Dimension size = getPreferredSize();
 
+        //Set the size 90% of the current window width and 250 in height
         size.width = (int)(mainFrame.getWidth() * 0.9f);
         size.height = 250;
 
+        //Set the size
         setPreferredSize(size);
-
         setSize(size);
 
+        //Set the border
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-
+        //Create the different components
         createHeaders();
         createTextAreas();
         createScrollPanes();
 
 
         setLayout(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
+        GridBagConstraints constraints;
 
 
 

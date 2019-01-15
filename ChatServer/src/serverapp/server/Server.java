@@ -15,11 +15,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import serverapp.gui.*;
 
 public class Server {
 
-
+    //Toggle if the server should be running or not
     boolean serverIsRunning = false;
 
     //Store the Servers listening port
@@ -27,38 +26,40 @@ public class Server {
     public int maximumUsers;
 
 
-    //List used to store all connected client sockets
-    List<Socket> socketList = new ArrayList<>();
-
-    //Hash map used to associate a client socket to a specific Thread
-    Map<Socket, Thread> socketThreadMap = new HashMap<>();
-
+    //Queue used to store messages pending to be sent to users
     private ConcurrentLinkedQueue<String> messageToBeSentList = new ConcurrentLinkedQueue<>();
 
+    //Queue for message which will be displayed by the GUI
     public ConcurrentLinkedQueue<String> messagesToBeDisplayed = new ConcurrentLinkedQueue<>();
 
+    //List to store connected users
+    public List<User> userList = new ArrayList<>();
 
     public MainFrame mainframe;
 
-    public List<User> userList = new ArrayList<>();
-
-
-    private Thread sendMessageThread;
 
     private Logger requestLogger;
     private Logger errorLogger;
 
     private String projectPath;
 
+        //Different folder paths
+
     private final String loggingFolder = "\\Logs";
     private final String errorLoggingFolder = "\\Errors";
     private final String requestLoggingFolder = "\\Requests";
+
+        //String used to store the path to a folder
 
     private String loggingFolderPath;
     private String requestLoggingFolderPath;
     private String errorLoggingFolderPath;
 
+    //Shutdown hook will be used when the users closes the program
     private Thread shutdownHookThread;
+
+
+
 
     //Constructor
     public Server(int port, int maximumUsers){
@@ -203,6 +204,9 @@ public class Server {
     //Check if a socket is currently not used
     public static boolean CheckRemotePortAvailability(int portToCheck){
 
+        //Try to connect a new socket, if the socket manages to connect it means  that the port is not available.
+        //But if the try method catches an IOException that means that the socket failed to connect to the port and
+        //thus the port is available
         try(Socket socket = new Socket(InetAddress.getLocalHost(),portToCheck )){
 
             System.out.println("Remote port is NOT available");
@@ -224,25 +228,6 @@ public class Server {
             return false;
         }
 
-        /*try{
-            Socket socket = new Socket(InetAddress.getLocalHost(),portToCheck );
-            socket.close();
-
-            System.out.println("Remote port is NOT available");
-
-            return false;
-        } catch (UnknownHostException e) {
-
-            System.out.println("Remote port is NOT available");
-
-            return false;
-
-        } catch (IOException e) {
-
-            System.out.println("Remote port is available");
-
-            return true;
-        }*/
     }
 
     //Initialises the server and it's associated threads
@@ -255,7 +240,7 @@ public class Server {
 
         System.out.println("Remote port: " + remotePort);
 
-        //Starts a new serverapp.server.Server Socket
+        //Starts a new Server Socket
         try(ServerSocket serverSocket = new ServerSocket(remotePort)){
 
             System.out.println("Socket has been opened, awaiting connections...");
@@ -265,19 +250,18 @@ public class Server {
             serverIsRunning = frame.runServer;
 
             //Start threads
-            new Thread(new ConnectionRequests()).start();
+            new Thread(new serverRequests()).start();
             new Thread(new ServerConnection(serverSocket, this)).start();
-            //new Thread(new DebugServerThread(this)).start();
 
-            sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
+            //Start a send message thread, responsible for sending out messages to clients
+            Thread sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
             sendMessageThread.start();
 
 
             //Get the current system time
             long systemTime = System.currentTimeMillis();
 
-
-
+            //Do only if the server should be running
             while(serverIsRunning){
 
                 //System.out.println(systemTime % 5000);
@@ -306,11 +290,9 @@ public class Server {
 
             }
 
+            //If the code reaches this point, that means that "serverIsRunning" is false and the server should shutdown
             ShutdownServer();
 
-            //updateServer = true;
-
-            //UpdateServer();
 
 
 
@@ -320,7 +302,7 @@ public class Server {
 
     }
 
-
+    //Close all sockets connected to the server
     private void ShutdownServer(){
         try {
 
@@ -336,50 +318,14 @@ public class Server {
         System.out.println("Server has been shutdown!");
     }
 
-    private void UpdateServer(){
+        //Methods used by threads to transfer incoming messages
 
-        /*while(true){
-
-            //System.out.println("Here!");
-
-            //System.out.println("SocketList: " + socketList.size() + "     HashMap: " + socketThreadMap.size());
-
-
-
-        }*/
-
-
-
-
-        /*if(!messageToBeSentList.isEmpty()){
-
-               System.out.println("Size of list: " + messageToBeSentList.size());
-
-               String message = messageToBeSentList.poll();
-
-               for(Socket socket : socketList){
-                   try {
-                       PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                       out.println(message);
-
-                   } catch (IOException e) {
-                       e.printStackTrace();
-                   }
-                   System.out.println(socket.getPort() + " is closed?: " + socket.isClosed());
-               }
-
-               System.out.println("Polled message: " + message);
-           }*/
-
-    }
-
-    //Methods used by threads to transfer incoming messages
     void ReceiveMessages(String message, Socket socket){
 
-       // System.out.println("***" + socket.getPort() + ": " + message);
 
         User senderUser = null;
 
+        //Get the username associated with a certain socket
         for(User user : userList){
             if(user.socket.equals(socket)){
                 senderUser = user;
@@ -401,6 +347,7 @@ public class Server {
             //messageToBeSentList.add("***" +"[USERNAME UNAVAILABLE]"+ ": " + message);
         }
 
+        //Add the message to two different queues
         messageToBeSentList.add(completeMessage);
         messagesToBeDisplayed.add(completeMessage);
 
@@ -409,8 +356,10 @@ public class Server {
 
 
     }
+
+    //This method is primarily used by the server to send message to clients
     public void ReceiveMessages(String message, String sender){
-        //This method is primarily used by the server to send message to clients
+
 
         String completeMessage = sender +": " + message;
         System.out.println(completeMessage);
@@ -490,11 +439,8 @@ public class Server {
 
     }
 
-
-
-
-
-    private class ConnectionRequests implements Runnable{
+    //Listen for different request send by client using UDP
+    private class serverRequests implements Runnable{
 
         @Override
         public void run() {
@@ -503,49 +449,50 @@ public class Server {
             System.out.println("Listening for requests");
             try(DatagramSocket socket = new DatagramSocket(remotePort)) {
 
+                //The socket will only listen for packets in one second before breaking the block
                 socket.setSoTimeout(1000);
 
                 while(serverIsRunning){
+
                     DatagramPacket request = new DatagramPacket(new byte[50], 50);
 
                     boolean requestRecieved = false;
-                    try{
 
+                    //Check if any packet has arrived
+                    try{
                         //System.out.println("Looking for requests");
                         socket.receive(request);
                         requestRecieved = true;
 
                         //System.out.println("Request received ");
 
-                    }catch(SocketTimeoutException e){
-
-                        //System.out.println("Failed to get message");
+                    }catch(SocketTimeoutException ignored){
 
                     }
 
 
                     if(requestRecieved){
-                       // System.out.println("Request Received! ");
 
-
+                        //Get the message from the packet and trim it (to remove excess white spaces)
                         String requestMessage = new String(request.getData(), StandardCharsets.ISO_8859_1);
                         requestMessage = requestMessage.trim();
 
+                        //Check if the sender wanted to receive the connected clients' usernames
                         if(requestMessage.equals("%USERS%")){
 
                             String responseText = "";
 
+                            //Put all usernames in a string
                             if(!userList.isEmpty()){
                                 for(User user : userList){
-
                                     responseText = responseText + user.username + ",";
-
                                 }
                             }
                             byte[] responseMessage = responseText.getBytes(StandardCharsets.ISO_8859_1);
 
                             System.out.println("Username request received");
 
+                            //Send the usernames back to the sender
                             DatagramPacket response = new DatagramPacket(responseMessage, responseMessage.length, request.getAddress(), request.getPort());
                             socket.send(response);
 
@@ -556,11 +503,15 @@ public class Server {
                             byte[] responseMessage;
                             String clientUsername = "[UNDECIDED]";
                             System.out.println("Amount of users: " + userList.size());
+
+                            //Check if the maximum user size has been exceeded, thus the sender cannot connect
                             if(userList.size() >= maximumUsers){
 
                                 //"f" for "The server is full"
                                 responseMessage = "f".getBytes(StandardCharsets.ISO_8859_1);
                             }else{
+
+                                //Get the text from the packet
                                 clientUsername = new String(request.getData(), StandardCharsets.ISO_8859_1);
 
                                 //Remove white characters
@@ -568,6 +519,7 @@ public class Server {
 
                                 boolean usernameExist = false;
 
+                                //Confirm the username does not already exist
                                 for(User user : userList){
                                     if(user.username.equalsIgnoreCase(clientUsername)){
                                         usernameExist = true;
@@ -576,7 +528,6 @@ public class Server {
                                 }
 
                                 // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
-
                                 if(!usernameExist){
                                     responseMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
                                 }else{
@@ -595,18 +546,11 @@ public class Server {
                                     "\r\n\r\n");
 
 
-
+                            //Send a response to the sender
                             DatagramPacket response = new DatagramPacket(responseMessage, responseMessage.length, request.getAddress(), request.getPort());
                             socket.send(response);
                         }
-
-
-
-
                     }
-
-
-
                 }
 
                 System.out.println("Connection Request thread has been shut down!");
@@ -620,7 +564,7 @@ public class Server {
     }
 
 
-    //Check for new client connections
+    //Listen for connection requests using TCP/IP
     private class ServerConnection implements Runnable{
 
 
@@ -644,20 +588,20 @@ public class Server {
                     //Accept any incoming connection
                     Socket clientSocket = serverSocket.accept();
 
-                    if(userList.size() < maximumUsers){
+                    //Confirm the amout of connected users is below or equal to the limit
+                    if(userList.size() <= maximumUsers){
 
                         System.out.println("Connection has been established!");
 
                         System.out.println(clientSocket.getInetAddress());
 
-                        //Create a new Thread to run a serverapp.server.ServerThread
+                        //Create a new Thread to run a ServerThread
                         Thread localThread = new Thread(new ServerThread(clientSocket, server));
 
                         //Add the user to the "userList"
                         userList.add( new User("Test", localThread, clientSocket));
 
                         localThread.start();
-
 
 
                         //Log the incoming client connection

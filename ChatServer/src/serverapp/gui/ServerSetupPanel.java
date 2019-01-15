@@ -10,18 +10,17 @@ import java.awt.event.ActionListener;
 
 public class ServerSetupPanel extends JPanel implements ActionListener {
 
-    public JButton submitButton;
+    JButton submitButton;
 
-    public JLabel maximumUserLabel;
-    public JLabel portLabel;
+    private JLabel maximumUserLabel;
+    private JLabel portLabel;
 
     public int port;
 
-    public JTextField portTextField;
-    public JTextField maximumUserField;
+    private JTextField portTextField;
+    private JTextField maximumUserField;
 
-
-    public int maximumUsers;
+    int maximumUsers;
 
     MainFrame frame;
 
@@ -30,32 +29,33 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
 
         frame = currentFrame;
 
+        //Set the panel size half of the whole window
         Dimension size = getPreferredSize();
         size.width = (currentFrame.getSize().width / 2);
         size.height = (currentFrame.getSize().height / 2);
 
-
+        //Set the size
         setPreferredSize(size);
         setSize(size);
 
+        //Set a border
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
         //Submit submitButton
         submitButton = new JButton("Start Server");
-
         submitButton.addActionListener((ActionListener) currentFrame);
 
         //Create a label an text field for port number
 
         portLabel = new JLabel("Port Number: ");
-
         portTextField = new JTextField(0);
 
+        //Create a label and text field for maximum users
 
         maximumUserLabel = new JLabel("Maximum Users: ");
-
         maximumUserField = new JTextField(10);
 
+        //Set the layout to GridBagLayout
         setLayout(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -120,12 +120,15 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
         add(maximumUserField, constraints);
     }
 
+    //Validate that the text field "Port Number" is correctly filled out
     public boolean validatePortField(){
 
         int port;
 
+        //Make sure the field is not empty
         if(!portTextField.getText().isEmpty()){
 
+            //Parse the string to int, NumberFormatException will be called if the text field does not contain only numbers
             try{
                 port = Math.abs(Integer.parseInt(portTextField.getText()));
             }catch(NumberFormatException e){
@@ -133,6 +136,7 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
                 return false;
             }
 
+            //See if the port is available
             if(Server.CheckRemotePortAvailability(port)){
 
             }else{
@@ -156,11 +160,16 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
         return true;
     }
 
+    //Validate that the text field "Maximum Users" is correctly filled out
     public boolean validateMaximumUsersField(){
+
+
+        //Check that the field is not empty
         if(!maximumUserField.getText().isEmpty()){
 
             int maximumUsers;
 
+            //Parse the string to int, NumberFormatException will be called if the string does not only contain numbers
             try{
                 maximumUsers = Math.abs(Integer.parseInt(maximumUserField.getText()));
             }catch(NumberFormatException e){
@@ -188,15 +197,10 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
 
 
 
-        if(e.getSource() == submitButton){
+        /*if(e.getSource() == submitButton){
             System.out.println("Button has been pressed");
 
-
-
-
-
-
-        }
+        }*/
 
     }
 }
