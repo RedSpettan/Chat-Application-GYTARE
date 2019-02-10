@@ -50,7 +50,7 @@ public class UpdateChat implements Runnable {
                     }
 
                     //Post the message
-                    frame.chatPanel.textArea.append("\n"+ messageToBeSent);
+                    frame.chatPanel.textArea.append(messageToBeSent + "\n");
 
                     //Move the scroll bar to the bottom
                     if(moveScrollBar){

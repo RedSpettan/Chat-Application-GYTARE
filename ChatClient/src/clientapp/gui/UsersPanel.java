@@ -83,12 +83,12 @@ public class UsersPanel extends JPanel {
         usersTextField.setEditable(false);
 
         //Text area
-        usersTextArea = new JTextArea();
-        usersTextArea.setPreferredSize(new Dimension(200,0));
+        usersTextArea = new JTextArea(2, 20);
+        //usersTextArea.setPreferredSize(new Dimension(200,0));
         usersTextArea.setEditable(false);
 
         //The scrubbers will only appear as they are needed
-        usersScrollPane = new JScrollPane(usersTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        usersScrollPane = new JScrollPane(usersTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         //usersScrollPane.setPreferredSize(new Dimension(200,0));
 
 
