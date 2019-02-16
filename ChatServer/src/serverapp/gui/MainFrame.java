@@ -14,9 +14,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public Server server;
 
-
-
-
     ServerSetupPanel serverSetupPanel;
 
     ChatPanel chatPanel;
@@ -167,6 +164,7 @@ public class MainFrame extends JFrame implements ActionListener {
         constraints.gridx = 0;
         constraints.gridy = 2;
 
+        //Attach it to the far left
         constraints.anchor = GridBagConstraints.LINE_START;
 
         constraints.insets = new Insets(0,0,10,0);
@@ -277,28 +275,29 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
         if(e.getSource() == informationButton){
-                /*JOptionPane.showMessageDialog(null, "IP-Address (Host Address): " + InetAddress.getLocalHost().getHostAddress() +
-                        "\n CanonicalHostName" + InetAddress.getLocalHost().getCanonicalHostName() + "\n Name: " + InetAddress.getLocalHost().getHostName());*/
 
-                JOptionPane.showMessageDialog(null, NetworkInterFaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
-
-                //NetworkInterFaces();
+            //Display server information prompt
+            JOptionPane.showMessageDialog(null, NetworkInterFaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
 
         }
 
 
     }
 
+
+    //Get the current IP-address associated with the host machine
     public static String NetworkInterFaces(){
 
         StringBuilder addressString = new StringBuilder();
 
         try {
+            //Get the network interfaces on computer the program is executing on
             Enumeration<NetworkInterface> eNI = NetworkInterface.getNetworkInterfaces();
 
             while(eNI.hasMoreElements()){
-                NetworkInterface n = eNI.nextElement();
 
+                //Get the IP-addresses associated with the network interface
+                NetworkInterface n = eNI.nextElement();
                 Enumeration eIA = n.getInetAddresses();
 
                 //System.out.println("Name: " + n.getDisplayName());
@@ -306,17 +305,18 @@ public class MainFrame extends JFrame implements ActionListener {
                 while(eIA.hasMoreElements()){
                     InetAddress i = (InetAddress) eIA.nextElement();
 
+                    //Only IPv4 address
                     if(!(i.getAddress().length > 4)){
-
 
                         String address = i.getHostAddress();
 
-
+                        //Array to store the ip-address sliced
                         int[] intAddress = new int[4];
 
                         int beginIndex = 0;
                         int endIndex;
 
+                        //Divide the IP-address into 4 slices
                         for(int x = 0; x < 4; x++){
 
                             endIndex = address.indexOf(".", beginIndex);
@@ -328,14 +328,13 @@ public class MainFrame extends JFrame implements ActionListener {
                             }else{
                                 intAddress[x] = Integer.parseInt(address.substring(beginIndex));
                             }
-
-                            //System.out.println(intAddress[x]);
-
                         }
 
 
+                        //No loopback address
                         if(!address.equalsIgnoreCase("127.0.0.1")){
 
+                            //Check if it is a local IP-address
                             if(intAddress[0] == 192 && intAddress[1] == 168 ){
 
                                 System.out.println("Local address: " + address);
@@ -363,6 +362,7 @@ public class MainFrame extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
+        //Return
         return String.valueOf(addressString);
     }
 
