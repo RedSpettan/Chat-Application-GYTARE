@@ -7,6 +7,8 @@ import serverapp.server.StartServerThread;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.*;
+import java.util.Enumeration;
 
 public class MainFrame extends JFrame implements ActionListener {
 
@@ -20,6 +22,7 @@ public class MainFrame extends JFrame implements ActionListener {
     ChatPanel chatPanel;
     UserInformationPanel informationPanel;
     JButton shutDownServerButton;
+    JButton informationButton;
 
     GridBagConstraints constraints;
 
@@ -154,6 +157,27 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+    private void createInformationButton(){
+        informationButton = new JButton("Server Information");
+
+        informationButton.addActionListener(this);
+
+        constraints = new GridBagConstraints();
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+
+        constraints.anchor = GridBagConstraints.LINE_START;
+
+        constraints.insets = new Insets(0,0,10,0);
+
+        container.add(informationButton, constraints);
+
+    }
+
+
+
+
 
         //Method for drawing the Set up or chat GUI
 
@@ -167,6 +191,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private void createChatGUI(){
         createChatPanel();
         createInformationPanel();
+        createInformationButton();
         createShutDownButton();
 
         //Update the GUI
@@ -190,6 +215,7 @@ public class MainFrame extends JFrame implements ActionListener {
             //Remove the Chat GUI
             container.remove(informationPanel);
             container.remove(chatPanel);
+            container.remove(informationButton);
             container.remove(shutDownServerButton);
 
             createSetupGUI();
@@ -250,8 +276,96 @@ public class MainFrame extends JFrame implements ActionListener {
 
         }
 
+        if(e.getSource() == informationButton){
+                /*JOptionPane.showMessageDialog(null, "IP-Address (Host Address): " + InetAddress.getLocalHost().getHostAddress() +
+                        "\n CanonicalHostName" + InetAddress.getLocalHost().getCanonicalHostName() + "\n Name: " + InetAddress.getLocalHost().getHostName());*/
+
+                JOptionPane.showMessageDialog(null, NetworkInterFaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
+
+                //NetworkInterFaces();
+
+        }
+
 
     }
+
+    public static String NetworkInterFaces(){
+
+        StringBuilder addressString = new StringBuilder();
+
+        try {
+            Enumeration<NetworkInterface> eNI = NetworkInterface.getNetworkInterfaces();
+
+            while(eNI.hasMoreElements()){
+                NetworkInterface n = eNI.nextElement();
+
+                Enumeration eIA = n.getInetAddresses();
+
+                //System.out.println("Name: " + n.getDisplayName());
+
+                while(eIA.hasMoreElements()){
+                    InetAddress i = (InetAddress) eIA.nextElement();
+
+                    if(!(i.getAddress().length > 4)){
+
+
+                        String address = i.getHostAddress();
+
+
+                        int[] intAddress = new int[4];
+
+                        int beginIndex = 0;
+                        int endIndex;
+
+                        for(int x = 0; x < 4; x++){
+
+                            endIndex = address.indexOf(".", beginIndex);
+
+                            if(endIndex != -1){
+                                intAddress[x] = Integer.parseInt(address.substring(beginIndex, endIndex));
+
+                                beginIndex = endIndex + 1;
+                            }else{
+                                intAddress[x] = Integer.parseInt(address.substring(beginIndex));
+                            }
+
+                            //System.out.println(intAddress[x]);
+
+                        }
+
+
+                        if(!address.equalsIgnoreCase("127.0.0.1")){
+
+                            if(intAddress[0] == 192 && intAddress[1] == 168 ){
+
+                                System.out.println("Local address: " + address);
+
+                                addressString.append("Local address: " + address + "\n");
+
+
+                            }else{
+                                System.out.println("IP address: " + address);
+
+                                addressString.append("IP address: " + address + "\n");
+
+
+                            }
+
+                            System.out.println(i.getHostAddress());
+                            //System.out.println("Length: " + i.getAddress().length);
+                        }
+                    }
+                    //System.out.println(i.getHostAddress());
+                }
+            }
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        return String.valueOf(addressString);
+    }
+
 
 
     //Used to show a confirmation prompt if the player pressed the close button in the top corner

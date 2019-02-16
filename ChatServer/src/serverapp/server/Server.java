@@ -22,9 +22,11 @@ public class Server {
     boolean serverIsRunning = false;
 
     //Store the Servers listening port
-    private int remotePort;
+    public int remotePort;
     public int maximumUsers;
 
+
+    public InetAddress inet4Address;
 
     //Queue used to store messages pending to be sent to users
     private ConcurrentLinkedQueue<String> messageToBeSentList = new ConcurrentLinkedQueue<>();
@@ -247,6 +249,12 @@ public class Server {
             System.out.println("IP address: " + Inet4Address.getLocalHost());
 
 
+            //inet4Address = Inet4Address.getLocalHost();
+
+
+
+            //System.out.println("ServerSocket test: " + serverSocket.getInetAddress().getHostAddress());
+
             serverIsRunning = frame.runServer;
 
             //Start threads
@@ -386,6 +394,10 @@ public class Server {
                             "\r\n PortNumber: " + user.socket.getPort() +
                             "\r\n Host Address: " + user.inetAddress.getHostAddress() +
                             "\r\n Host name: " + user.inetAddress.getHostName());
+
+                    String chatMessage = "--- " + user.username+ "has left the server ---";
+                    messageToBeSentList.add(chatMessage);
+                    messagesToBeDisplayed.add(chatMessage);
 
                     userList.remove(user);
                     System.out.println("serverapp.server.User removed!");
