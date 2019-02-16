@@ -45,7 +45,6 @@ public class MainFrame extends JFrame implements ActionListener {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-
         //Set Layout as GridBagLayout
         setLayout(new GridBagLayout());
 

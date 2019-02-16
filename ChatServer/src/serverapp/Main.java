@@ -20,22 +20,11 @@ public class Main {
         //NetworkInterFaces();
 
         SwingUtilities.invokeLater(() ->{
-            MainFrame mainFrame = new MainFrame("Test");
+            MainFrame mainFrame = new MainFrame("Server");
             //mainFrame.setVisible(false);
         });
 
         //server.StartServer();
-
-
-
-
-
     }
 
-
-
-
-    public void StartServer(Server server){
-
-    }
 }

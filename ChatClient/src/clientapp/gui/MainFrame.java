@@ -199,7 +199,7 @@ public class MainFrame extends JFrame implements ActionListener {
     public void displayServerRespondError(Client client){
         JOptionPane.showMessageDialog(null,
                 "Server failed to respond.\nMake sure all information is correct and try again.",
-                "HOST ADDRESS ERROR",
+                "Server ERROR",
                 JOptionPane.ERROR_MESSAGE);
 
 
@@ -208,35 +208,20 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     public void displayUnknownHostError(){
-        JOptionPane.showMessageDialog(null, "Host Address is invalid.\nMake sure all information is correct and try again.", "HOST ADDRESS ERROR", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Host Address is invalid.\nMake sure all information is correct and try again.", "Unknown Host", JOptionPane.ERROR_MESSAGE);
         runClient = false;
     }
 
     public void displayUsernameTakenError(){
-        JOptionPane.showMessageDialog(null, "Username is already taken.\nChange your username and re-connect again", "HOST ADDRESS ERROR", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Username is already taken.\nChange your username and re-connect again", "Username unavailable", JOptionPane.ERROR_MESSAGE);
         runClient = false;
     }
 
     public void displayServerFullError(){
-        JOptionPane.showMessageDialog(null, "Server is currently full.\nAttempt a reconnect in a while.", "HOST ADDRESS ERROR", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Server is currently full.\nAttempt a reconnect in a while.", "Server full", JOptionPane.ERROR_MESSAGE);
         runClient = false;
     }
 
-
-    private void connectClient(){
-
-        client = null;
-
-        client = new Client(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
-        runClient = true;
-        new Thread(new StartClientThread(this,client)).start();
-
-        System.out.println("Client has been started, tries to connect...");
-
-        connectTimer.setDelay(client.socketTimeoutTime);
-
-        connectTimer.start();
-    }
 
     private void connectClient(String host, int port, String username){
         client = null;
@@ -435,7 +420,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
             //Validate the 3 different text fields
             if(connectPanel.validateHostAddress() && connectPanel.validatePortNumber() && connectPanel.validateUsername()){
-                //connectClient();
                 connectClient(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
             }
         }

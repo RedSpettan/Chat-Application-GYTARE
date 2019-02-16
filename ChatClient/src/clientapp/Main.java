@@ -13,11 +13,11 @@ public class Main {
 
 
         SwingUtilities.invokeLater(() -> {
-            MainFrame mainFrame = new MainFrame("Test");
+            MainFrame mainFrame = new MainFrame("Client");
         });
 
         //Get username from console
-        String username = RetrieveUsername();
+        //String username = RetrieveUsername();
 
         //Client mainClient = new Client("LAPTOP-9V1U1J17", 9543, username);
 
