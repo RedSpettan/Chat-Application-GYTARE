@@ -20,6 +20,25 @@ public class StartServerThread implements Runnable {
 
         server.StartServer(frame);
 
+
+        try{
+            while(true){
+
+                if(!frame.runServer){
+                    server.ShutdownServer();
+                    break;
+                }
+
+                Thread.sleep(1000);
+
+
+
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         System.out.println("StartServerThread has been shutdown!");
 
     }

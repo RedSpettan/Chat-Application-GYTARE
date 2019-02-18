@@ -26,6 +26,8 @@ public class Server {
     public int maximumUsers;
 
 
+    ServerSocket theServerSocket;
+
     public InetAddress inet4Address;
 
     //Queue used to store messages pending to be sent to users
@@ -39,6 +41,11 @@ public class Server {
 
     public MainFrame mainframe;
 
+
+    Timer sendMessageTimer = new Timer();
+    Timer updateServerTimer = new Timer();
+
+    SendMessagesThread sm;
 
     private Logger requestLogger;
     private Logger errorLogger;
@@ -243,10 +250,14 @@ public class Server {
         System.out.println("Remote port: " + remotePort);
 
         //Starts a new Server Socket
-        try(ServerSocket serverSocket = new ServerSocket(remotePort)){
+        try{
+
+            theServerSocket = new ServerSocket(remotePort);
 
             System.out.println("Socket has been opened, awaiting connections...");
             System.out.println("IP address: " + Inet4Address.getLocalHost());
+
+
 
 
             //inet4Address = Inet4Address.getLocalHost();
@@ -259,47 +270,47 @@ public class Server {
 
             //Start threads
             new Thread(new serverRequests()).start();
-            new Thread(new ServerConnection(serverSocket, this)).start();
+            new Thread(new ServerConnection(theServerSocket, this)).start();
 
             //Start a send message thread, responsible for sending out messages to clients
-            Thread sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
-            sendMessageThread.start();
+            /*Thread sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
+            sendMessageThread.start();*/
 
 
-            //Get the current system time
-            long systemTime = System.currentTimeMillis();
+            sm = new SendMessagesThread(this, messageToBeSentList);
 
-            //Do only if the server should be running
-            while(serverIsRunning){
 
-                //System.out.println(systemTime % 5000);
+            sendMessageTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sm.CheckMessage();
 
-                serverIsRunning = frame.runServer;
+                    System.out.println("Messages Checked!");
+                }
 
-                //If 5 seconds have surpassed, check if sockets are still connected
-                if(System.currentTimeMillis() - systemTime >= 5000){
+
+
+            }, 1000, 200);
+
+
+            //long systemTime = System.currentTimeMillis();
+
+            updateServerTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    //If 5 seconds have surpassed, check if sockets are still connected
                     CheckSockets();
-                    systemTime = System.currentTimeMillis();
 
                     for(User user: userList){
                         user.calculateTime();
                         System.out.println(user.formattedTimeConnected);
                     }
+
+
+                    System.out.println("Server Updated!");
+
                 }
-
-                //Check if the send message is still alive. If not, the thread will attempt a restart
-                if(!sendMessageThread.isAlive()){
-
-                    System.err.print("*** Send Messages is not alive, attempting restart...*** ");
-
-                    sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
-                    sendMessageThread.start();
-                }
-
-            }
-
-            //If the code reaches this point, that means that "serverIsRunning" is false and the server should shutdown
-            ShutdownServer();
+            }, 1000, 3000);
 
 
 
@@ -311,8 +322,16 @@ public class Server {
     }
 
     //Close all sockets connected to the server
-    private void ShutdownServer(){
+    public void ShutdownServer(){
         try {
+
+            theServerSocket.close();
+
+            updateServerTimer.cancel();
+            sendMessageTimer.cancel();
+
+
+            serverIsRunning = false;
 
             for(User user : userList){
                 user.socket.close();
@@ -450,6 +469,7 @@ public class Server {
 
 
     }
+
 
     //Listen for different request send by client using UDP
     private class serverRequests implements Runnable{
