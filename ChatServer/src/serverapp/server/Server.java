@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -257,24 +258,11 @@ public class Server {
             System.out.println("Socket has been opened, awaiting connections...");
             System.out.println("IP address: " + Inet4Address.getLocalHost());
 
-
-
-
-            //inet4Address = Inet4Address.getLocalHost();
-
-
-
-            //System.out.println("ServerSocket test: " + serverSocket.getInetAddress().getHostAddress());
-
             serverIsRunning = frame.runServer;
 
             //Start threads
             new Thread(new serverRequests()).start();
             new Thread(new ServerConnection(theServerSocket, this)).start();
-
-            //Start a send message thread, responsible for sending out messages to clients
-            /*Thread sendMessageThread = new Thread(new SendMessagesThread(this, messageToBeSentList));
-            sendMessageThread.start();*/
 
 
             sm = new SendMessagesThread(this, messageToBeSentList);
@@ -284,30 +272,18 @@ public class Server {
                 @Override
                 public void run() {
                     sm.CheckMessage();
-
-                    System.out.println("Messages Checked!");
                 }
-
-
-
             }, 1000, 200);
-
-
-            //long systemTime = System.currentTimeMillis();
 
             updateServerTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    //If 5 seconds have surpassed, check if sockets are still connected
                     CheckSockets();
 
                     for(User user: userList){
                         user.calculateTime();
                         System.out.println(user.formattedTimeConnected);
                     }
-
-
-                    System.out.println("Server Updated!");
 
                 }
             }, 1000, 3000);
@@ -368,10 +344,8 @@ public class Server {
         if(senderUser != null){
             System.out.println(senderUser.username + ": " + message);
             completeMessage = senderUser.username + ": " + message;
-            //messageToBeSentList.add("***" + senderUser.username + ": " + message);
         }else{
             completeMessage = "[USERNAME UNAVAILABLE]"+ ": " + message;
-            //messageToBeSentList.add("***" +"[USERNAME UNAVAILABLE]"+ ": " + message);
         }
 
         //Add the message to two different queues
@@ -486,6 +460,9 @@ public class Server {
 
                 while(serverIsRunning){
 
+
+
+
                     DatagramPacket request = new DatagramPacket(new byte[50], 50);
 
                     boolean requestRecieved = false;
@@ -499,7 +476,7 @@ public class Server {
                         //System.out.println("Request received ");
 
                     }catch(SocketTimeoutException ignored){
-
+                        Thread.sleep(1000);
                     }
 
 
@@ -589,8 +566,9 @@ public class Server {
 
 
 
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
+                errorLogger.log(Level.WARNING, e.getMessage(), e);
             }
         }
     }
@@ -613,15 +591,28 @@ public class Server {
         public void run() {
 
             try {
+
+                serverSocket.setSoTimeout(1000);
+
                 while(serverIsRunning){
 
 
 
-                    //Accept any incoming connection
-                    Socket clientSocket = serverSocket.accept();
+                    Thread.sleep(2000);
+
+
+                    /*//Accept any incoming connection
+                    Socket clientSocket = serverSocket.accept();*/
+
+                    Socket clientSocket = null;
+                    try{
+                         clientSocket = serverSocket.accept();
+
+                    }catch(SocketTimeoutException ignored){
+                    }
 
                     //Confirm the amout of connected users is below or equal to the limit
-                    if(userList.size() <= maximumUsers){
+                    if((userList.size() <= maximumUsers) && clientSocket != null){
 
                         System.out.println("Connection has been established!");
 
@@ -651,6 +642,11 @@ public class Server {
                 e.printStackTrace();
 
                 System.out.println("Server connection thread has been shutdown!");
+            } catch (InterruptedException e) {
+
+                errorLogger.log(Level.WARNING, e.getMessage(), e);
+
+                e.printStackTrace();
             }
 
         }
