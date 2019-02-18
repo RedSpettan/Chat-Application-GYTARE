@@ -1,7 +1,6 @@
 package serverapp.gui;
 
 import serverapp.server.Server;
-import serverapp.server.ShutdownHook;
 import serverapp.server.StartServerThread;
 
 import javax.swing.*;
@@ -27,6 +26,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
     private Thread chatUpdateThread;
+
+    private ChatManager chatManager;
 
 
     boolean updateChat = false;
@@ -126,8 +127,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
         updateChat = true;
 
-        chatUpdateThread = new Thread(new UpdateChat(this));
-        chatUpdateThread.start();
+        chatManager = new ChatManager(this);
+
+
+        /*chatUpdateThread = new Thread(new ChatManager(this));
+        chatUpdateThread.start();*/
 
     }
 
@@ -208,6 +212,10 @@ public class MainFrame extends JFrame implements ActionListener {
 
         if(responseMessage == JOptionPane.YES_OPTION){
             runServer = false;
+
+            updateChat = false;
+
+            chatManager.StopUpdate();
 
             //Remove the Chat GUI
             container.remove(informationPanel);
