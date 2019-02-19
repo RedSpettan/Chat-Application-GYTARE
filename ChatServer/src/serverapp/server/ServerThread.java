@@ -37,7 +37,7 @@ public class ServerThread implements Runnable{
             while((line = reader.readLine()) != null){
 
                 //Send the message to the server
-                activeServer.ReceiveMessages(line, clientSocket);
+                activeServer.receiveMessages(line, clientSocket);
             }
 
 
@@ -48,11 +48,9 @@ public class ServerThread implements Runnable{
         }
     }
 
-
+    //Send username request to the client
     private void SendUsernameMessage(BufferedReader reader){
 
-
-        System.out.println("Is the socket closed?: " + clientSocket.isClosed());
 
         try {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
@@ -73,11 +71,13 @@ public class ServerThread implements Runnable{
 
     }
 
+    //Associate a username to the user's socket
     private void associateUsername(String username){
 
         for(User user : activeServer.userList){
             if(user.socket.equals(clientSocket)){
                 user.username = username;
+                activeServer.receiveMessages("--- " + user.username+ " has connected to the server ---");
                 break;
             }
         }

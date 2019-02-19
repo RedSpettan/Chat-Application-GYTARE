@@ -30,7 +30,7 @@ public class User {
     }
 
 
-
+    //Calculate the amount of time user has existed
     public void calculateTime(){
 
         long currentTime = System.currentTimeMillis();

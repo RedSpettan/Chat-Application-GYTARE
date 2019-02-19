@@ -17,14 +17,14 @@ public class Main {
         //Server server = new Server(9543,2);
 
 
-        //NetworkInterFaces();
+        //getNetworkInterfaces();
 
         SwingUtilities.invokeLater(() ->{
             MainFrame mainFrame = new MainFrame("Server");
             //mainFrame.setVisible(false);
         });
 
-        //server.StartServer();
+        //server.startServer();
     }
 
 }

@@ -17,18 +17,15 @@ public class MainFrame extends JFrame implements ActionListener {
 
     ChatPanel chatPanel;
     UserInformationPanel informationPanel;
-    JButton shutDownServerButton;
-    JButton informationButton;
+    private JButton shutDownServerButton;
+    private JButton informationButton;
 
-    GridBagConstraints constraints;
+    private GridBagConstraints constraints;
 
-    Container container;
+    private Container container;
 
-
-    private Thread chatUpdateThread;
 
     private ChatManager chatManager;
-
 
     boolean updateChat = false;
 
@@ -284,7 +281,7 @@ public class MainFrame extends JFrame implements ActionListener {
         if(e.getSource() == informationButton){
 
             //Display server information prompt
-            JOptionPane.showMessageDialog(null, NetworkInterFaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
+            JOptionPane.showMessageDialog(null, getNetworkInterfaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
 
         }
 
@@ -293,7 +290,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
     //Get the current IP-address associated with the host machine
-    public static String NetworkInterFaces(){
+    public static String getNetworkInterfaces(){
 
         StringBuilder addressString = new StringBuilder();
 
@@ -306,8 +303,6 @@ public class MainFrame extends JFrame implements ActionListener {
                 //Get the IP-addresses associated with the network interface
                 NetworkInterface n = eNI.nextElement();
                 Enumeration eIA = n.getInetAddresses();
-
-                //System.out.println("Name: " + n.getDisplayName());
 
                 while(eIA.hasMoreElements()){
                     InetAddress i = (InetAddress) eIA.nextElement();

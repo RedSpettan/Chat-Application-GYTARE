@@ -1,6 +1,5 @@
 package serverapp.server;
 
-import serverapp.Main;
 import serverapp.gui.MainFrame;
 
 public class StartServerThread implements Runnable {
@@ -18,21 +17,18 @@ public class StartServerThread implements Runnable {
     @Override
     public void run() {
 
-        server.StartServer(frame);
-
+        server.startServer(frame);
 
         try{
             while(true){
 
+                //Close the thread and shutdown server
                 if(!frame.runServer){
-                    server.ShutdownServer();
+                    server.shutdownServer();
                     break;
                 }
 
                 Thread.sleep(1000);
-
-
-
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

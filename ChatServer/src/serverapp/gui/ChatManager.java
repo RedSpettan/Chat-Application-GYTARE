@@ -5,7 +5,7 @@ import serverapp.server.User;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ChatManager implements Runnable {
+public class ChatManager {
 
 
     private MainFrame frame;
@@ -18,13 +18,11 @@ public class ChatManager implements Runnable {
     Timer updateChatTimer = new Timer();
 
 
-    public ChatManager(MainFrame mainFrame){
+    ChatManager(MainFrame mainFrame){
 
         this.frame = mainFrame;
 
-        /*updateInformationTimer = new Timer();
-        updateChatTimer = new Timer();*/
-
+        //Update user information every 2 seconds
         updateInformationTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -32,6 +30,7 @@ public class ChatManager implements Runnable {
             }
         }, 1000, 2000);
 
+        //Update chat every 200 milliseconds
         updateChatTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -58,7 +57,7 @@ public class ChatManager implements Runnable {
     }
 
 
-
+    //Post messages and scroll text area
     private void UpdateChat(){
 
         if(!frame.updateChat){
@@ -72,7 +71,7 @@ public class ChatManager implements Runnable {
             //Get the message at the front of the queue
             String messageToBeSent = frame.server.messagesToBeDisplayed.poll();
 
-            System.out.println("Message to be sent: " + messageToBeSent);
+            //System.out.println("Message to be sent: " + messageToBeSent);
 
             //Confirm the message is not a null value
             if(messageToBeSent != null){
@@ -90,7 +89,7 @@ public class ChatManager implements Runnable {
                 //If the current maximum - the initial maximum is equal to current scroll value, that means the scroll bar is at bottom and the scroll pane should auto scroll
                 if((scrollValue ==(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum)) || (scrollValue == 1)){
                     moveScrollBar = true;
-                    System.out.println("Scroll bar will be moved!");
+                    //System.out.println("Scroll bar will be moved!");
 
                 }
 
@@ -106,60 +105,9 @@ public class ChatManager implements Runnable {
         }
     }
 
-
+    //Cancel Timers
     void StopUpdate(){
         updateChatTimer.cancel();
         updateInformationTimer.cancel();
-    }
-
-
-    @Override
-    public void run() {
-
-        System.out.println("Runnable is running!");
-
-        while(frame.updateChat){
-
-            UpdateInformationPanel();
-
-            //Check if any message is pending to be sent
-            if(!frame.server.messagesToBeDisplayed.isEmpty()){
-
-                //Get the message at the front of the queue
-                String messageToBeSent = frame.server.messagesToBeDisplayed.poll();
-
-                System.out.println("Message to be sent: " + messageToBeSent);
-
-                //Confirm the message is not a null value
-                if(messageToBeSent != null){
-
-                    //Get the scroll panes current initial scroll maximum, when no message are present
-                    if(scrollInitialMaximum == 0){
-                        scrollInitialMaximum = frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum();
-                    }
-
-                    //Store the current scroll value
-                    scrollValue = frame.chatPanel.scrollPane.getVerticalScrollBar().getValue();
-
-                    boolean moveScrollBar = false;
-
-                    //If the current maximum - the initial maximum is equal to current scroll value, that means the scroll bar is at bottom and the scroll pane should auto scroll
-                    if((scrollValue ==(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum)) || (scrollValue == 1)){
-                        moveScrollBar = true;
-                        System.out.println("Scroll bar will be moved!");
-
-                    }
-
-                    //Post the message
-                    frame.chatPanel.textArea.append(messageToBeSent + "\n");
-
-                    //Move the scroll bar to the bottom
-                    if(moveScrollBar){
-                        frame.chatPanel.textArea.setCaretPosition(frame.chatPanel.textArea.getDocument().getLength());
-                    }
-
-                }
-            }
-        }
     }
 }
