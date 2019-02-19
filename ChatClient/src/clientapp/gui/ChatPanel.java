@@ -100,6 +100,7 @@ public class ChatPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+        //Retrieve the message in the text field
         if(!textField.getText().isEmpty()){
             String message = textField.getText();
 

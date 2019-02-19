@@ -11,12 +11,10 @@ import java.nio.charset.StandardCharsets;
 public class ReceiveMessagesThread implements Runnable{
 
 
-    private Socket clientSocket;
     private Client activeClient;
 
-    ReceiveMessagesThread(Socket socket, Client client){
+    ReceiveMessagesThread(Client client){
 
-        this.clientSocket = socket;
         this.activeClient = client;
     }
 

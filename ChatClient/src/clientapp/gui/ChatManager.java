@@ -18,6 +18,7 @@ public class ChatManager {
 
         this.frame = mainFrame;
 
+        //Update chat every 100 milliseconds
         updateChatTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -27,7 +28,7 @@ public class ChatManager {
 
     }
 
-
+    //Post new messages and scrolls the text pane
     public void updateChat(){
         //Check if any message is pending to be sent
         if(!frame.client.messageToBeDisplayedList.isEmpty()){

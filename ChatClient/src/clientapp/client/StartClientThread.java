@@ -28,6 +28,7 @@ public class StartClientThread implements Runnable{
 
                 if(!frame.runClient || client.socket.isClosed()/*!client.clientIsRunning*/){
 
+                    //Show error prompt if the server closed down
                     boolean showError = client.socket.isClosed();
 
                     client.ShutDownClient();
@@ -35,6 +36,7 @@ public class StartClientThread implements Runnable{
                     break;
                 }
 
+                //Sleep for 1 second
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {

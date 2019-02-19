@@ -109,7 +109,7 @@ public class Client {
 
 
                 //Start a new thread using an locally initialized RecieveMessageThread
-                Thread receiveMessageThread = new Thread(new ReceiveMessagesThread(this.socket, this));
+                Thread receiveMessageThread = new Thread(new ReceiveMessagesThread(this));
                 receiveMessageThread.start();
 
 
@@ -118,7 +118,7 @@ public class Client {
 
 
             }catch(UnknownHostException e){
-                frame.displayServerRespondError(this);
+                frame.displayServerRespondError();
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -177,7 +177,7 @@ public class Client {
             return false;
 
         }catch(SocketTimeoutException e){
-            frame.displayServerRespondError(this);
+            frame.displayServerRespondError();
             return false;
         }
         catch(UnknownHostException e){
