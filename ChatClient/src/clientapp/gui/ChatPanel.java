@@ -95,22 +95,7 @@ public class ChatPanel extends JPanel implements ActionListener {
 
         add(textField, constraints);
 
-
-
-
-
-        //textArea.append("AnotherOne: Hello there \nTestPerson13: Wow, it sure is empty in here");
-
-        //textArea.append("\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj\nj");
-
-
     }
-
-
-
-
-
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -123,8 +108,6 @@ public class ChatPanel extends JPanel implements ActionListener {
             textField.setText("");
 
             textField.requestFocus();
-
         }
-
     }
 }

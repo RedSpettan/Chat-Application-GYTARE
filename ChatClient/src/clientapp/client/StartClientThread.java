@@ -2,8 +2,6 @@ package clientapp.client;
 
 import clientapp.gui.MainFrame;
 
-import javax.swing.*;
-
 public class StartClientThread implements Runnable{
 
 
@@ -28,15 +26,12 @@ public class StartClientThread implements Runnable{
         try{
             while(true){
 
-
-
                 if(!frame.runClient || client.socket.isClosed()/*!client.clientIsRunning*/){
 
                     boolean showError = client.socket.isClosed();
 
                     client.ShutDownClient();
-                    frame.DrawSetupGUI(showError);
-
+                    frame.drawSetupGUI(showError);
                     break;
                 }
 
@@ -44,6 +39,7 @@ public class StartClientThread implements Runnable{
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }catch(NullPointerException ignored){
         }
 
     }

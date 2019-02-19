@@ -14,6 +14,11 @@ public class UserSetUpPanel extends JPanel {
     int port;
     String username;
 
+
+    final Color fadeColor = new Color(180,180,180);
+    Color normalColor;
+
+
     //Labels
     JLabel hostLabel;
     JLabel portLabel;
@@ -63,6 +68,8 @@ public class UserSetUpPanel extends JPanel {
 
         connectButton = new JButton("Connect");
         connectButton.addActionListener(currentFrame);
+
+        normalColor = connectButton.getBackground();
 
         //Set Layout and create con
         setLayout(new GridBagLayout());
@@ -287,6 +294,15 @@ public class UserSetUpPanel extends JPanel {
             return false;
         }
 
+    }
+
+
+    public void changeButtonColor(boolean fade){
+        if(fade){
+            connectButton.setBackground(fadeColor);
+        }else{
+            connectButton.setBackground(normalColor);
+        }
     }
 
 
