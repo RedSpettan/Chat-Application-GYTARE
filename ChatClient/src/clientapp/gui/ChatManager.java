@@ -1,6 +1,4 @@
-package serverapp.gui;
-
-import serverapp.server.User;
+package clientapp.gui;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,64 +11,29 @@ public class ChatManager implements Runnable {
     int scrollInitialMaximum = 0;
     int scrollValue;
 
-
-    Timer updateInformationTimer = new Timer();
     Timer updateChatTimer = new Timer();
 
 
-    public ChatManager(MainFrame mainFrame){
+    public ChatManager(MainFrame mainFrame) {
 
         this.frame = mainFrame;
-
-        /*updateInformationTimer = new Timer();
-        updateChatTimer = new Timer();*/
-
-        updateInformationTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                UpdateInformationPanel();
-            }
-        }, 1000, 2000);
 
         updateChatTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 UpdateChat();
-
             }
-        }, 1000, 200);
+        }, 1000, 100);
 
     }
 
-    //Update all the connected users information
-    private void UpdateInformationPanel(){
 
-        frame.informationPanel.clearTextAreas();
-
-        for(User user : frame.server.userList){
-
-            frame.informationPanel.usernameTextArea.append(user.username + "\n");
-            frame.informationPanel.ipAddressTextArea.append(user.inetAddress.toString()+ "\n");
-            frame.informationPanel.portTextArea.append(user.socket.getPort() + "\n");
-            frame.informationPanel.timeTextArea.append(user.formattedTimeConnected + "\n");
-
-        }
-    }
-
-
-
-    private void UpdateChat(){
-
-        if(!frame.updateChat){
-            StopUpdate();
-        }
-
-
+    public void UpdateChat(){
         //Check if any message is pending to be sent
-        if(!frame.server.messagesToBeDisplayed.isEmpty()){
+        if(!frame.client.messageToBeDisplayedList.isEmpty()){
 
             //Get the message at the front of the queue
-            String messageToBeSent = frame.server.messagesToBeDisplayed.poll();
+            String messageToBeSent = frame.client.messageToBeDisplayedList.poll();
 
             System.out.println("Message to be sent: " + messageToBeSent);
 
@@ -86,6 +49,7 @@ public class ChatManager implements Runnable {
                 scrollValue = frame.chatPanel.scrollPane.getVerticalScrollBar().getValue();
 
                 boolean moveScrollBar = false;
+
 
                 //If the current maximum - the initial maximum is equal to current scroll value, that means the scroll bar is at bottom and the scroll pane should auto scroll
                 if((scrollValue ==(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum)) || (scrollValue == 1)){
@@ -107,26 +71,21 @@ public class ChatManager implements Runnable {
     }
 
 
-    void StopUpdate(){
+    public void stopTimer(){
         updateChatTimer.cancel();
-        updateInformationTimer.cancel();
     }
-
 
     @Override
     public void run() {
-
         System.out.println("Runnable is running!");
 
         while(frame.updateChat){
 
-            UpdateInformationPanel();
-
             //Check if any message is pending to be sent
-            if(!frame.server.messagesToBeDisplayed.isEmpty()){
+            if(!frame.client.messageToBeDisplayedList.isEmpty()){
 
                 //Get the message at the front of the queue
-                String messageToBeSent = frame.server.messagesToBeDisplayed.poll();
+                String messageToBeSent = frame.client.messageToBeDisplayedList.poll();
 
                 System.out.println("Message to be sent: " + messageToBeSent);
 
@@ -142,6 +101,7 @@ public class ChatManager implements Runnable {
                     scrollValue = frame.chatPanel.scrollPane.getVerticalScrollBar().getValue();
 
                     boolean moveScrollBar = false;
+
 
                     //If the current maximum - the initial maximum is equal to current scroll value, that means the scroll bar is at bottom and the scroll pane should auto scroll
                     if((scrollValue ==(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum)) || (scrollValue == 1)){

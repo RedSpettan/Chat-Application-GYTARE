@@ -46,15 +46,28 @@ public class MainFrame extends JFrame implements ActionListener {
     int updateUserList = 2000;
 
 
+    private boolean connectPressed = false;
+
+
     Client client;
 
     Thread updateChatThread;
 
-
+    ChatManager chatManager;
 
     public boolean updateChat = false;
 
     public boolean runClient = false;
+
+
+    public boolean isConnectPressed() {
+        return connectPressed;
+    }
+
+    public void setConnectPressed(boolean connectPressed) {
+        this.connectPressed = connectPressed;
+    }
+
 
 
     public MainFrame(String title)  {
@@ -82,11 +95,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
             //Instantiate the timers
 
-        connectTimer = new Timer(2000, drawChatGUITask);
-        connectTimer.setRepeats(false);
+        /*connectTimer = new Timer(2000, drawChatGUITask);
+        connectTimer.setRepeats(false);*/
 
-        checkConnectionTimer = new Timer(1000, checkUserConnection);
-        checkConnectionTimer.setRepeats(false);
+        /*checkConnectionTimer = new Timer(1000, checkUserConnection);
+        checkConnectionTimer.setRepeats(false);*/
     }
 
 
@@ -166,6 +179,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         //Create the different GUIs, either the set up or the chat GUI
 
+    //This is only used the first starting the program, refer to DrawSetupGUI otherwise
     private void createSetupGUI(){
         createSetupPanel();
 
@@ -184,12 +198,6 @@ public class MainFrame extends JFrame implements ActionListener {
         container.repaint();
 
         updateChat = true;
-
-
-        updateChatThread = new Thread(new UpdateChat(this));
-        updateChatThread.start();
-
-
 
     }
 
@@ -222,6 +230,13 @@ public class MainFrame extends JFrame implements ActionListener {
         runClient = false;
     }
 
+    public void DisplayConnectionDisruptedError(){
+        JOptionPane.showMessageDialog(null,
+                "The server connection has been disrupted.",
+                "ERROR",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
 
     private void connectClient(String host, int port, String username){
         client = null;
@@ -234,9 +249,9 @@ public class MainFrame extends JFrame implements ActionListener {
         System.out.println("Client has been started, tries to connect...");
 
         //Start a timer which checks if the client has successfully connected to the server
-        connectTimer = new Timer(client.socketTimeoutTime, drawChatGUITask);
+        /*connectTimer = new Timer(client.socketTimeoutTime, drawChatGUITask);
         connectTimer.setRepeats(false);
-        connectTimer.start();
+        connectTimer.start();*/
     }
 
 
@@ -294,11 +309,57 @@ public class MainFrame extends JFrame implements ActionListener {
         if(response == JOptionPane.YES_OPTION){
             runClient = false;
 
-            container.remove(usersPanel);
+            /*container.remove(usersPanel);
             container.remove(chatPanel);
             container.remove(disconnectButton);
 
-            createSetupGUI();
+            createSetupGUI();*/
+        }
+
+    }
+
+    public void DrawChatGUI(){
+        createChatGUI();
+        System.out.println("Drew the chat GUI!");
+
+        container.revalidate();
+        container.repaint();
+
+        //Save current values
+        host = client.serverHost;
+        port = client.remotePort;
+        username = client.username;
+
+        //Start new timers for updating the currently connected users
+        //and a timer to check if the server is still running
+
+        //checkConnectionTimer.start();
+
+        chatManager = new ChatManager(this);
+
+
+        updateUserListTimer = new Timer(updateUserList, updateConnectedUsers);
+        updateUserListTimer.setRepeats(false);
+        updateUserListTimer.start();
+
+    }
+
+    public void DrawSetupGUI(boolean showError){
+
+        updateUserListTimer.stop();
+
+        runClient = false;
+
+        container.remove(usersPanel);
+        container.remove(chatPanel);
+        container.remove(disconnectButton);
+
+        chatManager.stopTimer();
+
+        createSetupGUI();
+
+        if(showError){
+            DisplayConnectionDisruptedError();
         }
 
     }
@@ -327,7 +388,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 //Start new timers for updating the currently connected users
                 //and a timer to check if the server is still running
 
-                checkConnectionTimer.start();
+                //checkConnectionTimer.start();
 
                 updateUserListTimer = new Timer(updateUserList, updateConnectedUsers);
                 updateUserListTimer.setRepeats(false);
@@ -344,7 +405,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
             //Stop the timer if the client is no longer running
             if(!runClient){
-                checkConnectionTimer.stop();
+                //checkConnectionTimer.stop();
                 System.out.println("Timer stoppppped!");
 
             }else {
@@ -371,7 +432,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 }else{
 
                     //Restart the timer
-                    checkConnectionTimer.start();
+                    //checkConnectionTimer.start();
 
                 }
             }
@@ -410,22 +471,32 @@ public class MainFrame extends JFrame implements ActionListener {
         //Check if the connected button has been pressed in the set up GUI
         if(e.getSource() == connectPanel.connectButton){
 
-            //Prevent spam presses
+            /*//Prevent spam presses
             if(connectTimer.isRunning()){
                 System.out.println("The timer is running");
                 return;
-            }
+            }*/
 
             System.out.println("The timer is not running!");
+
+
+            if(isConnectPressed()){
+
+                System.out.println("Cannot click!");
+                return;
+            }
 
             //Validate the 3 different text fields
             if(connectPanel.validateHostAddress() && connectPanel.validatePortNumber() && connectPanel.validateUsername()){
                 connectClient(connectPanel.hostAddress, connectPanel.port, connectPanel.username);
+                setConnectPressed(true);
             }
         }
 
         //Disconnect button
         if(e.getSource() == disconnectButton){
+
+            System.out.println("Yeet!");
 
             validateClientShutdown();
 
@@ -453,5 +524,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
         }
     };
+
 
 }

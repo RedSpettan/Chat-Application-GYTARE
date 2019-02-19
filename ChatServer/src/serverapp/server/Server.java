@@ -460,20 +460,14 @@ public class Server {
 
                 while(serverIsRunning){
 
-
-
-
                     DatagramPacket request = new DatagramPacket(new byte[50], 50);
 
                     boolean requestRecieved = false;
 
                     //Check if any packet has arrived
                     try{
-                        //System.out.println("Looking for requests");
                         socket.receive(request);
                         requestRecieved = true;
-
-                        //System.out.println("Request received ");
 
                     }catch(SocketTimeoutException ignored){
                         Thread.sleep(1000);
@@ -595,8 +589,6 @@ public class Server {
                 serverSocket.setSoTimeout(1000);
 
                 while(serverIsRunning){
-
-
 
                     Thread.sleep(2000);
 

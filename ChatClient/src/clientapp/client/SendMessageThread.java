@@ -17,6 +17,31 @@ public class SendMessageThread implements Runnable{
 
     }
 
+
+    public void SendMessages(){
+
+        PrintWriter out = null;
+
+        if(!activeClient.messageToBeSentQueue.isEmpty()){
+
+            String messageToBeSent = activeClient.messageToBeSentQueue.poll();
+
+            try{
+                out = new PrintWriter(activeClient.socket.getOutputStream(), true, StandardCharsets.ISO_8859_1);
+
+                out.println(messageToBeSent);
+                out.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                System.out.println("Output stream error in Send message thread");
+            }
+
+
+        }
+    }
+
     @Override
     public void run() {
 
