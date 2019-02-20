@@ -5,10 +5,9 @@ import serverapp.server.Server;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ServerSetupPanel extends JPanel implements ActionListener {
+public class ServerSetupPanel extends JPanel {
 
     JButton submitButton;
 
@@ -137,7 +136,7 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
             }
 
             //See if the port is available
-            if(Server.CheckRemotePortAvailability(port)){
+            if(Server.checkRemotePortAvailability(port)){
 
             }else{
                 System.out.println("Not a valid port!");
@@ -192,15 +191,4 @@ public class ServerSetupPanel extends JPanel implements ActionListener {
     }
 
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-
-
-        /*if(e.getSource() == submitButton){
-            System.out.println("Button has been pressed");
-
-        }*/
-
-    }
 }

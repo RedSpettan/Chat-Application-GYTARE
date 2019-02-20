@@ -105,7 +105,7 @@ public class ChatPanel extends JPanel implements ActionListener {
         if(!textField.getText().isEmpty()){
             String message = textField.getText();
 
-            frame.server.ReceiveMessages(message, "SERVER");
+            frame.server.receiveMessages(message, "SERVER");
 
             textField.setText("");
 

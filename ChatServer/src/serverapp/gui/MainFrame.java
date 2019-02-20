@@ -1,7 +1,6 @@
 package serverapp.gui;
 
 import serverapp.server.Server;
-import serverapp.server.ShutdownHook;
 import serverapp.server.StartServerThread;
 
 import javax.swing.*;
@@ -18,16 +17,15 @@ public class MainFrame extends JFrame implements ActionListener {
 
     ChatPanel chatPanel;
     UserInformationPanel informationPanel;
-    JButton shutDownServerButton;
-    JButton informationButton;
+    private JButton shutDownServerButton;
+    private JButton informationButton;
 
-    GridBagConstraints constraints;
+    private GridBagConstraints constraints;
 
-    Container container;
+    private Container container;
 
 
-    private Thread chatUpdateThread;
-
+    private ChatManager chatManager;
 
     boolean updateChat = false;
 
@@ -126,8 +124,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
         updateChat = true;
 
-        chatUpdateThread = new Thread(new UpdateChat(this));
-        chatUpdateThread.start();
+        chatManager = new ChatManager(this);
+
+
+        /*chatUpdateThread = new Thread(new ChatManager(this));
+        chatUpdateThread.start();*/
 
     }
 
@@ -209,6 +210,10 @@ public class MainFrame extends JFrame implements ActionListener {
         if(responseMessage == JOptionPane.YES_OPTION){
             runServer = false;
 
+            updateChat = false;
+
+            chatManager.StopUpdate();
+
             //Remove the Chat GUI
             container.remove(informationPanel);
             container.remove(chatPanel);
@@ -276,7 +281,7 @@ public class MainFrame extends JFrame implements ActionListener {
         if(e.getSource() == informationButton){
 
             //Display server information prompt
-            JOptionPane.showMessageDialog(null, NetworkInterFaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
+            JOptionPane.showMessageDialog(null, getNetworkInterfaces() + "Port: " + server.remotePort + "\nMaximum Users: " + server.maximumUsers);
 
         }
 
@@ -285,7 +290,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
     //Get the current IP-address associated with the host machine
-    public static String NetworkInterFaces(){
+    public static String getNetworkInterfaces(){
 
         StringBuilder addressString = new StringBuilder();
 
@@ -298,8 +303,6 @@ public class MainFrame extends JFrame implements ActionListener {
                 //Get the IP-addresses associated with the network interface
                 NetworkInterface n = eNI.nextElement();
                 Enumeration eIA = n.getInetAddresses();
-
-                //System.out.println("Name: " + n.getDisplayName());
 
                 while(eIA.hasMoreElements()){
                     InetAddress i = (InetAddress) eIA.nextElement();
@@ -373,12 +376,24 @@ public class MainFrame extends JFrame implements ActionListener {
         public void windowClosing(WindowEvent e) {
             super.windowClosing(e);
 
-            //Show prompt
-            int response = JOptionPane.showConfirmDialog(null,
-                    "The server and program will shut down.\nDo you want to proceed?",
-                    "Exit",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE);
+            int response;
+
+            if(runServer){
+                //Show prompt
+                response = JOptionPane.showConfirmDialog(null,
+                        "The server and program will shut down.\nDo you want to proceed?",
+                        "Exit",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                response = JOptionPane.showConfirmDialog(null,
+                        "The program will shut down.\nDo you want to proceed?",
+                        "Exit",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+
 
             if(response == JOptionPane.YES_OPTION){
                 System.exit(0);

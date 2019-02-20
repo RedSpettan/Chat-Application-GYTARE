@@ -21,13 +21,12 @@ public class Client {
     //Store message which will be displayed by the GUI
     public ConcurrentLinkedQueue<String> messageToBeDisplayedList = new ConcurrentLinkedQueue<>();
 
-    //Toggle if the client should be running
-    boolean clientIsRunning = false;
-    public boolean clientConnected = false;
+    private Timer sendMessagesTimer = new Timer();
 
+    private Timer updateClientTimer = new Timer();
 
     //Time in millis of how long the socket should wait for response from the server
-    public int socketTimeoutTime = 10000;
+    public int socketTimeoutTime = 7000;
 
     //Socket connected to the server
     public Socket socket;
@@ -81,8 +80,6 @@ public class Client {
             frame.runClient = false;
         }
 
-        clientIsRunning = frame.runClient;
-
 
         if(frame.runClient){
 
@@ -96,25 +93,32 @@ public class Client {
                 socket = new Socket(serverHost, remotePort);
                 this.socket = socket;
 
-                clientConnected = true;
-
                 System.out.println("\n--TCP connection has been established--");
 
                 //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
                 SendMessageThread sendMessageThreadClass = new SendMessageThread(this);
-                Thread sendMessageThread = new Thread(sendMessageThreadClass);
-                sendMessageThread.start();
+
+                sendMessagesTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        sendMessageThreadClass.SendMessages();
+                        //System.out.println("messages!");
+
+                    }
+                }, 1000, 100);
+
 
                 //Start a new thread using an locally initialized RecieveMessageThread
-                Thread receiveMessageThread = new Thread(new ReceiveMessagesThread(this.socket, this));
+                Thread receiveMessageThread = new Thread(new ReceiveMessagesThread(this));
                 receiveMessageThread.start();
 
-                UpdateClient();
 
+
+                frame.drawChatGUI();
 
 
             }catch(UnknownHostException e){
-                frame.displayServerRespondError(this);
+                frame.displayServerRespondError();
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -123,6 +127,8 @@ public class Client {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+            }finally {
+                frame.setConnectPressed(false);
             }
         }
 
@@ -171,7 +177,7 @@ public class Client {
             return false;
 
         }catch(SocketTimeoutException e){
-            frame.displayServerRespondError(this);
+            frame.displayServerRespondError();
             return false;
         }
         catch(UnknownHostException e){
@@ -183,56 +189,17 @@ public class Client {
 
             frame.runClient = false;
             return false;
+        }finally {
+            frame.setConnectPressed(false);
         }
 
-    }
-
-    //Method used to update the client
-    private void UpdateClient(){
-
-
-        /*Timer timer = new Timer();
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println("hello");
-            }
-
-
-        }, 1000, 1000);*/
-
-
-        //Check if the server should be running
-        while(clientIsRunning){
-
-            clientIsRunning = frame.runClient;
-
-            //Stop updating if the MainFrame boolean variable is false
-            if(!frame.runClient){
-                break;
-            }
-
-
-            //Stop updating if the socket has been closed
-            if(this.socket.isClosed()){
-
-                clientConnected = false;
-                break;
-
-            }
-        }
-
-        shutDownClient();
-
-        /*restartClient();
-        System.out.println("Updated method has been closed!");*/
     }
 
     //Close the connected socket
-    private void shutDownClient(){
+    public void ShutDownClient(){
 
-        clientIsRunning = false;
+        updateClientTimer.cancel();
+        sendMessagesTimer.cancel();
 
         try {
             socket.close();
