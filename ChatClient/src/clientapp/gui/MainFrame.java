@@ -372,12 +372,15 @@ public class MainFrame extends JFrame implements ActionListener {
             if(!responseMessage.isEmpty()){
                 responseMessage = responseMessage.replace(",", "\n");
 
+                responseMessage = responseMessage.trim();
+
                 connectedUsers = responseMessage;
             }else{
                 connectedUsers = "";
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Timed out...");
         }
 
     }
@@ -415,11 +418,23 @@ public class MainFrame extends JFrame implements ActionListener {
         public void windowClosing(WindowEvent e) {
             super.windowClosing(e);
 
-            int response = JOptionPane.showConfirmDialog(null,
-                    "The client will be disconnected and the program will shut down.\nDo you want to proceed?",
-                    "Exit",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE);
+            int response;
+
+            if(runClient){
+                response = JOptionPane.showConfirmDialog(null,
+                        "The client will be disconnected and the program will shut down.\nDo you want to proceed?",
+                        "Exit",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                response = JOptionPane.showConfirmDialog(null,
+                        "The program will shut down.\nDo you want to proceed?",
+                        "Exit",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+
 
             if(response == JOptionPane.YES_OPTION){
                 System.exit(0);

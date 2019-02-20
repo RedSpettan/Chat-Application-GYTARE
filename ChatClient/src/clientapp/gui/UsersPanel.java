@@ -1,7 +1,6 @@
 package clientapp.gui;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
 
 public class UsersPanel extends JPanel {
@@ -13,12 +12,8 @@ public class UsersPanel extends JPanel {
 
     private JScrollPane usersScrollPane;
 
-    private MainFrame frame;
-
 
     public UsersPanel(MainFrame mainFrame) {
-
-        this.frame = mainFrame;
 
         Dimension size = getPreferredSize();
 

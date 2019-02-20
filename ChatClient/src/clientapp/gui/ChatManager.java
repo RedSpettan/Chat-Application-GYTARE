@@ -36,7 +36,7 @@ public class ChatManager {
             //Get the message at the front of the queue
             String messageToBeSent = frame.client.messageToBeDisplayedList.poll();
 
-            System.out.println("Message to be sent: " + messageToBeSent);
+            //System.out.println("Message to be sent: " + messageToBeSent);
 
             //Confirm the message is not a null value
             if(messageToBeSent != null){
@@ -55,7 +55,7 @@ public class ChatManager {
                 //If the current maximum - the initial maximum is equal to current scroll value, that means the scroll bar is at bottom and the scroll pane should auto scroll
                 if((scrollValue ==(frame.chatPanel.scrollPane.getVerticalScrollBar().getMaximum() - scrollInitialMaximum)) || (scrollValue == 1)){
                     moveScrollBar = true;
-                    System.out.println("Scroll bar will be moved!");
+                    //System.out.println("Scroll bar will be moved!");
 
                 }
 

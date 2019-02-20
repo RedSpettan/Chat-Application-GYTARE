@@ -44,7 +44,7 @@ public class ServerThread implements Runnable{
         //Will catch if the client has been shut down
         } catch (IOException e) {
             //e.printStackTrace();
-            System.out.println("***Thread associated with socket '" + clientSocket.getPort() + "' has been stopped!***");
+            //System.out.println("***Thread associated with socket '" + clientSocket.getPort() + "' has been stopped!***");
         }
     }
 

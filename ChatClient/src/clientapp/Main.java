@@ -1,10 +1,8 @@
 package clientapp;
 
-import clientapp.client.Client;
 import clientapp.gui.MainFrame;
 
 import javax.swing.*;
-import java.util.Scanner;
 
 public class Main {
 

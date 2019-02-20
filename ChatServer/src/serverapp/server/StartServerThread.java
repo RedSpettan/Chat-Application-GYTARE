@@ -35,7 +35,7 @@ public class StartServerThread implements Runnable {
         }
 
 
-        System.out.println("StartServerThread has been shutdown!");
+        //System.out.println("StartServerThread has been shutdown!");
 
     }
 }

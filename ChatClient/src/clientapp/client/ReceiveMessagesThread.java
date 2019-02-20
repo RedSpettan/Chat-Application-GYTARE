@@ -42,14 +42,14 @@ public class ReceiveMessagesThread implements Runnable{
         } catch(SocketException e){
 
             System.err.println("\n--CONNECTION HAS BEEN DISRUPTED--\n");
-            System.out.println("Receive Message Thread has been shut down");
+            //System.out.println("Receive Message Thread has been shut down");
             //System.out.println("\n***AUTOMATIC RECONNECTION WILL COMMENCE***\n");
         }
         catch (IOException e) {
             e.printStackTrace();
 
         }
-        System.out.println("Receive Message Thread has been shut down");
+        //System.out.println("Receive Message Thread has been shut down");
     }
 
     //Send username on server request

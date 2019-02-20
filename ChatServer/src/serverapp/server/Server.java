@@ -388,8 +388,8 @@ public class Server {
             for(User user : userList){
 
                 if(user.socket.isClosed()){
-                    System.out.println("Is the Thread Alive?: " + user.serverThread.isAlive());
-                    System.out.println("serverapp.server.User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");
+                    /*System.out.println("Is the Thread Alive?: " + user.serverThread.isAlive());
+                    System.out.println("serverapp.server.User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");*/
 
                     //Log the user disconnecting
                     requestLogger.info("serverapp.server.User has disconnected. " +
@@ -403,7 +403,7 @@ public class Server {
                     messagesToBeDisplayed.add(chatMessage);
 
                     userList.remove(user);
-                    System.out.println("serverapp.server.User removed!");
+                    //System.out.println("serverapp.server.User removed!");
 
                     break;
                 }
@@ -525,7 +525,7 @@ public class Server {
                     }
                 }
 
-                System.out.println("Connection Request thread has been shut down!");
+               // System.out.println("Connection Request thread has been shut down!");
 
 
 
@@ -599,9 +599,9 @@ public class Server {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
 
-                System.out.println("Server connection thread has been shutdown!");
+                //System.out.println("Server connection thread has been shutdown!");
             } catch (InterruptedException e) {
 
                 errorLogger.log(Level.WARNING, e.getMessage(), e);
