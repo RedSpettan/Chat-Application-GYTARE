@@ -248,15 +248,20 @@ public class Server {
         this.mainframe = frame;
 
 
-        System.out.println("Remote port: " + remotePort);
+        //System.out.println("Remote port: " + remotePort);
 
         //Starts a new Server Socket
         try{
 
             theServerSocket = new ServerSocket(remotePort);
 
-            System.out.println("Socket has been opened, awaiting connections...");
-            System.out.println("IP address: " + Inet4Address.getLocalHost());
+            /*System.out.println("Socket has been opened, awaiting connections...");
+            System.out.println("IP address: " + Inet4Address.getLocalHost());*/
+
+            requestLogger.info("\r\n--- Server Started ---" +
+                    "\r\nPort Number: " + remotePort +
+                    "\r\nMaximum Users: " + maximumUsers +
+                    "\r\n\r\n");
 
             serverIsRunning = frame.runServer;
 

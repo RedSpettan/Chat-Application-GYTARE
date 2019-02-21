@@ -19,7 +19,7 @@ public class ShutdownHook implements Runnable {
         try{
             requestFileHandler.close();
             errorFileHandler.close();
-            System.out.println("Shutdown hook exit!");
+            //System.out.println("Shutdown hook exit!");
         }catch(SecurityException e){
             e.printStackTrace();
         }
