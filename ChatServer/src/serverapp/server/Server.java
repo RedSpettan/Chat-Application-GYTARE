@@ -188,7 +188,7 @@ public class Server {
             requestFileHandler.setFormatter(formatter);
 
 
-            requestLogger.info("Logger initialized \r\n ");
+            requestLogger.info("Logger initialized\r\n\r\n");
 
 
             //Initialize the error FileHandler and add it to the error logger
@@ -198,7 +198,7 @@ public class Server {
             //Apply the SimpleFormatter created earlier to the error FileHandler
             errorFileHandler.setFormatter(formatter);
 
-            errorLogger.info("Logger initialized \r\n");
+            errorLogger.info("Logger initialized\r\n\r\n");
 
             //Initialize and add a new shutdown hook thread to the Runtime, used for when the program is shutdown.
             shutdownHookThread = new Thread(new ShutdownHook(requestFileHandler, errorFileHandler));
@@ -392,11 +392,11 @@ public class Server {
                     System.out.println("serverapp.server.User: " + user.username + ". Socket " + user.socket.getPort() + " is currently not active ");*/
 
                     //Log the user disconnecting
-                    requestLogger.info("serverapp.server.User has disconnected. " +
-                            "\r\n Username:" + user.username +
-                            "\r\n PortNumber: " + user.socket.getPort() +
-                            "\r\n Host Address: " + user.inetAddress.getHostAddress() +
-                            "\r\n Host name: " + user.inetAddress.getHostName());
+                    requestLogger.info("\r\n--- User has disconnected ---" +
+                            "\r\nUsername: " + user.username +
+                            "\r\nPortNumber: " + user.socket.getPort() +
+                            "\r\nHost Address: " + user.inetAddress.getHostAddress() +
+                            "\r\nHost name: " + user.inetAddress.getHostName() + "\r\n\r\n");
 
                     String chatMessage = "--- " + user.username+ " has left the server ---";
                     messageToBeSentList.add(chatMessage);
@@ -514,7 +514,7 @@ public class Server {
 
                             // ------ Log Request ------
 
-                            requestLogger.info("\r\nRequest Received!\r\n" +
+                            requestLogger.info("\r\n--- Request Received ---\r\n" +
                                     "Host Address: " + request.getAddress().getHostAddress() +
                                     "\r\nHost Name: " + request.getAddress().getHostName() +
                                     "\r\nUsername submitted: " + clientUsername +
@@ -592,10 +592,10 @@ public class Server {
                         localThread.start();
 
                         //Log the incoming client connection
-                        requestLogger.info("A new client has connected. \r\n " +
-                                "Port number: " + clientSocket.getPort() +
-                                ".\r\n Host Address: " + clientSocket.getInetAddress().getHostAddress() +
-                                ".\r\n Host name:" + clientSocket.getInetAddress().getHostName() +"\r\n");
+                        requestLogger.info("\r\n--- Client connected ---" +
+                                "\r\nPort number: " + clientSocket.getPort() +
+                                "\r\nHost Address: " + clientSocket.getInetAddress().getHostAddress() +
+                                "\r\nHost name: " + clientSocket.getInetAddress().getHostName() +"\r\n\r\n");
                     }
 
 
