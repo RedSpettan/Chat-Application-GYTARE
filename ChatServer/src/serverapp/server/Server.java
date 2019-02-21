@@ -219,21 +219,21 @@ public class Server {
         //thus the port is available
         try(Socket socket = new Socket(InetAddress.getLocalHost(),portToCheck )){
 
-            System.out.println("Remote port is NOT available");
+            //System.out.println("Remote port is NOT available");
 
             return false;
 
         } catch (UnknownHostException e) {
-            System.out.println("Remote port is NOT available");
+            //System.out.println("Remote port is NOT available");
 
             return false;
 
         } catch (IOException e) {
-            System.out.println("Remote port is available");
+            //System.out.println("Remote port is available");
 
             return true;
         }catch (IllegalArgumentException e){
-            System.out.println("Illegal Argument");
+            //System.out.println("Illegal Argument");
 
             return false;
         }
@@ -394,7 +394,7 @@ public class Server {
                     //Log the user disconnecting
                     requestLogger.info("\r\n--- User has disconnected ---" +
                             "\r\nUsername: " + user.username +
-                            "\r\nPortNumber: " + user.socket.getPort() +
+                            "\r\nPort Number: " + user.socket.getPort() +
                             "\r\nHost Address: " + user.inetAddress.getHostAddress() +
                             "\r\nHost name: " + user.inetAddress.getHostName() + "\r\n\r\n");
 
@@ -540,6 +540,17 @@ public class Server {
         }
     }
 
+    //Log when a client connects to the server
+    void LogUserConnection(User user){
+        //Log the incoming client connection
+        requestLogger.info("\r\n--- Client connected ---" +
+                "\r\nUsername: " + user.username +
+                "\r\nPort number: " + user.socket.getPort() +
+                "\r\nHost Address: " + user.socket.getInetAddress().getHostAddress() +
+                "\r\nHost name: " + user.socket.getInetAddress().getHostName() +"\r\n\r\n");
+
+
+    }
 
     //Listen for connection requests using TCP/IP
     private class ServerConnection implements Runnable{
@@ -583,19 +594,14 @@ public class Server {
 
                         //System.out.println(clientSocket.getInetAddress());
 
-                        //Create a new Thread to run a ServerThread
-                        Thread localThread = new Thread(new ServerThread(clientSocket, server));
+                        //Create a new Thread to run a ClientThread
+                        Thread localThread = new Thread(new ClientThread(clientSocket, server));
 
                         //Add the user to the "userList"
                         userList.add( new User("Test", localThread, clientSocket));
 
                         localThread.start();
 
-                        //Log the incoming client connection
-                        requestLogger.info("\r\n--- Client connected ---" +
-                                "\r\nPort number: " + clientSocket.getPort() +
-                                "\r\nHost Address: " + clientSocket.getInetAddress().getHostAddress() +
-                                "\r\nHost name: " + clientSocket.getInetAddress().getHostName() +"\r\n\r\n");
                     }
 
 

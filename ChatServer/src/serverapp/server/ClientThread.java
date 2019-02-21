@@ -10,13 +10,13 @@ import java.nio.charset.StandardCharsets;
 
 //This thread is used to receive messages from the client which has been associated with this thread
 
-public class ServerThread implements Runnable{
+public class ClientThread implements Runnable{
 
 
     private Server activeServer;
     private Socket clientSocket;
 
-    public ServerThread(Socket clientSocket, Server server){
+    public ClientThread(Socket clientSocket, Server server){
 
         this.activeServer = server;
         this.clientSocket = clientSocket;
@@ -78,6 +78,7 @@ public class ServerThread implements Runnable{
             if(user.socket.equals(clientSocket)){
                 user.username = username;
                 activeServer.receiveMessages("--- " + user.username+ " has connected to the server ---");
+                activeServer.LogUserConnection(user);
                 break;
             }
         }

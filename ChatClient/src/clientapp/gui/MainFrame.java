@@ -249,7 +249,7 @@ public class MainFrame extends JFrame implements ActionListener {
         runClient = true;
         new Thread(new StartClientThread(this,client)).start();
 
-        System.out.println("Client has been started, tries to connect...");
+        //System.out.println("Client has been started, tries to connect...");
     }
 
 

@@ -87,13 +87,13 @@ public class Client {
 
             try{
 
-                System.out.println("Tries TCP");
+                //System.out.println("Tries TCP");
 
                 //Tries to connect to the server
                 socket = new Socket(serverHost, remotePort);
                 this.socket = socket;
 
-                System.out.println("\n--TCP connection has been established--");
+                System.out.println("\n*** Connection has been established ***\n\n");
 
                 //Initialize a new clientapp.client.SendMessageThread and start a new thread using it
                 SendMessageThread sendMessageThreadClass = new SendMessageThread(this);
@@ -132,7 +132,6 @@ public class Client {
             }
         }
 
-        System.out.println("startClient method has been terminated!");
     }
 
 
@@ -209,7 +208,7 @@ public class Client {
             System.exit(0);
         }
 
-        System.out.println("Client has now been shut down!");
+        //System.out.println("Client has now been shut down!");
 
     }
 
