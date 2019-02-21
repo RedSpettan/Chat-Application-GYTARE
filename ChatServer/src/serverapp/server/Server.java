@@ -46,6 +46,9 @@ public class Server {
     private Timer sendMessageTimer = new Timer();
     private Timer updateServerTimer = new Timer();
 
+    private Timer logUserTimer = new Timer();
+    private ConcurrentLinkedQueue<User> usersToBeLogged = new ConcurrentLinkedQueue<>();
+
     private SendMessages sm;
 
     private Logger requestLogger;
@@ -289,6 +292,13 @@ public class Server {
                 }
             }, 1000, 3000);
 
+            //Check if a user needs to be logged
+            logUserTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    logUserConnection();
+                }
+            }, 1000, 1000);
 
 
 
@@ -308,6 +318,7 @@ public class Server {
             //Stop timers
             updateServerTimer.cancel();
             sendMessageTimer.cancel();
+            logUserTimer.cancel();
 
             serverIsRunning = false;
 
@@ -540,14 +551,28 @@ public class Server {
         }
     }
 
+    //Method to add users which has joined
+    synchronized void logUser(User user){
+
+        usersToBeLogged.add(user);
+    }
+
     //Log when a client connects to the server
-    void LogUserConnection(User user){
+    private void logUserConnection(){
+
+        User currentUser = usersToBeLogged.poll();
+
+        if(currentUser == null){
+            System.out.println("No user!");
+            return;
+        }
+
         //Log the incoming client connection
         requestLogger.info("\r\n--- Client connected ---" +
-                "\r\nUsername: " + user.username +
-                "\r\nPort number: " + user.socket.getPort() +
-                "\r\nHost Address: " + user.socket.getInetAddress().getHostAddress() +
-                "\r\nHost name: " + user.socket.getInetAddress().getHostName() +"\r\n\r\n");
+                "\r\nUsername: " + currentUser.username +
+                "\r\nPort number: " + currentUser.socket.getPort() +
+                "\r\nHost Address: " + currentUser.socket.getInetAddress().getHostAddress() +
+                "\r\nHost name: " + currentUser.socket.getInetAddress().getHostName() +"\r\n\r\n");
 
 
     }

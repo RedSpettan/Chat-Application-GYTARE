@@ -78,7 +78,7 @@ public class ClientThread implements Runnable{
             if(user.socket.equals(clientSocket)){
                 user.username = username;
                 activeServer.receiveMessages("--- " + user.username+ " has connected to the server ---");
-                activeServer.LogUserConnection(user);
+                activeServer.logUser(user);
                 break;
             }
         }
