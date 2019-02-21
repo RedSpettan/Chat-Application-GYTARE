@@ -267,8 +267,6 @@ public class MainFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if(e.getSource() == serverSetupPanel.submitButton){
-            System.out.println("The button got pressed!");
-
             validateStartServer();
 
         }

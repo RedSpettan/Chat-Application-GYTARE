@@ -6,22 +6,22 @@ import java.awt.*;
 
 public class UserInformationPanel extends JPanel {
 
-    MainFrame mainFrame;
+    private MainFrame mainFrame;
 
-    JTextField usernameHeader;
-    JTextField ipAddressHeader;
-    JTextField portHeader;
-    JTextField timeHeader;
+    private JTextField usernameHeader;
+    private JTextField ipAddressHeader;
+    private JTextField portHeader;
+    private JTextField timeHeader;
 
     JTextArea usernameTextArea;
     JTextArea ipAddressTextArea;
     JTextArea portTextArea;
     JTextArea timeTextArea;
 
-    JScrollPane usernameScrollPane;
-    JScrollPane ipAddressScrollPane;
-    JScrollPane portScrollPane;
-    JScrollPane timeScrollPane;
+    private JScrollPane usernameScrollPane;
+    private JScrollPane ipAddressScrollPane;
+    private JScrollPane portScrollPane;
+    private JScrollPane timeScrollPane;
 
 
     void clearTextAreas(){
