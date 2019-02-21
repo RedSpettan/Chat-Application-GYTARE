@@ -499,6 +499,10 @@ public class Server {
                                     }
                                 }
 
+                                if(clientUsername.equalsIgnoreCase("server")){
+                                    usernameExist = true;
+                                }
+
                                 // "y" for "Yes the user can connect". "u" for "Username taken", the user cannot connect
                                 if(!usernameExist){
                                     responseMessage = "y".getBytes(StandardCharsets.ISO_8859_1);
