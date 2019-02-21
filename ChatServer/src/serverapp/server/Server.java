@@ -12,10 +12,7 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.*;
 
 public class Server {
 
@@ -322,6 +319,8 @@ public class Server {
 
             serverIsRunning = false;
 
+
+
             //Stop each user socket
             for(User user : userList){
                 user.socket.close();
@@ -332,6 +331,20 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        requestLogger.info("\r\n--- Server shutdown ---\r\n\r\n");
+
+        Handler[] rHandlers = requestLogger.getHandlers();
+        Handler[] eHandlers = errorLogger.getHandlers();
+
+
+        for(Handler h : rHandlers){
+            h.close();
+        }
+        for(Handler ha : eHandlers){
+            ha.close();
+        }
+
 
         System.out.println("Server has been shutdown!");
     }
@@ -563,7 +576,7 @@ public class Server {
         User currentUser = usersToBeLogged.poll();
 
         if(currentUser == null){
-            System.out.println("No user!");
+            //System.out.println("No user!");
             return;
         }
 

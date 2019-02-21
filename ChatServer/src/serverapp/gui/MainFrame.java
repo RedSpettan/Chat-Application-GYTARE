@@ -396,6 +396,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
             if(response == JOptionPane.YES_OPTION){
+                server.shutdownServer();
                 System.exit(0);
             }
         }

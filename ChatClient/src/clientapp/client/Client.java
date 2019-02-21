@@ -26,7 +26,7 @@ public class Client {
     private Timer updateClientTimer = new Timer();
 
     //Time in millis of how long the socket should wait for response from the server
-    public int socketTimeoutTime = 8000;
+    public int socketTimeoutTime = 11000;
 
     //Socket connected to the server
     public Socket socket;
